@@ -26,32 +26,17 @@
  *
  */
 
+#define MY_CODEC Opus
 #include <codec/opalplugin.hpp>
-#include <codec/known.h>
-
-#ifndef PLUGIN_CODEC_DLL_EXPORTS
-#include "plugin_config.h"
-#endif
 
 #include "../../../src/codec/opusmf_inc.cxx"
 
 #include "opus.h"
 
-#include <vector>
 
-#ifdef _MSC_VER
-#pragma warning(disable:4505)
-#define snprintf _snprintf
-#endif
-
-
-#define MY_CODEC Opus                        // Name of codec (use C variable characters)
-
-#define MY_CODEC_LOG STRINGIZE(MY_CODEC)
-class MY_CODEC { };
+///////////////////////////////////////////////////////////////////////////////
 
 PLUGINCODEC_CONTROL_LOG_FUNCTION_DEF
-
 
 static const char MyDescription[] = "Opus Audio Codec (RFC6716 reference)";     // Human readable description of codec
 
@@ -216,17 +201,17 @@ static struct PluginCodec_Option const * const MyOptions[] = {
 };
 
 
-class OpusPluginMediaFormat : public PluginCodec_AudioFormat<MY_CODEC>
+class OpusPluginMediaFormat : public AudioFormat
 {
   public:
     unsigned m_actualSampleRate;
     unsigned m_actualChannels;
 
     OpusPluginMediaFormat(const char * formatName, const char * rawFormat, unsigned actualSampleRate, unsigned actualChannels)
-      : PluginCodec_AudioFormat<MY_CODEC>(formatName, OpusEncodingName, MyDescription,
-                                           960*actualChannels*actualSampleRate/OPUS_SAMPLE_RATE,
-                                           MAX_BIT_RATE*OPUS_FRAME_MS/1000/8, // 20ms and bits to bytes
-                                           OPUS_SAMPLE_RATE, MyOptions)
+      : AudioFormat(formatName, OpusEncodingName, MyDescription,
+                    960*actualChannels*actualSampleRate/OPUS_SAMPLE_RATE,
+                    MAX_BIT_RATE*OPUS_FRAME_MS/1000/8, // 20ms and bits to bytes
+                    OPUS_SAMPLE_RATE, MyOptions)
       , m_actualSampleRate(actualSampleRate)
       , m_actualChannels(actualChannels)
     {
@@ -274,7 +259,7 @@ DEF_MEDIA_FORMAT(48,S);
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class OpusPluginCodec : public PluginCodec<MY_CODEC>
+class OpusPluginCodec : public Transcoder
 {
   protected:
     unsigned m_sampleRate;
@@ -284,7 +269,7 @@ class OpusPluginCodec : public PluginCodec<MY_CODEC>
 
   public:
     OpusPluginCodec(const PluginCodec_Definition * defn)
-      : PluginCodec<MY_CODEC>(defn)
+      : Transcoder(defn)
       , m_useInBandFEC(true)
       , m_countFEC(0)
     {
@@ -306,7 +291,7 @@ class OpusPluginCodec : public PluginCodec<MY_CODEC>
       }
 
       // Base class sets bit rate and frame time
-      return PluginCodec<MY_CODEC>::SetOption(optionName, optionValue);
+      return Transcoder::SetOption(optionName, optionValue);
     }
 
 

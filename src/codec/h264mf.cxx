@@ -32,10 +32,10 @@
 
 #if OPAL_VIDEO
 
-#include "h264mf_inc.cxx"
-
 #include <opal/mediafmt.h>
 #include <h323/h323caps.h>
+
+#include "h264mf_inc.cxx"
 
 
 class OpalH264Format : public OpalVideoFormatInternal

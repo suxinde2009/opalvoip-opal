@@ -29,7 +29,6 @@
  * $Date$
  */
 
-#include <codec/opalplugin.h>
 #include <codec/known.h>
 
 

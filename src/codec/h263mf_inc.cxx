@@ -26,21 +26,12 @@
  *
  */
 
-#include <codec/opalplugin.hpp>
 #include <codec/known.h>
-
-#include <stdio.h>
 
 #include <algorithm>
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
-#ifdef MY_CODEC
-  #define MY_CODEC_LOG STRINGIZE(MY_CODEC)
-#else
-  #define MY_CODEC_LOG OPAL_H263
-#endif
 
 static const char H263FormatName[] = OPAL_H263;
 static const char H263EncodingName[] = "H263";
@@ -159,7 +150,7 @@ static int MergeCustomResolution(const char * dest, const char * src, char * res
       if (d < MAX_H263_CUSTOM_RESOLUTIONS && srcRes[s].width == dstRes[d].width && srcRes[s].height == dstRes[d].height) {
         resultRes[resultCount].width = srcRes[s].width;
         resultRes[resultCount].height = srcRes[s].height;
-        resultRes[resultCount].mpi = std::max(srcRes[s].mpi, dstRes[d].mpi);
+        resultRes[resultCount].mpi = ::std::max(srcRes[s].mpi, dstRes[d].mpi);
         ++resultCount;
       }
     }
@@ -204,7 +195,7 @@ static void ClampResolution(unsigned width, unsigned height, unsigned mpi,
 }
 
 
-static bool ClampToNormalised(PluginCodec_OptionMap & original, PluginCodec_OptionMap & changed)
+static bool ClampToNormalised(OptionMap & original, OptionMap & changed)
 {
   // extract the MPI values set in the custom options, and find the min/max of them
   unsigned minWidth  = INT_MAX;
@@ -250,14 +241,14 @@ static bool ClampToNormalised(PluginCodec_OptionMap & original, PluginCodec_Opti
   unsigned maxBR = original.GetUnsigned("MaxBR")*100;
   if (maxBR != 0) {
     changed.SetUnsigned(maxBR, PLUGINCODEC_OPTION_MAX_BIT_RATE);
-    PluginCodec_OptionMap::ClampMax(maxBR, original, changed, PLUGINCODEC_OPTION_TARGET_BIT_RATE);
+    Utilities::ClampMax(maxBR, original, changed, PLUGINCODEC_OPTION_TARGET_BIT_RATE);
   }
 
   return true;
 }
 
 
-static bool ClampToCustomised(PluginCodec_OptionMap & original, PluginCodec_OptionMap & changed)
+static bool ClampToCustomised(OptionMap & original, OptionMap & changed)
 {
   // following values will be set while scanning for options
   unsigned minWidth  = original.GetUnsigned(PLUGINCODEC_OPTION_MIN_RX_FRAME_WIDTH,  PLUGINCODEC_QCIF_WIDTH);

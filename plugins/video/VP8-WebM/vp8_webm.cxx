@@ -24,23 +24,17 @@
  */
 
 #include "../common/platform.h"
+#include "../common/critsect.h"
 
-#define MY_CODEC VP8  // Name of codec (use C variable characters)
+#define MY_CODEC VP8_WebM  // Name of codec (use C variable characters)
+#include <codec/opalplugin.hpp>
 
 #define OPAL_SIP 1
 
 #include "../../../src/codec/vp8mf_inc.cxx"
 
-#include <codec/opalplugin.hpp>
-#include "../common/critsect.h"
 
-#ifdef _MSC_VER
-#pragma warning(disable:4505)
-#define snprintf _snprintf
-#endif
-
-
-/* Building notes for Windows.
+ /* Building notes for Windows.
    As of v1.3.0, no prebuilt libraries seem to be available, you must build it
    from scratch, and to do that you must have Cygwin installed.
 
@@ -62,6 +56,10 @@
       ../configure --target=x86_64-win64-vsXX
       make
  */
+
+#ifdef _MSC_VER
+  #pragma warning(disable:4505)
+#endif
 
 #define VPX_CODEC_DISABLE_COMPAT 1
 #include "vpx/vpx_encoder.h"
@@ -85,10 +83,10 @@
 
 #define INCLUDE_OM_CUSTOM_PACKETIZATION 1
 
-class VP8_CODEC { };
+
+///////////////////////////////////////////////////////////////////////////////
 
 PLUGINCODEC_CONTROL_LOG_FUNCTION_DEF
-
 
 PLUGINCODEC_LICENSE(
   "Robert Jongbloed, Vox Lucida Pty.Ltd.",                      // source code author
@@ -266,14 +264,11 @@ static struct PluginCodec_Option const * OptionTableOM[] = {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class VP8Format : public PluginCodec_VideoFormat<VP8_CODEC>
+class VP8Format : public VideoFormat
 {
-  private:
-    typedef PluginCodec_VideoFormat<VP8_CODEC> BaseClass;
-
   public:
     VP8Format(const char * formatName, const char * payloadName, const char * description, OptionsTable options)
-      : BaseClass(formatName, payloadName, description, MaxBitRate, options)
+      : VideoFormat(formatName, payloadName, description, MaxBitRate, options)
     {
 #ifdef VPX_CODEC_USE_ERROR_CONCEALMENT
       if ((vpx_codec_get_caps(vpx_codec_vp8_dx()) & VPX_CODEC_CAP_ERROR_CONCEALMENT) != 0)
@@ -357,7 +352,7 @@ class VP8FormatOM : public VP8Format
     {
       unsigned maxWidth = original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_WIDTH);
       unsigned maxHeight = original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_HEIGHT);
-      std::stringstream strm;
+      ::std::stringstream strm;
       strm << maxWidth << 'x' << maxHeight;
       Change(strm.str().c_str(), original, changed, MaxFrameSizeOM.m_name);
       return true;
@@ -397,11 +392,8 @@ enum Orientation {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class VP8Encoder : public PluginVideoEncoder<VP8_CODEC>
+class VP8Encoder : public VideoEncoder
 {
-  private:
-    typedef PluginVideoEncoder<VP8_CODEC> BaseClass;
-
   protected:
     vpx_codec_enc_cfg_t        m_config;
     unsigned                   m_initFlags;
@@ -416,7 +408,7 @@ class VP8Encoder : public PluginVideoEncoder<VP8_CODEC>
 
   public:
     VP8Encoder(const PluginCodec_Definition * defn)
-      : BaseClass(defn)
+      : VideoEncoder(defn)
       , m_initFlags(0)
       , m_maxQ(31)
       , m_rateControlPeriod(1000)
@@ -473,7 +465,7 @@ class VP8Encoder : public PluginVideoEncoder<VP8_CODEC>
       if (strcasecmp(optionName, SpatialResamplingDown.m_name) == 0)
         return SetOptionUnsigned(m_config.rc_resize_down_thresh, optionValue, 0, 100);
 
-      return BaseClass::SetOption(optionName, optionValue);
+      return VideoEncoder::SetOption(optionName, optionValue);
     }
 
 
@@ -543,7 +535,7 @@ class VP8Encoder : public PluginVideoEncoder<VP8_CODEC>
 
     virtual int GetStatistics(char * bufferPtr, unsigned bufferSize)
     {
-      size_t len = BaseClass::GetStatistics(bufferPtr, bufferSize);
+      size_t len = VideoEncoder::GetStatistics(bufferPtr, bufferSize);
       len += snprintf(bufferPtr+len, bufferSize-len, "Width=%u\nHeight=%u\n", m_width, m_height);
 
       WaitAndSignal lock(m_mutex);
@@ -768,11 +760,8 @@ class VP8EncoderOM : public VP8Encoder
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class VP8Decoder : public PluginVideoDecoder<VP8_CODEC>
+class VP8Decoder : public VideoDecoder
 {
-  private:
-    typedef PluginVideoDecoder<VP8_CODEC> BaseClass;
-
   protected:
     vpx_codec_iface_t  * m_iface;
     vpx_codec_ctx_t      m_codec;
@@ -786,7 +775,7 @@ class VP8Decoder : public PluginVideoDecoder<VP8_CODEC>
 
   public:
     VP8Decoder(const PluginCodec_Definition * defn)
-      : BaseClass(defn)
+      : VideoDecoder(defn)
       , m_iface(vpx_codec_vp8_dx())
       , m_flags(0)
       , m_iterator(NULL)
@@ -823,7 +812,7 @@ class VP8Decoder : public PluginVideoDecoder<VP8_CODEC>
 
     virtual int GetStatistics(char * bufferPtr, unsigned bufferSize)
     {
-      size_t len = BaseClass::GetStatistics(bufferPtr, bufferSize);
+      size_t len = VideoDecoder::GetStatistics(bufferPtr, bufferSize);
       len += snprintf(bufferPtr+len, bufferSize-len, "Width=%u\nHeight=%u\n", m_width, m_height);
       return (int)len;
     }
@@ -1231,7 +1220,7 @@ static struct PluginCodec_Definition VP8CodecDefinition[] =
 #endif
 };
 
-PLUGIN_CODEC_IMPLEMENT_CXX(VP8_CODEC, VP8CodecDefinition);
+PLUGIN_CODEC_IMPLEMENT_CXX(MY_CODEC, VP8CodecDefinition);
 
 
 /////////////////////////////////////////////////////////////////////////////

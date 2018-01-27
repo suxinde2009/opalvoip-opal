@@ -25,19 +25,10 @@
  *
  */
 
-#include <codec/opalplugin.hpp>
 #include <codec/known.h>
-
-#include <stdio.h>
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
-#ifdef MY_CODEC
-  #define MY_CODEC_LOG STRINGIZE(MY_CODEC)
-#else
-  #define MY_CODEC_LOG "MPEG4"
-#endif
 
 static const char MPEG4FormatName[] = OPAL_MPEG4;
 static const char MPEG4EncodingName[] = "MP4V-ES";
@@ -202,7 +193,7 @@ static unsigned MergeProfileAndLevelOption(unsigned dstPL, unsigned srcPL)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static bool MyToNormalised(PluginCodec_OptionMap & original, PluginCodec_OptionMap & changed)
+static bool MyToNormalised(OptionMap & original, OptionMap & changed)
 {
     unsigned profileLevel = original.GetUnsigned(ProfileAndLevel, 1);
     unsigned width = original.GetUnsigned(PLUGINCODEC_OPTION_FRAME_WIDTH, 352);
@@ -256,7 +247,7 @@ static bool MyToNormalised(PluginCodec_OptionMap & original, PluginCodec_OptionM
 }
 
 
-static bool MyToCustomised(PluginCodec_OptionMap & /*original*/, PluginCodec_OptionMap & /*changed*/)
+static bool MyToCustomised(OptionMap & /*original*/, OptionMap & /*changed*/)
 {
   return true;
 }

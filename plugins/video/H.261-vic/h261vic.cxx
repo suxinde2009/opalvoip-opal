@@ -44,37 +44,15 @@
   which will determine the size from the received data stream.
  */
 
-#define _CRT_NONSTDC_NO_DEPRECATE 1
-#define _CRT_SECURE_NO_WARNINGS 1
+#include "../common/platform.h"
+#include "../common/critsect.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <algorithm>
-
-#ifndef PLUGIN_CODEC_DLL_EXPORTS
-#include "plugin_config.h"
-#endif
-
-#include <codec/opalplugin.hpp>
-
-
-#if defined (_WIN32) || defined (_WIN32_WCE)
-  #ifndef _WIN32_WCE
-    #define STRCMPI  _strcmpi
-  #else
-    #define STRCMPI  _stricmp
-    #define strdup _strdup
-  #endif
-#else
-  #define STRCMPI  strcasecmp
-  #include <unistd.h>
-  #include <semaphore.h>
-#endif
-
 #include <math.h>
 
-#include "critsect.h"
+#define MY_CODEC VIC_H261
+#include <codec/opalplugin.hpp>
+
 
 #ifdef _MSC_VER
 #pragma warning(disable:4800)
@@ -164,24 +142,24 @@ class H261EncoderContext
         return;
 
       if ((width==CIF_WIDTH) && (height==CIF_HEIGHT)) {
-        double bitrate_d = std::max((int)bitrate, 128000);
-        double factor =  std::max (   0.0031 * pow ((double) (bitrate_d/64000), 4)
+        double bitrate_d = ::std::max((int)bitrate, 128000);
+        double factor =  ::std::max (   0.0031 * pow ((double) (bitrate_d/64000), 4)
 	                            - 0.0758 * pow ((double) (bitrate_d/64000), 3)
 			            + 0.6518 * pow ((double) (bitrate_d/64000), 2)
 			            - 1.9377 * (double) (bitrate_d/64000)
 			            + 2.5342
 			            , 1.0);
-        videoQuality = std::max ((int)( floor ( tsto / factor)), 1);
+        videoQuality = ::std::max ((int)( floor ( tsto / factor)), 1);
       } 
       else if ((width==QCIF_WIDTH) && (height==QCIF_HEIGHT)) {
-        double bitrate_d = std::max((int)bitrate, 64000);
-        double factor =  std::max ( 0.0036 * pow ((double) (bitrate_d / 64000), 4)
+        double bitrate_d = ::std::max((int)bitrate, 64000);
+        double factor =  ::std::max ( 0.0036 * pow ((double) (bitrate_d / 64000), 4)
 	                          - 0.0462 * pow ((double) (bitrate_d / 64000), 3)
 				  + 0.2792 * pow ((double) (bitrate_d / 64000), 2)
 				  - 0.5321 * (double) (bitrate_d / 64000)
 				  + 1.3438    -0.0844
 				  , 1.0);
-	videoQuality = std::max ((int)( floor ( tsto / factor)), 1); 
+	videoQuality = ::std::max ((int)( floor ( tsto / factor)), 1); 
       } 
       PTRACE(4, "H261", "f(tsto=" << tsto << ", bitrate=" << bitrate << ", width=" << width <<", height=" << height << ")=" << videoQuality);
     }

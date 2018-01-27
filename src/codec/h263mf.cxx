@@ -32,11 +32,11 @@
 
 #if OPAL_VIDEO
 
-#include "h263mf_inc.cxx"
-
 #include <opal/mediafmt.h>
 #include <codec/opalpluginmgr.h>
 #include <asn/h245.h>
+
+#include "h263mf_inc.cxx"
 
 
 /////////////////////////////////////////////////////////////////////////////

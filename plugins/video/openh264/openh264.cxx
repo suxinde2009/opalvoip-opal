@@ -27,6 +27,7 @@
 #include "../common/platform.h"
 
 #define MY_CODEC openH264  // Name of codec (use C variable characters)
+#include <codec/opalplugin.hpp>
 
 #define OPAL_H323 1
 #define OPAL_SIP 1
@@ -39,10 +40,7 @@
 #include <iomanip>
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
-
-class MY_CODEC { };
 
 PLUGINCODEC_CONTROL_LOG_FUNCTION_DEF
 
@@ -472,13 +470,11 @@ static struct PluginCodec_H323GenericCodecData MyH323GenericData = {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class H264_PluginMediaFormat : public PluginCodec_VideoFormat<MY_CODEC>
+class H264_PluginMediaFormat : public VideoFormat
 {
 public:
-  typedef PluginCodec_VideoFormat<MY_CODEC> BaseClass;
-
   H264_PluginMediaFormat(const char * formatName, OptionsTable options)
-    : BaseClass(formatName, H264EncodingName, MyDescription, LevelInfo[sizeof(LevelInfo)/sizeof(LevelInfo[0])-1].m_MaxBitRate, options)
+    : VideoFormat(formatName, H264EncodingName, MyDescription, LevelInfo[sizeof(LevelInfo)/sizeof(LevelInfo[0])-1].m_MaxBitRate, options)
   {
     m_h323CapabilityType = PluginCodec_H323Codec_generic;
     m_h323CapabilityData = &MyH323GenericData;
@@ -574,10 +570,8 @@ static void CheckVersion(bool encoder)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class H264_Encoder : public PluginVideoEncoder<MY_CODEC>
+class H264_Encoder : public VideoEncoder
 {
-    typedef PluginVideoEncoder<MY_CODEC> BaseClass;
-
   protected:
     EProfileIdc m_profile;
     ELevelIdc   m_level;
@@ -595,7 +589,7 @@ class H264_Encoder : public PluginVideoEncoder<MY_CODEC>
 
   public:
     H264_Encoder(const PluginCodec_Definition * defn)
-      : BaseClass(defn)
+      : VideoEncoder(defn)
       , m_profile((EProfileIdc)DefaultProfileInt)
       , m_level(LEVEL_3_1)
       , m_constraints(0)
@@ -707,7 +701,7 @@ class H264_Encoder : public PluginVideoEncoder<MY_CODEC>
       }
 
       // Base class sets bit rate and frame time
-      return BaseClass::SetOption(optionName, optionValue);
+      return VideoEncoder::SetOption(optionName, optionValue);
     }
 
 
@@ -772,7 +766,7 @@ class H264_Encoder : public PluginVideoEncoder<MY_CODEC>
 
 
     /// Get options that are "active" and may be different from the last SetOptions() call.
-    virtual bool GetActiveOptions(PluginCodec_OptionMap & options)
+    virtual bool GetActiveOptions(OptionMap & options)
     {
       options.SetUnsigned(m_frameTime, PLUGINCODEC_OPTION_FRAME_TIME);
       return true;
@@ -781,7 +775,7 @@ class H264_Encoder : public PluginVideoEncoder<MY_CODEC>
 
     virtual int GetStatistics(char * bufferPtr, unsigned bufferSize)
     {
-      size_t len = BaseClass::GetStatistics(bufferPtr, bufferSize);
+      size_t len = VideoEncoder::GetStatistics(bufferPtr, bufferSize);
       len += snprintf(bufferPtr+len, bufferSize-len, "Width=%u\nHeight=%u\n", m_width, m_height);
 
       if (m_quality >= 0 && len < bufferSize)
@@ -879,10 +873,8 @@ class H264_Encoder : public PluginVideoEncoder<MY_CODEC>
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class H264_Decoder : public PluginVideoDecoder<MY_CODEC>
+class H264_Decoder : public VideoDecoder
 {
-    typedef PluginVideoDecoder<MY_CODEC> BaseClass;
-
   protected:
     ISVCDecoder * m_decoder;
     SBufferInfo   m_bufferInfo;
@@ -892,7 +884,7 @@ class H264_Decoder : public PluginVideoDecoder<MY_CODEC>
 
   public:
     H264_Decoder(const PluginCodec_Definition * defn)
-      : BaseClass(defn)
+      : VideoDecoder(defn)
       , m_decoder(NULL)
       , m_lastId(-1)
     {
@@ -941,7 +933,7 @@ class H264_Decoder : public PluginVideoDecoder<MY_CODEC>
 
     virtual int GetStatistics(char * bufferPtr, unsigned bufferSize)
     {
-      size_t len = BaseClass::GetStatistics(bufferPtr, bufferSize);
+      size_t len = VideoDecoder::GetStatistics(bufferPtr, bufferSize);
       len += snprintf(bufferPtr+len, bufferSize-len, "Width=%u\nHeight=%u\n", m_width, m_height);
       return (int)len;
     }

@@ -34,6 +34,9 @@
 
 #include <opal_config.h>
 
+#define MY_CODEC MediaFormat
+#include <codec/opalplugin.hpp>
+
 #include <opal/mediatype.h>
 #include <rtp/rtp.h>
 #include <ptlib/bitwise_enum.h>
@@ -45,7 +48,6 @@
 #include <limits>
 
 
-class PluginCodec_OptionMap;
 class OpalMediaFormat;
 class H225_BandWidth;
 class PASN_Integer;
@@ -764,7 +766,7 @@ class OpalMediaFormatInternal : public PObject
   protected:
     bool AdjustByOptionMaps(
       PTRACE_PARAM(const char * operation,)
-      bool (*adjuster)(PluginCodec_OptionMap & original, PluginCodec_OptionMap & changed)
+      bool (*adjuster)(MY_CODEC_NAMESPACE::OptionMap & original, MY_CODEC_NAMESPACE::OptionMap & changed)
     );
 
     PCaselessString              formatName;

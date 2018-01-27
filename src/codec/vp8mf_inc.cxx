@@ -25,19 +25,10 @@
  *
  */
 
-#include <codec/opalplugin.hpp>
 #include <codec/known.h>
-
-#include <stdio.h>
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
-#ifdef MY_CODEC
-  #define MY_CODEC_LOG STRINGIZE(MY_CODEC)
-#else
-  #define MY_CODEC_LOG "VP8"
-#endif
 
 static const char VP8FormatName[] = OPAL_VP8;
 static const char VP8EncodingName[] = "VP8";
@@ -61,34 +52,35 @@ const unsigned MaxBitRate = 16000000;
 
 /////////////////////////////////////////////////////////////////////////////
 
-static bool MyToNormalised(PluginCodec_OptionMap & original, PluginCodec_OptionMap & changed)
+static bool MyToNormalised(OptionMap & original, OptionMap & changed)
 {
-  PluginCodec_OptionMap::iterator it = original.find(MaxFrameSizeName);
+  OptionMap::iterator it = original.find(MaxFrameSizeName);
   if (it != original.end() && !it->second.empty()) {
     unsigned maxWidth = original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_WIDTH);
     unsigned maxHeight = original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_HEIGHT);
-    unsigned maxFrameSize = PluginCodec_Utilities::String2Unsigned(it->second) % MAX_FS_SDP;
-    if (PluginCodec_Utilities::ClampResolution(original, changed, maxWidth, maxHeight, maxFrameSize))
-      PluginCodec_Utilities::Change(maxFrameSize, original, changed, MaxFrameSizeName);
+    unsigned maxFrameSize = Utilities::String2Unsigned(it->second) % MAX_FS_SDP;
+    if (Utilities::ClampResolution(original, changed, maxWidth, maxHeight, maxFrameSize))
+      Utilities::Change(maxFrameSize, original, changed, MaxFrameSizeName);
   }
 
   it = original.find(MaxFrameRateName);
   if (it != original.end() && !it->second.empty())
-    PluginCodec_Utilities::ClampMin(PLUGINCODEC_VIDEO_CLOCK/PluginCodec_Utilities::String2Unsigned(it->second), original, changed, PLUGINCODEC_OPTION_FRAME_TIME);
+    Utilities::ClampMin(PLUGINCODEC_VIDEO_CLOCK / Utilities::String2Unsigned(it->second),
+                        original, changed, PLUGINCODEC_OPTION_FRAME_TIME);
 
   return true;
 }
 
 
-static bool MyToCustomised(PluginCodec_OptionMap & original, PluginCodec_OptionMap & changed)
+static bool MyToCustomised(OptionMap & original, OptionMap & changed)
 {
-  PluginCodec_Utilities::Change(PluginCodec_Utilities::GetMacroBlocks(
-                                    original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_WIDTH),
-                                    original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_HEIGHT)),
-                                original, changed, MaxFrameSizeName);
+  Utilities::Change(Utilities::GetMacroBlocks(
+    original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_WIDTH),
+    original.GetUnsigned(PLUGINCODEC_OPTION_MAX_RX_FRAME_HEIGHT)),
+    original, changed, MaxFrameSizeName);
 
-  PluginCodec_Utilities::Change(PLUGINCODEC_VIDEO_CLOCK/original.GetUnsigned(PLUGINCODEC_OPTION_FRAME_TIME),
-                                original, changed, MaxFrameRateName);
+  Utilities::Change(PLUGINCODEC_VIDEO_CLOCK / original.GetUnsigned(PLUGINCODEC_OPTION_FRAME_TIME),
+                    original, changed, MaxFrameRateName);
 
   return true;
 }

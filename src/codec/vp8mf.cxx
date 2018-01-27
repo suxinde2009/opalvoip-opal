@@ -31,10 +31,10 @@
 
 #if OPAL_VIDEO
 
-#include "vp8mf_inc.cxx"
-
 #include <opal/mediafmt.h>
 #include <h323/h323caps.h>
+
+#include "vp8mf_inc.cxx"
 
 
 class OpalVP8Format : public OpalVideoFormatInternal

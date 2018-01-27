@@ -44,7 +44,8 @@
 
 #include "../common/platform.h"
 
-#define MY_CODEC AV_H263  // Name of codec (use C variable characters)
+#define MY_CODEC FF_H263  // Name of codec (use C variable characters)
+#include <codec/opalplugin.hpp>
 
 #define OPAL_H323 1
 #define OPAL_SIP 1
@@ -54,16 +55,8 @@
 #include "rfc2190.h"
 #include "rfc2429.h"
 
-#if defined(_WIN32) || defined(_WIN32_WCE)
-  #define STRCMPI  _strcmpi
-#else
-  #define STRCMPI  strcasecmp
-#endif
-
 
 /////////////////////////////////////////////////////////////////////////////
-
-class MY_CODEC { };
 
 PLUGINCODEC_CONTROL_LOG_FUNCTION_DEF
 
@@ -300,13 +293,11 @@ static struct PluginCodec_Option const * const OptionTable_RFC2190[] = {
 
 /////////////////////////////////////////////////////////////////////////////
 
-class H263_PluginMediaFormat : public PluginCodec_VideoFormat<MY_CODEC>
+class H263_PluginMediaFormat : public VideoFormat
 {
 public:
-  typedef PluginCodec_VideoFormat<MY_CODEC> BaseClass;
-
   H263_PluginMediaFormat(const char * formatName, const char * encodingName, OptionsTable options)
-    : BaseClass(formatName, encodingName, MyDescription, H263_BITRATE, options)
+    : VideoFormat(formatName, encodingName, MyDescription, H263_BITRATE, options)
   {
     if (options == OptionTable_RFC2190) {
       m_payloadType = 34;
@@ -409,13 +400,11 @@ static void RFC2429Dump(std::ostream & trace, const PluginCodec_RTP & rtp)
 
 /////////////////////////////////////////////////////////////////////////////
 
-class H263_Base_Encoder : public PluginVideoEncoder<MY_CODEC>, public FFMPEGCodec
+class H263_Base_Encoder : public VideoEncoder, public FFMPEGCodec
 {
-  typedef PluginVideoEncoder<MY_CODEC> BaseClass;
-
   public:
     H263_Base_Encoder(const PluginCodec_Definition * defn, const char * prefix, OpalPluginFrame * packetizer)
-      : BaseClass(defn)
+      : VideoEncoder(defn)
       , FFMPEGCodec(prefix, packetizer)
     { 
       PTRACE(4, m_prefix, "Created encoder");
@@ -481,7 +470,7 @@ class H263_Base_Encoder : public PluginVideoEncoder<MY_CODEC>, public FFMPEGCode
         return true;
       }
 
-      return BaseClass::SetOption(option, value);
+      return VideoEncoder::SetOption(option, value);
     }
 
 
@@ -545,7 +534,7 @@ class H263_Base_Encoder : public PluginVideoEncoder<MY_CODEC>, public FFMPEGCode
       if (m_picture == NULL)
         return -1;
 
-      size_t len = BaseClass::GetStatistics(bufferPtr, bufferSize);
+      size_t len = VideoEncoder::GetStatistics(bufferPtr, bufferSize);
 
       if (m_picture->quality >= 0 && len < bufferSize)
         len += snprintf(bufferPtr+len, bufferSize-len, "Quality=%u\n", m_picture->quality);
@@ -596,7 +585,7 @@ class H263_RFC2190_Encoder : public H263_Base_Encoder
 
 
     /// Get options that are "active" and may be different from the last SetOptions() call.
-    virtual bool GetActiveOptions(PluginCodec_OptionMap & options)
+    virtual bool GetActiveOptions(OptionMap & options)
     {
       if (!H263_Base_Encoder::GetActiveOptions(options))
         return false;
@@ -644,13 +633,11 @@ class H263_RFC2429_Encoder : public H263_Base_Encoder
 
 /////////////////////////////////////////////////////////////////////////////
 
-class H263_Base_Decoder : public PluginVideoDecoder<MY_CODEC>, public FFMPEGCodec
+class H263_Base_Decoder : public VideoDecoder, public FFMPEGCodec
 {
-  typedef PluginVideoDecoder<MY_CODEC> BaseClass;
-
   public:
     H263_Base_Decoder(const PluginCodec_Definition * defn, const char * prefix, OpalPluginFrame * depacketizer)
-      : BaseClass(defn)
+      : VideoDecoder(defn)
       , FFMPEGCodec(prefix, depacketizer)
     {
       PTRACE(4, m_prefix, "Created decoder");
@@ -678,7 +665,7 @@ class H263_Base_Decoder : public PluginVideoDecoder<MY_CODEC>, public FFMPEGCode
         }
       }
 
-      return BaseClass::SetOption(option, value);
+      return VideoDecoder::SetOption(option, value);
     }
 
 
