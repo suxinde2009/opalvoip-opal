@@ -85,6 +85,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LID", "LID", "{81EE9ADA-BC6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio - SILK", "audio\SILK\SILK_2017.vcxproj", "{BBC0B79A-4A93-4B33-A7C5-D411724041E1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Silk_FIX", "audio\SILK\SILK_SDK\src\Silk_FIX_2017.vcxproj", "{56B91D01-9150-4BBF-AFA1-5B68AB991B76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (licensed)|Win32 = Debug (licensed)|Win32
@@ -644,6 +646,22 @@ Global
 		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release (licensed)|x64.ActiveCfg = Release|x64
 		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release|Win32.ActiveCfg = Release|Win32
 		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release|x64.ActiveCfg = Release|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug (licensed)|Win32.ActiveCfg = Debug|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug (licensed)|Win32.Build.0 = Debug|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug (licensed)|x64.ActiveCfg = Debug|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug (licensed)|x64.Build.0 = Debug|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug|Win32.Build.0 = Debug|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug|x64.ActiveCfg = Debug|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Debug|x64.Build.0 = Debug|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release (licensed)|Win32.ActiveCfg = Release|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release (licensed)|Win32.Build.0 = Release|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release (licensed)|x64.ActiveCfg = Release|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release (licensed)|x64.Build.0 = Release|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release|Win32.ActiveCfg = Release|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release|Win32.Build.0 = Release|Win32
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release|x64.ActiveCfg = Release|x64
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -681,6 +699,7 @@ Global
 		{851A8648-5021-4FC3-ACED-40D2802D9C5E} = {4BA0D2DA-7C6C-4C93-8659-57E6DE2844AA}
 		{E513A4F2-5341-4CAE-A643-D47975AE291C} = {9DF65381-0795-4D05-9D6F-E57E70857F70}
 		{BBC0B79A-4A93-4B33-A7C5-D411724041E1} = {4BA0D2DA-7C6C-4C93-8659-57E6DE2844AA}
+		{56B91D01-9150-4BBF-AFA1-5B68AB991B76} = {4BA0D2DA-7C6C-4C93-8659-57E6DE2844AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA816AAF-A718-45D5-BDC6-B2D7F036AE20}

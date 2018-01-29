@@ -207,6 +207,11 @@ xcopy /y/f "$(TargetDir)$(TargetName).*d*" "C:\Program Files (x86)\PTLib Plug In
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../../../include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="SILK_SDK\src\Silk_FIX_2017.vcxproj">
+      <Project>{56b91d01-9150-4bbf-afa1-5b68ab991b76}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
