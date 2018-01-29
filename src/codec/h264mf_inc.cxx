@@ -447,6 +447,8 @@ static bool MyToCustomised(OptionMap & original, OptionMap & changed)
 }
 
 
+#ifdef MY_CODEC
+
 namespace MY_CODEC_NAMESPACE {
 
   class FlashPacketizer
@@ -585,5 +587,8 @@ namespace MY_CODEC_NAMESPACE {
   };
 
 };
+
+#endif // MY_CODEC
+
 
 // End of File ///////////////////////////////////////////////////////////////
