@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio - GSM 06.10", "audio\GSM0610\gsm0610_2017.vcxproj", "{E6897206-9765-4B73-9A98-DAC5787814CE}"
 EndProject
@@ -82,6 +82,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Video", "Video", "{9DF65381-0795-4D05-9D6F-E57E70857F70}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LID", "LID", "{81EE9ADA-BC66-4F45-B667-1288DAFB1C0A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio - SILK", "audio\SILK\SILK_2017.vcxproj", "{BBC0B79A-4A93-4B33-A7C5-D411724041E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -634,6 +636,14 @@ Global
 		{E513A4F2-5341-4CAE-A643-D47975AE291C}.Release|Win32.Build.0 = Release|Win32
 		{E513A4F2-5341-4CAE-A643-D47975AE291C}.Release|x64.ActiveCfg = Release|x64
 		{E513A4F2-5341-4CAE-A643-D47975AE291C}.Release|x64.Build.0 = Release|x64
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Debug (licensed)|Win32.ActiveCfg = Debug|Win32
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Debug (licensed)|x64.ActiveCfg = Debug|x64
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Debug|x64.ActiveCfg = Debug|x64
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release (licensed)|Win32.ActiveCfg = Release|Win32
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release (licensed)|x64.ActiveCfg = Release|x64
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release|Win32.ActiveCfg = Release|Win32
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -670,5 +680,9 @@ Global
 		{9C4961D2-5DDB-40C7-9BE8-CA918DC4E782} = {4BA0D2DA-7C6C-4C93-8659-57E6DE2844AA}
 		{851A8648-5021-4FC3-ACED-40D2802D9C5E} = {4BA0D2DA-7C6C-4C93-8659-57E6DE2844AA}
 		{E513A4F2-5341-4CAE-A643-D47975AE291C} = {9DF65381-0795-4D05-9D6F-E57E70857F70}
+		{BBC0B79A-4A93-4B33-A7C5-D411724041E1} = {4BA0D2DA-7C6C-4C93-8659-57E6DE2844AA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA816AAF-A718-45D5-BDC6-B2D7F036AE20}
 	EndGlobalSection
 EndGlobal
