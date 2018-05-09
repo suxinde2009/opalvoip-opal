@@ -425,10 +425,10 @@ OpalDTLSSRTPSession::~OpalDTLSSRTPSession()
 }
 
 
-void OpalDTLSSRTPSession::SetPassiveMode(bool passive)
+void OpalDTLSSRTPSession::SetSetUpMode(SetUpMode mode)
 {
-  PTRACE(4, *this << "set DTLS to " << (passive ? "passive" : " active") << " mode");
-  m_passiveMode = passive;
+  m_passiveMode = mode == SetUpModePassive;
+  PTRACE(4, *this << "set DTLS to " << (m_passiveMode ? "passive" : " active") << " mode");
 
   OpalMediaTransportPtr transport = m_transport;
   if (transport == NULL)
@@ -436,7 +436,7 @@ void OpalDTLSSRTPSession::SetPassiveMode(bool passive)
 
   OpalDTLSMediaTransport * dtls = dynamic_cast<OpalDTLSMediaTransport *>(&*transport);
   if (dtls != NULL)
-    dtls->SetPassiveMode(passive);
+    dtls->SetPassiveMode(m_passiveMode);
 }
 
 

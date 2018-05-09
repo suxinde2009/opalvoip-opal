@@ -793,6 +793,25 @@ class OpalMediaSession : public PSafeObject, public OpalMediaTransportChannelTyp
     void SetRemoteBehindNAT();
     bool IsRemoteBehindNAT() const { return m_remoteBehindNAT; }
 
+    /// When setting things up with remote system, we rule, or they do
+    enum SetUpMode
+    {
+      SetUpModeNotSet,
+      SetUpModePassive,
+      SetUpModeActive
+    };
+    virtual SetUpMode GetSetUpMode() const { return SetUpModeNotSet; }
+    virtual void SetSetUpMode(SetUpMode /*mode*/) { }
+
+    enum ConnectionMode
+    {
+      ConnectionNotSet,
+      ConnectionNew,
+      ConnectionExisting
+    };
+    virtual ConnectionMode GetConnectionMode() const { return m_connectionMode; }
+    virtual void SetConnectionMode(ConnectionMode mode) { m_connectionMode = mode;  }
+
     /**Create internal crypto keys for the suite.
       */
     void OfferCryptoSuite(const PString & cryptoSuite);
@@ -839,6 +858,7 @@ class OpalMediaSession : public PSafeObject, public OpalMediaTransportChannelTyp
     unsigned         m_sessionId;  // unique session ID
     OpalMediaType    m_mediaType;  // media type for session
     bool             m_remoteBehindNAT;
+    ConnectionMode   m_connectionMode;
     PStringOptions   m_stringOptions;
     PStringToString  m_groups;
 

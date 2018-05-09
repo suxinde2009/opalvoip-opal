@@ -125,8 +125,8 @@ class OpalDTLSSRTPSession : public OpalSRTPSession
     virtual const PCaselessString & GetSessionType() const { return RTP_DTLS_SAVP(); }
 
     // New members
-    void SetPassiveMode(bool passive);
-    bool IsPassiveMode() const { return m_passiveMode; }
+    virtual SetUpMode GetSetUpMode() const { return m_passiveMode ? SetUpModePassive : SetUpModeActive; }
+    virtual void SetSetUpMode(SetUpMode mode);
 
     PSSLCertificateFingerprint GetLocalFingerprint(PSSLCertificateFingerprint::HashType hashType) const;
     void SetRemoteFingerprint(const PSSLCertificateFingerprint& fp);

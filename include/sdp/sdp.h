@@ -187,32 +187,10 @@ class SDPCommonAttributes
       SendRecv
     };
 
-#if OPAL_SRTP // DTLS
-    P_DECLARE_BITWISE_ENUM_EX(SetupModes, 3, (
-      SetupNotSet,
-      SetupActive,
-      SetupPassive,
-      SetupHoldConnection
-    ),
-      SetupActivePassive = SetupActive | SetupPassive
-    );
-
-    enum ConnectionMode
-    {
-      ConnectionNotSet,
-      ConnectionNew,
-      ConnectionExisting
-    };
-#endif
-
     typedef PDictionary<PString, PStringSet> GroupDict;
 
     SDPCommonAttributes()
       : m_direction(Undefined)
-#if OPAL_SRTP // DTLS
-      , m_setupMode(SetupNotSet)
-      , m_connectionMode(ConnectionNotSet)
-#endif
     { }
 
     virtual ~SDPCommonAttributes() { }
@@ -233,11 +211,7 @@ class SDPCommonAttributes
 
     virtual void OutputAttributes(ostream & strm) const;
 
-#if OPAL_SRTP
-    SetupModes GetSetupMode() const { return m_setupMode; }
-    void SetSetupMode(SetupModes setupType) { m_setupMode = setupType; }
-    ConnectionMode GetConnectionMode() const { return m_connectionMode; }
-    void SetConnectionMode(ConnectionMode mode) { m_connectionMode = mode; }
+#if OPAL_SRTP // DTLS
     const PSSLCertificateFingerprint& GetFingerprint() const { return m_fingerprint; }
     void SetFingerprint(const PSSLCertificateFingerprint& fp) { m_fingerprint = fp; }
 #endif
@@ -265,16 +239,17 @@ class SDPCommonAttributes
     Direction           m_direction;
     SDPBandwidth        m_bandwidth;
     RTPHeaderExtensions m_headerExtensions;
+
 #if OPAL_SRTP // DTLS
-    SetupModes                 m_setupMode;
-    ConnectionMode             m_connectionMode;
     PSSLCertificateFingerprint m_fingerprint;
 #endif
+
 #if OPAL_ICE
     PStringSet          m_iceOptions;
     PString             m_username;
     PString             m_password;
 #endif //OPAL_ICE
+
     PStringOptions      m_stringOptions;
 };
 
@@ -361,9 +336,32 @@ class SDPMediaDescription : public PObject, public SDPCommonAttributes
 
     virtual void ProcessMediaOptions(SDPMediaFormat & sdpFormat, const OpalMediaFormat & mediaFormat);
 
+    // RFC4145
+    P_DECLARE_BITWISE_ENUM_EX(SetupModes, 3,
+      (
+        SetupNotSet,
+        SetupActive,
+        SetupPassive,
+        SetupHoldConnection
+      ),
+      SetupActivePassive = SetupActive | SetupPassive
+    );
+    SetupModes GetSetupMode() const { return m_setupMode; }
+    void SetSetupMode(SetupModes setupType) { m_setupMode = setupType; }
+
+    // RFC4145
+    typedef OpalMediaSession::ConnectionMode ConnectionMode;
+    ConnectionMode GetConnectionMode() const { return m_connectionMode; }
+    void SetConnectionMode(ConnectionMode mode) { m_connectionMode = mode; }
+
+    // RFC4574
+    virtual PString GetLabel() const { return m_label; }
+    virtual void SetLabel(const PString & label) { m_label = label; }
+
 #if OPAL_VIDEO
     virtual OpalVideoFormat::ContentRole GetContentRole() const { return OpalVideoFormat::eNoRole; }
-#endif
+    virtual void SetContentRole(OpalVideoFormat::ContentRole /*role*/) { }
+#endif // OPAL_VIDEO
 
   protected:
     virtual SDPMediaFormat * FindFormat(PString & str) const;
@@ -376,6 +374,9 @@ class SDPMediaDescription : public PObject, public SDPCommonAttributes
     bool                 m_reducedSizeRTCP;
     PStringList          m_mids;
     PStringToString      m_groups;
+    SetupModes           m_setupMode;      // RFC4145
+    ConnectionMode       m_connectionMode; // RFC4145
+    PString              m_label;          // RFC4574
 #if OPAL_ICE
     PNatCandidateList    m_candidates;
 #endif //OPAL_ICE
@@ -396,6 +397,7 @@ class SDPDummyMediaDescription : public SDPMediaDescription
   public:
     SDPDummyMediaDescription() { }
     SDPDummyMediaDescription(const OpalTransportAddress & address, const PStringArray & tokens);
+    SDPDummyMediaDescription(const SDPMediaDescription & mediaDescription);
 
     virtual PString GetSDPMediaType() const;
     virtual PCaselessString GetSDPTransportType() const;
@@ -547,6 +549,7 @@ class SDPVideoMediaDescription : public SDPRTPAVPMediaDescription
     virtual void SetAttribute(const PString & attr, const PString & value);
     virtual bool PostDecode(const OpalMediaFormatList & mediaFormats);
     virtual OpalVideoFormat::ContentRole GetContentRole() const { return m_contentRole; }
+    virtual void SetContentRole( OpalVideoFormat::ContentRole role ) { m_contentRole = role; }
 
   protected:
     class Format : public SDPRTPAVPMediaDescription::Format
@@ -603,6 +606,7 @@ class SDPApplicationMediaDescription : public SDPMediaDescription
         virtual bool FromSDP(const PString & portString);
     };
 };
+
 
 /////////////////////////////////////////////////////////
 

@@ -1428,6 +1428,7 @@ OpalMediaSession::OpalMediaSession(const Init & init)
   , m_sessionId(init.m_sessionId)
   , m_mediaType(init.m_mediaType)
   , m_remoteBehindNAT(init.m_remoteBehindNAT)
+  , m_connectionMode(ConnectionNotSet)
 {
   PTRACE_CONTEXT_ID_FROM(init.m_connection);
   PTRACE(5, *this << "created " << this << " for " << m_mediaType);
@@ -1458,6 +1459,10 @@ void OpalMediaSession::Start()
   OpalMediaTransportPtr transport = m_transport; // This way avoids races
   if (transport != NULL)
     transport->Start();
+
+  // Once we are started, then another negotiation is "existing"
+  if (m_connectionMode == ConnectionNew)
+    m_connectionMode = ConnectionExisting;
 }
 
 
