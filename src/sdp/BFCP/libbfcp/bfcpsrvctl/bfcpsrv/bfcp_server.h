@@ -46,10 +46,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "BFCPconnection.h"
-#include "BFCP_fsm.h"
-#include "bfcp_threads.h"
-#include "bfcp_messages.h"
+#include "../../BFCPconnection.h"
+#include "../../BFCP_fsm.h"
+#include "../../bfcp_threads.h"
+#include "../../bfcpmsg/bfcp_messages.h"
 #include "bfcp_user_list.h"
 #include "bfcp_link_list.h"
 
@@ -165,6 +165,8 @@ public:
         * @return void
         */
        virtual ~ServerEvent() {};	
+
+        virtual void Log(const  char* /*pcFile*/, int /*iLine*/, int /*iErrorLevel*/, const  char* /*pcFormat*/, va_list /*args*/) { }
     };
 
      /**
@@ -182,7 +184,7 @@ public:
      * @param p_ServerEvent listener for ServerEvent \ref ServerEvent
      * @return new instance
      */
-    BFCP_Server(UINT8 Max_conf ,UINT32 p_confID ,UINT32 p_userID , UINT32 p_floorID , UINT32 p_streamID ,BFCP_Server::ServerEvent* p_ServerEvent);
+    BFCP_Server(UINT8 Max_conf ,UINT32 p_confID ,UINT32 p_userID , UINT32 p_floorID , UINT32 p_streamID ,BFCP_Server::ServerEvent* p_ServerEvent, int transport=BFCP_OVER_UDP);
 
     /**
      * \brief start thread for TCP connection . 
@@ -294,7 +296,7 @@ public:
     /**
      * Set the remote address and port (UDP) and send Hello to the remote client
      **/
-     bool SendHello(UINT32 p_userID, const char * remoteAddr, UINT16 remotePort, BFCP_SOCKET s = INVALID_SOCKET, int tr = BFCP_OVER_UDP );
+     bool SendHello(UINT32 p_userID, const char * remoteAddr, UINT16 remotePort, BFCP_SOCKET s = BFCP_INVALID_SOCKET, int tr = BFCP_OVER_UDP );
     
     /**
      * The floor control server informs floor participants and floor chairs

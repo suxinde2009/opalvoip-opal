@@ -32,7 +32,6 @@
 #ifndef _BFCP_EXCEPTION_H
 #define _BFCP_EXCEPTION_H
 
-#ifndef WIN32
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
@@ -40,7 +39,7 @@
 class BFCPException : public std::exception
 {
 public:
-    BFCPException( const char * file , const int line , bool fatal , const char* reason="Unknown" , const char* comment="" )
+    BFCPException( const char * file , const int line , bool /*fatal*/, const char* reason="Unknown" , const char* comment="" )
     {
         std::ostringstream oss;
         oss << file << ":(" << line << ") - exception: " << reason;
@@ -68,10 +67,6 @@ public:
 private:
     std::string msg;
 };
-#else
-#include "FTCException.h" 
-#define BFCPException FTCException
-#endif
 
 class InterruptedException: public BFCPException {
 public:

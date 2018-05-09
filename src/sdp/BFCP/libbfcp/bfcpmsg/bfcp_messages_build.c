@@ -62,6 +62,14 @@ bfcp_message *bfcp_build_message(bfcp_arguments* arguments)
 			return bfcp_build_message_Hello(arguments->entity, arguments->unreliable);
 		case e_primitive_HelloAck:
 			return bfcp_build_message_HelloAck(arguments->entity, arguments->primitives, arguments->attributes);
+		case e_primitive_FloorStatusAck:
+		    return bfcp_build_message_FloorStatusAck(arguments->entity);
+		case e_primitive_FloorRequestStatusAck:
+		    return bfcp_build_message_FloorRequestStatusAck(arguments->entity);
+		case e_primitive_Goodbye:
+		    return bfcp_build_message_Goodbye(arguments->entity, arguments->unreliable);
+        case e_primitive_GoodbyeAck:
+            return bfcp_build_message_GoodbyeAck(arguments->entity);
 		case e_primitive_Error:
 			return bfcp_build_message_Error(arguments->entity, arguments->error, arguments->eInfo, arguments->unreliable);
 		default:

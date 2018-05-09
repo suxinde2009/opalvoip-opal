@@ -68,7 +68,8 @@
 #ifndef WIN32
 #include <arpa/inet.h>	/*     For htonl and htons */
 #define BFCP_SOCKET int 
-#define INVALID_SOCKET -1
+#define BFCP_INVALID_SOCKET -1
+#define closesocket(fd) close(fd)
 //#ifdef _UNICODE
 //#define _T(x) L ## x
 //#define ft_tcsncpy wcsncpy
@@ -79,12 +80,14 @@
 #else  // WIN32
 #include <winsock2.h>	/*     For htonl and htons (Win32) */
 #define BFCP_SOCKET SOCKET
+#define BFCP_INVALID_SOCKET INVALID_SOCKET
 #endif
 
 #include <stdarg.h>	/*     For functions with variable arguments */
 #include <stdlib.h>	/*     For calloc */
 #include <string.h>	/*     For memcpy */
 #include <stdio.h>
+#define _T(x) x
 
 #ifdef __cplusplus
 extern "C" {

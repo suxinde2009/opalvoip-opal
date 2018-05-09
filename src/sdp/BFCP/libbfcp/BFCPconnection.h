@@ -27,13 +27,13 @@
 #ifndef BFCP_CONNECTION_H
 #define BFCP_CONNECTION_H
 
-#include <sys/time.h>
 #include <string>
 #include <map>
 #include <list>
 
 #ifdef WIN32
 #include <winsock2.h>
+#include <ws2tcpip.h> // winsock2 is not complete, ws2tcpip add some defines such as IP_TOS
 #endif
 
 #ifdef SUPPORT_SSL
@@ -47,12 +47,13 @@
 /* The library supports both TCP/BFCP and TCP/TLS/BFCP */
 #endif
 
-#include "bfcp_messages.h"
+#include "./bfcpmsg/bfcp_messages.h"
 #include "bfcp_threads.h"
 
 #define BFCP_OVER_TCP	0
 #define BFCP_OVER_TLS	1
 #define BFCP_OVER_UDP	2
+#define BFCP_OVER_DTLS	3
 
 #define BFCP_FCS_DEFAULT_PORT	2345	/** @brief The default port the Floor Control Server will bind to */
 #define BFCP_MAX_CONNECTIONS 	1000	/** @brief  The default value for how many connections the server can hold at the same time */
@@ -85,13 +86,13 @@ public:
      * @param  void
      * @return  new instance 
      */
-    BFCPConnection(void);
+    explicit BFCPConnection(int transport = BFCP_OVER_TCP);
     /**
      * Default destructor 
      * @param  void 
      * @return 
      */
-    virtual ~BFCPConnection(void);
+    virtual ~BFCPConnection();
     /**
      * This virtual callback is called when you recevied a message .
      * @param socket recevied socket 
@@ -121,7 +122,7 @@ public:
      * @param iErrorLevel error level \ref INF debug \ref WAR warning \ref ERR error 
      * @param pcFormat char formated traces 
      */
-    virtual void Log(const  char* pcFile, int iLine, int iErrorLevel, const  char* pcFormat, ...);
+    virtual void Log(const  char* pcFile, int iLine, int iErrorLevel, const  char* pcFormat, ...) = 0;
     /**
      * Return connected state 
      * @return true connected , false not connected .
@@ -235,8 +236,8 @@ public:
      */
     bool GetServerInfo(char * localIp , int* localPort);
      
-    
-    
+
+
 protected:
     /**
      * Add a new client. Can be active, passive TCP or TLS client. Can be UDP client.
@@ -350,7 +351,7 @@ private:
 	 * @param addr: sockaddr containing the remote address.
 	 * @param addrlen size of adress (depends on network protocol used)
 	 **/
-	void SetRemoteAddress(sockaddr * addr, size_t addrlen);
+	void SetRemoteAddress(sockaddr * addr, socklen_t addrlen);
 
 	inline void SetRemoteAddres(struct sockaddr_storage * addr, socklen_t addrlen)
 	{
@@ -370,7 +371,7 @@ private:
 	 **/
 	bool SetLocalAddress(const char * addr, UINT16 port);
 	
-	void SetLocalAddress(sockaddr * addr, size_t addrlen);
+	void SetLocalAddress(sockaddr * addr, socklen_t addrlen);
 
 	int GetRole()
 	{
@@ -494,13 +495,8 @@ private:
 	/* Answers */
 	std::map<UINT16, Transaction> answerMap; 
    	
-#ifdef WIN32
-	size_t m_addrlen;
-	size_t m_remoteAddrLen;
-#else
 	socklen_t m_addrlen;
 	socklen_t m_remoteAddrLen;
-#endif
 	
     public:
 	bfcp_message * message;
@@ -545,8 +541,11 @@ private:
     
     /** Network thread */
     BFCP_THREAD_HANDLE m_thread ;
+
+#ifndef WIN32
     //fd_set m_rset ;
     fd_set m_wset ;
+#endif
 
     /**
      * Initially false, this tag is set to true if the close connection request
@@ -585,12 +584,13 @@ private:
      * true if the network thread are started 
      */
     bool m_isStarted ;
-    
-    fd_set allSet;
+
+#ifndef WIN32
     int pipefd[2];
-    
+    pthread_cond_t m_timer_cond
+#endif
+
     BFCP_THREAD_HANDLE m_timer_thread;
-    pthread_cond_t m_timer_cond;
 };
 
 #endif // BFCP_CONNECTION_H

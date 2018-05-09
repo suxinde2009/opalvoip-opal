@@ -39,7 +39,7 @@
 		break;					\
 	}
 
-sampleClient::sampleClient() {
+sampleClient::sampleClient(){
     Log(INF,"sampleClient instance created. ");
     SetFloorctrlMode(FLOOCTRL_MODE_CLIENT) ;
     m_BFCP_Participant = NULL ;
@@ -74,7 +74,7 @@ int sampleClient::OpenParticipantTcpConnection(const char* local_address, int lo
             return Status ;
 
         if ( m_BFCP_Participant == NULL  )
-            m_BFCP_Participant = new BFCP_Participant( m_confID , m_userID , m_floorID , m_streamID , this );
+            m_BFCP_Participant = new BFCP_Participant( m_confID , m_userID , m_floorID , m_streamID , this , BFCP_OVER_TCP);
 
         if ( m_BFCP_Participant ) {
             if ( m_BFCP_Participant->isStarted() ) {

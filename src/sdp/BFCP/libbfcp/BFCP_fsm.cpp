@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "BFCP_fsm.h"
 
 BFCP_fsm::~BFCP_fsm(void)
@@ -646,6 +646,12 @@ bool BFCP_fsm::FsmCtrlPerform(e_BFCP_ACT p_evt , s_bfcp_msg_event* p_bfcp_evt )
 	else
 	{
 	     Log(INF,"FSM [%s] action NOT successful. State will not change", getBfcpFsmAct(m_bfcpFsmSt) );
+	     Log(INF,"Providing callback for event %s and status %s ", getBfcpFsmAct(p_evt), getBfcpStatus(p_bfcp_evt->Status) );
+	     if( strcmp(getBfcpFsmAct(p_evt), "FloorStatusGranted") == 0 )
+	     {
+	    	 Log(INF,"Providing callback for event %s and status %s ", getBfcpFsmAct(p_evt), getBfcpStatus(p_bfcp_evt->Status) );
+	    	 BFCPFSM_UpdatesBfcpFsmEvent( p_bfcp_evt , p_evt , m_bfcpFsmSt );
+	     }
 	}
         return Status ;
 }
@@ -673,87 +679,64 @@ bool BFCP_fsm::BFCPFSM_FsmEvent( s_bfcp_msg_event* p_bfcpEvent ){
     {
     case e_primitive_FloorRequest:
         return FsmCtrlPerform(BFCP_ACT_FloorRequest,p_bfcpEvent);
-        break ; 
     case e_primitive_FloorRelease:
         return FsmCtrlPerform(BFCP_ACT_FloorRelease,p_bfcpEvent);
-        break ; 
     case e_primitive_FloorRequestQuery:
         return FsmCtrlPerform(BFCP_ACT_FloorRequestQuery,p_bfcpEvent);
-        break ; 
     case e_primitive_FloorRequestStatus:
         switch ( p_bfcpEvent->Status )
         {
         case BFCP_PENDING:
         case BFCP_ACCEPTED:
             return FsmCtrlPerform(BFCP_ACT_FloorRequestStatusAccepted,p_bfcpEvent);
-            break ;
         case BFCP_GRANTED:
             return FsmCtrlPerform(BFCP_ACT_FloorRequestStatusGranted,p_bfcpEvent);
-            break ; 
         case BFCP_DENIED:
         case BFCP_CANCELLED:
         case BFCP_RELEASED:
         case BFCP_REVOKED:
             return FsmCtrlPerform(BFCP_ACT_FloorRequestStatusAborted,p_bfcpEvent);
-            break ;
         default:
             Log(ERR,_T("BFCPFSM_FsmEvent unknown Event[%d] status[%d]"),p_bfcpEvent->Event,p_bfcpEvent->Status );
             return false ;
-            break ;
         }
-        break ; 
     case e_primitive_UserQuery:
         return FsmCtrlPerform(BFCP_ACT_UserQuery,p_bfcpEvent);
-        break ; 
     case e_primitive_UserStatus:
         return FsmCtrlPerform(BFCP_ACT_UserStatus,p_bfcpEvent);
-        break ; 
     case e_primitive_FloorQuery:
         return FsmCtrlPerform(BFCP_ACT_FloorQuery,p_bfcpEvent);
-        break ; 
     case e_primitive_FloorStatus:
         switch ( p_bfcpEvent->Status )
         {
         case BFCP_PENDING:
         case BFCP_ACCEPTED:
             return FsmCtrlPerform(BFCP_ACT_FloorStatusAccepted,p_bfcpEvent);
-            break ;
         case BFCP_GRANTED:
             return FsmCtrlPerform(BFCP_ACT_FloorStatusGranted,p_bfcpEvent);
-            break ; 
         case BFCP_DENIED:
         case BFCP_CANCELLED:
         case BFCP_RELEASED:
         case BFCP_REVOKED:
             return FsmCtrlPerform(BFCP_ACT_FloorStatusAborted,p_bfcpEvent);
-            break ;
         default:
             Log(ERR,_T("BFCPFSM_FsmEvent unknown Event[%d] status[%d]"),p_bfcpEvent->Event,p_bfcpEvent->Status );
             return false ;
-            break ;
         }
-        break ; 
     case e_primitive_ChairAction:
         return FsmCtrlPerform(BFCP_ACT_ChairAction ,p_bfcpEvent);
-        break ; 
     case e_primitive_ChairActionAck:
         return FsmCtrlPerform(BFCP_ACT_ChairActionAck ,p_bfcpEvent);
-        break ; 
     case e_primitive_Hello:
         return FsmCtrlPerform(BFCP_ACT_Hello ,p_bfcpEvent);
-        break ; 
     case e_primitive_HelloAck:
         return FsmCtrlPerform(BFCP_ACT_HelloAck ,p_bfcpEvent);
-        break ; 
     case e_primitive_Error:
         return FsmCtrlPerform(BFCP_ACT_Error ,p_bfcpEvent);
-        break ; 
     default :
         Log(ERR,_T("BFCPFSM_FsmEvent unknown Event[%d] status[%d]"),p_bfcpEvent->Event,p_bfcpEvent->Status );
         return false ;
-        break ; 
     }
-    return false ;
 }
 
 void BFCP_fsm::InitFsmEvent( st_BFCP_fsm_event * p_fsm_evt, e_BFCP_ACT p_state, const s_bfcp_msg_event* p_bfcp_evt )
@@ -772,6 +755,6 @@ void BFCP_fsm::InitFsmEvent( st_BFCP_fsm_event * p_fsm_evt, e_BFCP_ACT p_state, 
         p_fsm_evt->BeneficiaryID = p_bfcp_evt->BeneficiaryID ;
         p_fsm_evt->i_parm = p_bfcp_evt->i_parm ;
         p_fsm_evt->pt_param = p_bfcp_evt->pt_param ;
-        if ( p_bfcp_evt->c_param ) ft_tcsncpy(p_fsm_evt->c_param ,p_bfcp_evt->c_param , BFCP_STRING_SIZE );
+        strncpy(p_fsm_evt->c_param ,p_bfcp_evt->c_param , sizeof(p_fsm_evt->c_param) );
     }
 }

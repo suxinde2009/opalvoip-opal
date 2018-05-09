@@ -14,9 +14,9 @@
  */
  
 #include "../../bfcp_threads.h"
-#include "bfcp_messages.h"
+#include "../../BFCPexception.h"
+#include "../../bfcpmsg/bfcp_messages.h"
 #include "bfcp_user_list.h"
-#include "BFCPexception.h"
 
 
 
@@ -78,7 +78,7 @@ UINT16 BFCP_UserList::find_user_by_sockfd(lusers list_users, BFCP_SOCKET s)
 {
 	users temp_list_users;
 
-	if (list_users == NULL || s == INVALID_SOCKET)
+	if (list_users == NULL || s == BFCP_INVALID_SOCKET)
 		return 0;
 
 	temp_list_users = list_users->users;
@@ -165,9 +165,9 @@ BFCP_SOCKET BFCP_UserList::bfcp_get_user_socket(lusers list_users, UINT16 userID
 {
 	users  user = NULL;
 	if(list_users == NULL)
-		return INVALID_SOCKET;
+		return BFCP_INVALID_SOCKET;
 	if(userID <= 0)
-		return INVALID_SOCKET;
+		return BFCP_INVALID_SOCKET;
 
 
 	/* First we check if a user with the same ID already exists in the list */
@@ -179,7 +179,7 @@ BFCP_SOCKET BFCP_UserList::bfcp_get_user_socket(lusers list_users, UINT16 userID
 			return user->sockFd ;
 		}
 	}
-	return INVALID_SOCKET;
+	return BFCP_INVALID_SOCKET;
 }
 
 
@@ -209,7 +209,7 @@ int BFCP_UserList::bfcp_add_user(lusers list_users, UINT16 userID,  char *user_U
 		return -1;
 	else {
 		node_user->userID = userID;
-		node_user->sockFd = INVALID_SOCKET ;
+		node_user->sockFd = BFCP_INVALID_SOCKET ;
 		/* Add the CSP URI text */
 		if(user_URI != NULL) {
 			dLen = strlen(user_URI);

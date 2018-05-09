@@ -26,11 +26,11 @@
  * \remarks :
  */
 #include <sstream>
-#include "stdafx.h"
-#include "BFCPexception.h"
+
+#include "../../BFCPexception.h"
+#include "../../bfcpmsg/bfcp_strings.h"
 #include "bfcp_server.h"
 #include "bfcp_link_list.h"
-#include "bfcp_strings.h"
 
 /* Macro to check for errors after sending a BFCP message */
 
@@ -51,7 +51,7 @@ extern "C" void _ServerLog(char* pcFile, int iLine, int iErrorLevel, char* pcFor
     return  _p.Log(pcFile, iLine, iErrorLevel, s ) ;
 }
 
-BFCP_Server::BFCP_Server(UINT8 Max_conf ,UINT32 p_confID ,UINT32 p_userID , UINT32 p_floorID , UINT32 p_streamID , BFCP_Server::ServerEvent* p_ServerEvent ) {
+BFCP_Server::BFCP_Server(UINT8 Max_conf ,UINT32 p_confID ,UINT32 p_userID , UINT32 p_floorID , UINT32 p_streamID , BFCP_Server::ServerEvent* p_ServerEvent, int transport ):BFCPConnection(transport) {
     m_struct_server = NULL ;
     if(!Max_conf)
         Max_conf = BFCP_MAX_CONF;
@@ -869,7 +869,7 @@ bool BFCP_Server::isUserInConf(UINT16 userID )
 bool BFCP_Server::RemoveUserInConf(UINT16 userID )
 {
     bool Status = true ;
-    int i = CheckConferenceAndUser(m_struct_server, m_confID, userID, -1);
+    int i = CheckConferenceAndUser(m_struct_server, m_confID, userID, BFCP_INVALID_SOCKET);
     if (i >= 0)
     {
 	/* Notify remote party that the user is gone ! */
@@ -891,7 +891,7 @@ bool BFCP_Server::OpenUdpConnection(UINT16 p_userID, char * local_address, int l
     {
 	int tr = 0;
 	BFCP_SOCKET fd = bfcp_get_user_sockfd(m_struct_server, m_confID , p_userID, &tr);
-	if ( fd != INVALID_SOCKET)
+	if ( fd != BFCP_INVALID_SOCKET)
 	{
 	    if ( tr == BFCP_OVER_UDP)
 	    {
@@ -909,7 +909,7 @@ bool BFCP_Server::OpenUdpConnection(UINT16 p_userID, char * local_address, int l
 	
 	fd = AddClient(BFCP_OVER_UDP, BFCPConnectionRole::PASSIVE, local_address, local_port );
 	
-	if ( fd != INVALID_SOCKET )
+	if ( fd != BFCP_INVALID_SOCKET )
 	{
 	    int ret = bfcp_set_user_sockfd(m_struct_server, m_confID , p_userID, fd, BFCP_OVER_UDP);
 	    if (ret)
@@ -958,14 +958,14 @@ bool BFCP_Server::OnBFCPDisconnected(BFCP_SOCKET socket)
     else
     {
 	/* Lookup conference for all user with the same sockfd */
-	int i = CheckConferenceAndUser( m_struct_server, m_confID, 0, -1);
+	int i = CheckConferenceAndUser( m_struct_server, m_confID, 0, BFCP_INVALID_SOCKET);
 	if (i >= 0)
 	{
 	    UINT16 UserID = find_user_by_sockfd(m_struct_server->list_conferences[i].user, socket);
 	    if (UserID > 0)
 	    {
 		/* Reset the sock fd associated with this user */
-		bfcp_set_user_sockfd(m_struct_server, m_confID, UserID, INVALID_SOCKET, BFCP_OVER_TCP);
+		bfcp_set_user_sockfd(m_struct_server, m_confID, UserID, BFCP_INVALID_SOCKET, BFCP_OVER_TCP);
 	    }
 	}
     }
@@ -989,7 +989,6 @@ bool BFCP_Server::OpenTcpConnection(const char* local_address,
         Log(ERR,"BFCP_Server:: invalid participant ! ");
         //throw IOException("BFCP_Participant:: Connection connect failed");
     }
-
     try {
         SelLocalConnection(local_address,local_port,isServer?BFCPConnectionRole::PASSIVE:BFCPConnectionRole::ACTIVE);
         if ( !isServer ) {
@@ -1115,7 +1114,7 @@ int BFCP_Server::bfcp_initialize_conference_server(st_bfcp_server *conference_se
 
     bfcp_mutex_lock(count_mutex);
 
-    if (CheckConferenceAndUser(conference_server, conferenceID, 0, -1) >= 0)
+    if (CheckConferenceAndUser(conference_server, conferenceID, 0, BFCP_INVALID_SOCKET) >= 0)
     {
 	/* A conference with this conferenceID already exists */
         Log(ERR, "Could not create conference: conference ID %u is aready used.");
@@ -1164,7 +1163,8 @@ int BFCP_Server::bfcp_initialize_conference_server(st_bfcp_server *conference_se
 
     /* Both the conference and its list of users inheritate the transport property from the FCS */
     /* Obsolete - transport is handled event by event and associated with sock FD */
-    conference_server->list_conferences[i].bfcp_transport = BFCP_OVER_TCP;
+    /*Seems below configuration is not mandatory*/
+    //conference_server->list_conferences[i].bfcp_transport = BFCP_OVER_UDP;
     
     /* Obsolete - transport will be associated to the USER, not to the USER LIST */
     //conference_server->list_conferences[i].user->bfcp_transport = BFCP_OVER_TCP;
@@ -1189,7 +1189,7 @@ int BFCP_Server::bfcp_destroy_conference_server(st_bfcp_server *conference_serve
 
     bfcp_mutex_lock(count_mutex);
 
-    i = CheckConferenceAndUser(conference_server, conferenceID, 0, -1);
+    i = CheckConferenceAndUser(conference_server, conferenceID, 0, BFCP_INVALID_SOCKET);
     if (i < 0)
     {
         /* A conference with this conferenceID does NOT exist */
@@ -1314,7 +1314,7 @@ int BFCP_Server::bfcp_change_number_granted_floor_server(st_bfcp_server *server,
     int i, value = 0;
 
     bfcp_mutex_lock(count_mutex);
-    i = CheckConferenceAndUser(server, conferenceID, 0, -1);
+    i = CheckConferenceAndUser(server, conferenceID, 0, BFCP_INVALID_SOCKET);
     if (i >= 0)
     {
         value = bfcp_change_number_granted_floor(server->list_conferences[i].floor, floorID, limit_granted_floor);
@@ -1363,7 +1363,7 @@ int BFCP_Server::bfcp_change_chair_policy(st_bfcp_server *conference_server, UIN
 
     bfcp_mutex_lock(count_mutex);
 
-    i = CheckConferenceAndUser(conference_server, conferenceID, 0, -1);
+    i = CheckConferenceAndUser(conference_server, conferenceID, 0, BFCP_INVALID_SOCKET);
     if ( i >= 0 ) 
     {
         if(chair_wait_request != 0)
@@ -1388,7 +1388,7 @@ int BFCP_Server::bfcp_add_floor_server(st_bfcp_server *server, UINT32 conference
     if (limit_granted_floor < 0) return -1;
 
     bfcp_mutex_lock(count_mutex);
-    i = CheckConferenceAndUser(server, conferenceID, 0, -1);
+    i = CheckConferenceAndUser(server, conferenceID, 0, BFCP_INVALID_SOCKET);
     if ( i >=0 )
     {
         /* Check if the chair of the floor is a valid user */
@@ -1432,7 +1432,7 @@ int BFCP_Server::bfcp_delete_floor_server(st_bfcp_server *server, UINT32 confere
     bfcp_queue *laccepted;
 
     bfcp_mutex_lock(count_mutex);
-    i = CheckConferenceAndUser(server, conferenceID, 0, -1);
+    i = CheckConferenceAndUser(server, conferenceID, 0, BFCP_INVALID_SOCKET);
     if ( i >=0 )
     {
         /* Find the position of this floor in the floor list */
@@ -1495,7 +1495,7 @@ int BFCP_Server::bfcp_add_chair_server(st_bfcp_server *server, UINT32 conference
 
     bfcp_mutex_lock(count_mutex);
 
-    i = CheckConferenceAndUser(server, conferenceID, ChairID, -1);
+    i = CheckConferenceAndUser(server, conferenceID, ChairID, BFCP_INVALID_SOCKET);
     if ( i >=0 )
     {
             error = bfcp_change_chair(server->list_conferences[i].floor, floorID, ChairID);
@@ -1719,10 +1719,10 @@ int BFCP_Server::bfcp_set_user_sockfd(st_bfcp_server *server, UINT32 conferenceI
 BFCP_SOCKET BFCP_Server::bfcp_get_user_sockfd(st_bfcp_server *server, UINT32 conferenceID,UINT16 userID, int * p_transport)
 {
     int  i;
-    BFCP_SOCKET sockfd = INVALID_SOCKET ;
+    BFCP_SOCKET sockfd = BFCP_INVALID_SOCKET ;
 
     bfcp_mutex_lock(count_mutex);
-    i = CheckConferenceAndUser(server, conferenceID, 0, -1);
+    i = CheckConferenceAndUser(server, conferenceID, 0, BFCP_INVALID_SOCKET);
     if ( i >=0 ) 
     {
         /* Add a new user to the conference */
@@ -1744,7 +1744,7 @@ int BFCP_Server::bfcp_delete_user_server(st_bfcp_server *server, UINT32 conferen
 
     bfcp_mutex_lock(count_mutex);
 
-    i = CheckConferenceAndUser(server, conferenceID, userID, -1);
+    i = CheckConferenceAndUser(server, conferenceID, userID, BFCP_INVALID_SOCKET);
     if ( i >=0 ) 
     {
         /* Remove the user from the FloorRequest list of every node */
@@ -1963,7 +1963,7 @@ bfcp_floor_request_information *BFCP_Server::create_floor_message(UINT16 floorID
 }
 
 /* Setup and send a floorstatus BFCP message */
-int BFCP_Server::bfcp_show_floor_information(UINT32 conferenceID, UINT16 TransactionID, UINT16 userID, st_bfcp_conference *conference, UINT16 floorID, int *client, pnode newnode, UINT16 status) 
+int BFCP_Server::bfcp_show_floor_information(UINT32 conferenceID, UINT16 TransactionID, UINT16 userID, st_bfcp_conference *conference, UINT16 floorID, int * /*client*/, pnode newnode, UINT16 status) 
 {
     if(conference == NULL)
         return 0;
@@ -1978,7 +1978,7 @@ int BFCP_Server::bfcp_show_floor_information(UINT32 conferenceID, UINT16 Transac
     BFCP_SOCKET sockfd;
     
     sockfd = bfcp_get_user_socket(conference->user, userID, &transport);
-    if (sockfd == INVALID_SOCKET) return -1;
+    if (sockfd == BFCP_INVALID_SOCKET) return -1;
     
     if (TransactionID == 0 && transport == BFCP_OVER_UDP)
     {
@@ -2390,7 +2390,7 @@ int BFCP_Server::bfcp_FloorRequest_server(st_bfcp_server *server, UINT32 confere
     if(newnode == NULL)
         return -1;
 
-    int i, position_floor, error;
+    int i, position_floor, error = BFCP_INVALID_ERROR_CODES;
     UINT16 chairID;
     pfloor tempnode, floor;
     BFCP_THREAD_HANDLE wid = BFCP_NULL_THREAD_HANDLE  ;	/* The thread identifier */
@@ -3218,7 +3218,7 @@ int BFCP_Server::bfcp_hello_server(st_bfcp_server *server, UINT32 conferenceID, 
     bfcp_message *message = NULL;
 
     bfcp_mutex_lock(count_mutex);
-    i = CheckConferenceAndUser(server, conferenceID, userID, -1);
+    i = CheckConferenceAndUser(server, conferenceID, userID, BFCP_INVALID_SOCKET);
     
     /* A buffer to compose error text messages when needed */
     char errortext[BFCP_STRING_SIZE]={0};
@@ -3482,7 +3482,7 @@ int BFCP_Server::bfcp_floorquery_server(st_bfcp_server *server, UINT32 conferenc
     
     /* A buffer to compose error text messages when needed */
     char errortext[BFCP_STRING_SIZE]={0};
-    i = CheckConferenceAndUser(server, conferenceID, userID, -1);
+    i = CheckConferenceAndUser(server, conferenceID, userID, BFCP_INVALID_SOCKET);
     
     switch (i)
     {
@@ -4088,10 +4088,36 @@ bool BFCP_Server::bfcp_received_msg(bfcp_received_message *recv_msg, BFCP_SOCKET
                     }
 		    else
 		    {
-			Log(ERR, "FloorRelease: no floor request ID specified");
-			bfcp_error_code(recv_msg->entity->conferenceID, recv_msg->entity->userID, 
-				recv_msg->entity->transactionID, BFCP_INVALID_FLOORID, "No floor id specified for FloorRelease", NULL, sockfd, 0,
-				recv_msg->transport);
+               bfcp_queue *list = NULL;
+               bfcp_node *node = NULL;
+               st_bfcp_server* server = m_struct_server ;
+               list = server->list_conferences[0].granted;
+               if(list != NULL) {
+                    node = list->head;
+                    if(node != NULL)
+                    {
+                        while(node != NULL) {
+                            if(node->userID == evt.userID)
+                            {
+                                evt.FloorRequestID = node->floorRequestID;
+                                Log(INF,"Found FloorRequestID = %d", evt.FloorRequestID );
+                                break;
+                            }
+                            node = node->next;
+                        }
+
+                    }
+                }
+                if(evt.FloorRequestID == 0) {
+                    Log(ERR, "FloorRelease: no floor request ID specified");
+                    bfcp_error_code(recv_msg->entity->conferenceID, recv_msg->entity->userID, 
+                       recv_msg->entity->transactionID, BFCP_INVALID_FLOORID, "No floor id specified for FloorRelease", NULL, sockfd, 0,
+                       recv_msg->transport);
+
+                } else {
+                    Log(INF,"FloorRelease: FloorRequestID [%d]", evt.FloorRequestID );
+                    BFCPFSM_FsmEvent( &evt );
+                }
 		    }
                 }
                 break;
@@ -4399,7 +4425,7 @@ bool BFCP_Server::BFCPFSM_Hello(s_bfcp_msg_event* p_evt)
 	     */
 	    int tr;
 	    BFCP_SOCKET s = bfcp_get_user_sockfd(m_struct_server, m_confID, p_evt->userID, &tr);
-	    if ( s != INVALID_SOCKET && s != p_evt->sockfd )
+	    if ( s != BFCP_INVALID_SOCKET && s != p_evt->sockfd )
 	    {
 		if ( IsClientActive(s) )
 		{
@@ -4481,7 +4507,7 @@ bool BFCP_Server::BFCPFSM_FloorRequest(  s_bfcp_msg_event* p_evt )
     BFCP_SOCKET s2;
     memcpy( &newnode , p_evt->pt_param , sizeof(pnode));
 
-    int i, position_floor, error;
+    int i, position_floor, error = BFCP_INVALID_ERROR_CODES;
     pfloor tempnode, floor;
     unsigned short floorRequestID;
 
@@ -4533,7 +4559,7 @@ bool BFCP_Server::BFCPFSM_FloorRequest(  s_bfcp_msg_event* p_evt )
 floor_request_report_err2:
         bfcp_error_code(conferenceID, newnode->userID, TransactionID, (e_bfcp_error_codes) error, errortext, NULL, sockfd, y, p_evt->transport);
         bfcp_mutex_unlock(count_mutex);
-        return -1;
+        return false;
     }
 
     if( newnode->beneficiaryID != 0 )
@@ -4662,10 +4688,10 @@ bool BFCP_Server::SendHello(UINT32 p_userID, const char * remoteAddr, UINT16 rem
     UINT16 trID = 0;
     
     
-    if ( s == INVALID_SOCKET ) 
+    if ( s == BFCP_INVALID_SOCKET )
 	s = bfcp_get_user_sockfd( m_struct_server, m_confID, p_userID, &tr);
 
-    if ( s == INVALID_SOCKET )
+    if ( s == BFCP_INVALID_SOCKET )
     {
 	Log(ERR, "Cannot send Hello: client is not associated with any valid socket");
 	return false;
@@ -4763,7 +4789,7 @@ bool BFCP_Server::FloorRequestRespons(UINT32 p_userID,  UINT32 p_beneficiaryID ,
 	BFCP_SOCKET sockfd;
 
 	/* Check if this conference exists and if user is in the conf */
-	i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, -1);
+	i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, BFCP_INVALID_SOCKET);
 
         if( i < 0) 
 	{
@@ -4796,7 +4822,7 @@ bool BFCP_Server::FloorRequestRespons(UINT32 p_userID,  UINT32 p_beneficiaryID ,
         }
 
 	sockfd = bfcp_get_user_socket(m_struct_server->list_conferences[i].user, p_userID, &transport );
-	if ( sockfd == INVALID_SOCKET )
+	if ( sockfd == BFCP_INVALID_SOCKET )
 	{
 	    Status = false;	
 	    Log(ERR, "Failed to retreive sockfd asociated with user ID %d.", p_userID);
@@ -5060,7 +5086,7 @@ bool BFCP_Server::SendGoodBye(UINT32 p_userID)
 	bool Status = true;
 	
 	/* Check if this conference exists and if user is in the conf */
-	int i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, -1);
+	int i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, BFCP_INVALID_SOCKET);
 
         if( i < 0) 
 	{
@@ -5082,7 +5108,7 @@ bool BFCP_Server::SendGoodBye(UINT32 p_userID)
         }
 
 	sockfd = bfcp_get_user_socket(m_struct_server->list_conferences[i].user, p_userID, &transport );
-	if ( sockfd == INVALID_SOCKET )
+	if ( sockfd == BFCP_INVALID_SOCKET )
 	{
 	    Status = false;	
 	    Log(INF, "Cannot send GoodBye: socket of user ID %u is alread closed.", p_userID);
@@ -5102,12 +5128,12 @@ bool BFCP_Server::SendGoodBye(UINT32 p_userID)
 }
 
 
-bool BFCP_Server::AnswerGoodByeAck(UINT32 ConferenceID, UINT16 p_userID, UINT16 TransactionID, BFCP_SOCKET sockfd, int transport)
+bool BFCP_Server::AnswerGoodByeAck(UINT32 ConferenceID, UINT16 p_userID, UINT16 TransactionID, BFCP_SOCKET sockfd, int /*transport*/)
 {
 	bfcp_message * m;
 	
 	/* Check if this conference exists and if user is in the conf */
-	int i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, -1);
+	int i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, BFCP_INVALID_SOCKET);
 
         if( i < 0) 
 	{
@@ -5214,15 +5240,19 @@ bool BFCP_Server::FloorStatusRespons(UINT32 p_userID ,  UINT16 p_TransactionID ,
                 if(list_user != NULL) {
                     user = list_user->users;
                     while(user) 
-		    {
-			if ( bfcp_show_floor_information( m_confID , 0 , user->userID , m_struct_server->list_conferences+i, m_floorID, NULL , p_node , bfcp_status )== -1 ) 
-			{
-			    Log(ERR,"FloorStatusRespons send  FloorStatus %s failed ! ",getBfcpStatus(bfcp_status));
-			}
-                        user = user->next;
-                    }
-                }
-            }
+                    {
+                        Log(INF," May send FloorStatus to user %d on sockFD %d and uri %s", user->userID , user->sockFd , user->user_URI);
+                        if(user->userID != p_userID){
+                            Log(INF,"Sending FloorStatus to user %d on sockFD %d and uri %s", user->userID , user->sockFd, user->user_URI);
+                           if ( bfcp_show_floor_information( m_confID , 0 , user->userID , m_struct_server->list_conferences+i, m_floorID, NULL , p_node , bfcp_status )== -1 ) 
+                           {
+                               Log(ERR,"FloorStatusRespons send  FloorStatus %s failed ! ",getBfcpStatus(bfcp_status));
+                           }
+                       }
+                       user = user->next;
+                   }
+               }
+           }
         }
     
     return Status ;
@@ -5281,7 +5311,7 @@ bool BFCP_Server::GetFloorState(e_bfcp_status* p_bfcp_status , UINT32* p_userID 
 void BFCP_Server::OnGoodBye(UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID, BFCP_SOCKET p_sockfd, int transport)
 {
     char errortext[BFCP_STRING_SIZE]={0};	
-    e_bfcp_error_codes error;
+    e_bfcp_error_codes error = BFCP_INVALID_ERROR_CODES;
     int i = -1;
     
     bfcp_mutex_lock(count_mutex);
@@ -5344,16 +5374,17 @@ void BFCP_Server::OnGoodBye(UINT32 ConferenceID, UINT16 userID, UINT16 Transacti
     bfcp_mutex_unlock(count_mutex);
 }
 
-void BFCP_Server::Log(const  char* pcFile, int iLine, int iErrLevel , const  char* pcFormat, ...) {
-    va_list arg;
-    char s[3000];
-    va_start(arg,pcFormat);
-    vsnprintf(s,3000,pcFormat,arg);
-    va_end(arg);
-#ifdef WIN32
-    eConfLog(pcFile,iLine,iErrLevel,s);
-#else
-    printf("%s:%d | %d | %s\n",pcFile?pcFile:"" , iLine , iErrLevel , s);
-#endif
+void BFCP_Server::Log(const  char* pcFile, int iLine, int iErrLevel , const  char* pcFormat, ...)
+{
+  va_list arg;
+  va_start(arg,pcFormat);
+  if (m_ServerEvent != NULL)
+    m_ServerEvent->Log(pcFile, iLine, iErrLevel, pcFormat, arg);
+  else {
+    fprintf(stderr, "%s:%d | %d | ", pcFile ? pcFile : "", iLine, iErrLevel);
+    vfprintf(stderr, pcFormat, arg);
+    fputc('\n', stderr);
+  }
+  va_end(arg);
 }
 

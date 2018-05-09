@@ -462,11 +462,12 @@ int bfcp_parse_arguments(bfcp_received_message *recvM, bfcp_message *message)
 			case FLOOR_REQUEST_ID:
 			    recvM->arguments->frqID = bfcp_parse_attribute_FLOOR_REQUEST_ID(message, temp);
 			    BFCP_msgLog(INF,"< FLOOR_REQUEST_ID [%d]",recvM->arguments->frqID);
-			    
+#if 0
 			    if (!recvM->arguments->frqID) {	/* An error occurred in parsing this attribute */
 				recvM->errors = bfcp_received_message_add_error(recvM->errors, temp->type, BFCP_PARSING_ERROR);
 				if ( !recvM->errors ) return -1;	/* An error occurred while recording the error, return with failure */
 			    }
+#endif
 			    break;
             case PRIORITY:
                 recvM->arguments->priority = bfcp_parse_attribute_PRIORITY(message, temp);
@@ -1004,7 +1005,7 @@ bfcp_floor_request_information *bfcp_parse_attribute_FLOOR_REQUEST_INFORMATION(b
         bfcp_received_attribute *attribute = NULL;
         UINT16  ch16 = 0 ; /* 16 bits */
         bfcp_overall_request_status *oRS = NULL;
-        bfcp_floor_request_status *fRS = NULL, *tempRS = NULL;
+        bfcp_floor_request_status *fRS = NULL;
         bfcp_user_information *beneficiary = NULL, *requested_by = NULL;
         char *pInfo = NULL;
         unsigned char *buffer = message->buffer+recvA->position+2;	/* Skip the Header */
@@ -1029,6 +1030,7 @@ bfcp_floor_request_information *bfcp_parse_attribute_FLOOR_REQUEST_INFORMATION(b
                     return NULL;
                 break;
             case FLOOR_REQUEST_STATUS:
+#if 0 // // TODO: Need to figure it out do we really need not to process this.S
                 if(!fRS) {	/* Create a list, it's the first FLOOR-REQUEST-STATUS we add */
                     fRS = bfcp_parse_attribute_FLOOR_REQUEST_STATUS(message, attribute);
                     if(!fRS)	/* An error occurred while parsing this attribute */
@@ -1042,6 +1044,8 @@ bfcp_floor_request_information *bfcp_parse_attribute_FLOOR_REQUEST_INFORMATION(b
                         return NULL;
                     break;
                 }
+#endif
+                break;
             case BENEFICIARY_INFORMATION:
                 beneficiary = bfcp_parse_attribute_BENEFICIARY_INFORMATION(message, attribute);
                 if(!beneficiary)	/* An error occurred while parsing this attribute */
@@ -1162,7 +1166,8 @@ bfcp_floor_request_status *bfcp_parse_attribute_FLOOR_REQUEST_STATUS(bfcp_messag
         BFCP_msgLog(INF,"< FLOOR_REQUEST_STATUS floorId [%d] ", fID );
         /* Some attributes are not compulsory, they might not be in the message, let's check it */
         message->position = recvA->position+4;
-        while(recvA->length>((message->position)-(recvA->position))) {
+
+        while(recvA->length >= ((message->position)-(recvA->position))) {
             position = message->position;	/* Remember where message was before attribute parsing */
             attribute = bfcp_parse_attribute(message);
             if(!attribute)	/* An error occurred while parsing this attribute */
@@ -1184,7 +1189,7 @@ bfcp_floor_request_status *bfcp_parse_attribute_FLOOR_REQUEST_STATUS(bfcp_messag
                     return NULL;
                 break;
             default:	/* There's an attribute that shouldn't be here... */
-	        BFCP_msgLog(INF,"< FLOOR_REQUEST_STATUS - unexpected attribute type [%d] [%s]", fID ,
+	        BFCP_msgLog(ERR,"< FLOOR_REQUEST_STATUS - unexpected attribute type [%d] [%s]", fID ,
 			    attribute->type,getBfcpAttribute(attribute->type));
                 break;
             }

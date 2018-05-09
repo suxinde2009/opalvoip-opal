@@ -79,7 +79,7 @@ int sampleServer::StartServer(const char* local_address, int local_port, const c
         }
 
         if ( m_BFCP_Server == NULL  )
-            m_BFCP_Server = new BFCP_Server( BFCP_MAX_CONF , m_confID , m_userID , m_floorID , m_streamID , this );
+            m_BFCP_Server = new BFCP_Server( BFCP_MAX_CONF , m_confID , m_userID , m_floorID , m_streamID , this, BFCP_OVER_TCP );
 
 
         if (m_BFCP_Server ) 

@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
-#include "bfcp_messages.h"
+#include "../../bfcpmsg/bfcp_messages.h"
 
 typedef enum  floor_state {
     BFCP_FLOOR_STATE_WAITING=0,

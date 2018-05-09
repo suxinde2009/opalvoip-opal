@@ -20,10 +20,10 @@
 #include <string.h>
 
 /* The BFCP messages building/parsing library */
-#include "bfcp_messages.h"
+#include "../../bfcpmsg/bfcp_messages.h"
 #include "bfcp_floor_list.h"
 #include "bfcp_user_list.h"
-#include "bfcp_threads.h"
+#include "../../bfcp_threads.h"
 
 
 /* FloorRequestQuery instance (to notify about request events) */

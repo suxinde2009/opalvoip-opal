@@ -25,6 +25,8 @@ typedef pthread_mutex_t bfcp_mutex_t;
 #define BFCP_NULL_THREAD_HANDLE 0 
 #define BFCP_SLEEP(x) usleep(x*1000)
 
+#define BFCP_CURRENT_THREAD() pthread_self()
+
 #else // WIN32
 #if !defined(_MT)
 #error _beginthreadex requires a multithreaded C run-time library.
@@ -32,18 +34,20 @@ typedef pthread_mutex_t bfcp_mutex_t;
 #ifndef PATH_MAX
 #define PATH_MAX MAX_PATH 
 #endif
-#include "ftcmutex.h"
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1
+#endif
+#include <windows.h>
 #include <process.h>
-typedef FTCMutex*  bfcp_mutex_t;
-#define bfcp_mutex_init(a,b)  a=new FTCMutex()
-#define bfcp_mutex_destroy(a) if ( a )  { char msg[256] ; sprintf(msg,"%s(%d) ----- destroy %p\n",__FILE__,__LINE__,a);OutputDebugString(msg) ;delete a ; a=NULL;};
-#define bfcp_mutex_lock(a) { char msg[256] ; sprintf(msg,"%s(%d) >>>>> lock %p\n",__FILE__,__LINE__,a);OutputDebugString(msg) ; a->Lock();};
-#define bfcp_mutex_unlock(a) { char msg[256] ; sprintf(msg,"%s(%d) <<<<< unlock %p\n",__FILE__,__LINE__,a);OutputDebugString(msg);a->Unlock();};
+typedef CRITICAL_SECTION  bfcp_mutex_t;
+#define bfcp_mutex_init(a,b)  InitializeCriticalSection(&a)
+#define bfcp_mutex_destroy(a) DeleteCriticalSection(&a)
+#define bfcp_mutex_lock(a) EnterCriticalSection(&a)
+#define bfcp_mutex_unlock(a) LeaveCriticalSection(&a)
 #define BFCP_THREAD_HANDLE HANDLE
-#define close(fd)  closesocket(fd)
-#define BFCP_THREAD_HANDLE HANDLE
+#define BFCP_CURRENT_THREAD() ::GetCurrentThread()
 #define BFCP_THREAD_START(threadID,ThreadFunc,arg)  threadID = (HANDLE)_beginthreadex(NULL, 0, ThreadFunc, arg,0,NULL); 
-#define BFCP_THREAD_KILL(HThread)    TerminateThread(HThread,-1);CloseHandle(HThread);  
+#define BFCP_THREAD_KILL(HThread)    TerminateThread(HThread,1);CloseHandle(HThread);  
 #define BFCP_NULL_THREAD_HANDLE NULL
 #define BFCP_SLEEP(x) Sleep(x)
 #endif

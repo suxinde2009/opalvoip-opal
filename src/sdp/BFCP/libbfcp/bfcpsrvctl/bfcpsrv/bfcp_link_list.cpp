@@ -12,9 +12,9 @@
  *
  * \remarks :
  */
-#include "stdafx.h"
-#include "bfcp_threads.h"
-#include "BFCPexception.h"
+
+#include "../../bfcp_threads.h"
+#include "../../BFCPexception.h"
 #include "bfcp_link_list.h"
 
 BFCP_LinkList::BFCP_LinkList(){

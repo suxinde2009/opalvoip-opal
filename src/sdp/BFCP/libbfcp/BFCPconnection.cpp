@@ -1,32 +1,70 @@
-#include "stdafx.h"
-#include <netinet/in.h>
 #include <sstream>
 #include <map>
 #include <iostream>
+
+#include "BFCPconnection.h"
+#include "BFCPexception.h"
+
+
 using::std::map;
 using::std::pair;
 
 
 #ifdef WIN32
-#include "ftcore.h"
-#include "FTCThread.h"
-#define _GETLASTERROR() \
-    LPVOID lpMsgBuf;\
-    DWORD lastError = GetLastError();  \
-    char mess[ WRP_STRING_SIZE ] ; \
-    FormatMessage(  FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,  lastError,  0,  (LPTSTR) &lpMsgBuf,  0,  NULL );  \
-    snprintf(mess,WRP_STRING_SIZE,"GetLastError return %d [%s] ",lastError,lpMsgBuf); \
-    eConfLog(INF, "%s" ,mess ); \
-    LocalFree( lpMsgBuf );
-#else
+
+#include <io.h>
+
+std::string GetErrorText()
+{
+  DWORD lastError = GetLastError();
+  LPVOID lpMsgBuf;
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, lastError, 0, (LPTSTR)&lpMsgBuf, 0, NULL);
+  std::string errstr((const char *)lpMsgBuf);
+  LocalFree(lpMsgBuf);
+  return errstr;
+}
+
+
+int gettimeofday(struct timeval *tv, struct timezone *)
+{
+  FILETIME ft;
+  unsigned __int64 tmpres = 0;
+  static int tzflag;
+ 
+  GetSystemTimeAsFileTime(&ft);
+ 
+  tmpres |= ft.dwHighDateTime;
+  tmpres <<= 32;
+  tmpres |= ft.dwLowDateTime;
+ 
+  /*converting file time to unix epoch*/
+  tmpres -= 11644473600000000ULL; 
+  tmpres /= 10;  /*convert into microseconds*/
+  tv->tv_sec = (long)(tmpres / 1000000UL);
+  tv->tv_usec = (long)(tmpres % 1000000UL);
+ 
+  return 0;
+}
+
+#else // WIN32
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <errno.h>
-#define _GETLASTERROR()
-#endif
-#include "BFCPconnection.h"
-#include "BFCPexception.h"
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+
+std::string GetErrorText()
+{
+  std::vector,char> buf;
+  buf.resize(1000);
+  strerror_r(errno, buf.data(), buf.size()-1);
+  return buf.data();
+}
+
+#endif // WIN32
+
 
 static inline const char * TRANSPORT_NAME(int p_transp)
 {
@@ -101,32 +139,31 @@ BFCPConnectionRole::~BFCPConnectionRole(void)
 	
 }
 
-BFCPConnection::BFCPConnection() : m_remoteClient(BFCP_OVER_TCP)
+BFCPConnection::BFCPConnection(int transport)
+  : m_remoteClient(transport)
 {
     bfcp_mutex_init(m_mutConnect, NULL);
     bfcp_mutex_init(m_SessionMutex, NULL);
     m_ClientSocket.clear() ;
-    m_Socket = INVALID_SOCKET ;
+    m_Socket = BFCP_INVALID_SOCKET ;
     m_bClose = false;
     m_eRole = BFCPConnectionRole::ACTIVE;
     m_bConnected = false;
     m_isStarted = false ;
 
 #ifdef WIN32
-
     WSADATA wsaData;
     int err = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if(err < 0) {
-        Log(ERR, "BFCP start TCP connect  WSAStartup failed !");
-    }
+    if(err < 0)
+      throw BFCPException("BFCPConnection",__LINE__, "Winsock", "BFCP start TCP connect  WSAStartup failed !");
 #else
     pthread_cond_init( &m_timer_cond, 0);
-#endif
     FD_ZERO(&m_wset);
+    if ( pipe(pipefd) != 0)
+      throw BFCPException("BFCPConnection",__LINE__, "Internal pipe", "Failed to open internal pipe");
+#endif
     m_thread = BFCP_NULL_THREAD_HANDLE ;
     m_timer_thread = BFCP_NULL_THREAD_HANDLE ;
-    
-    if ( pipe(pipefd) != 0) throw BFCPException("BFCPConnection",__LINE__, "Internal pipe", "Failed to open internal pipe");
 }
 
 BFCPConnection::~BFCPConnection(void) 
@@ -138,12 +175,12 @@ BFCPConnection::~BFCPConnection(void)
     bfcp_mutex_lock(m_SessionMutex);
     bfcp_mutex_destroy(m_SessionMutex);
     
-    close(pipefd[0]);
-    close(pipefd[1]);
 #ifdef WIN32
     WSACleanup();
 #else
     pthread_cond_destroy( &m_timer_cond );
+    close(pipefd[0]);
+    close(pipefd[1]);
 #endif
 }
 
@@ -210,9 +247,9 @@ bool BFCPConnection::IsClientActive(BFCP_SOCKET s)
     bool ret = true;
     std::map<BFCP_SOCKET,Client2ServerInfo>::iterator it;
 
-    if (s == INVALID_SOCKET) return false;
+    if (s == BFCP_INVALID_SOCKET) return false;
     
-    if ( pthread_self() != m_thread )
+    if ( BFCP_CURRENT_THREAD() != m_thread )
     {
 	bfcp_mutex_lock(m_mutConnect);
 	lock = true;
@@ -236,9 +273,9 @@ bool BFCPConnection::SetRemoteAddressAndPort(BFCP_SOCKET s, const char *remoteIp
     bool lock = false;
     std::map<BFCP_SOCKET,Client2ServerInfo>::iterator it;
 
-    if (s == INVALID_SOCKET) return false;
+    if (s == BFCP_INVALID_SOCKET) return false;
     
-    if ( pthread_self() != m_thread )
+    if ( BFCP_CURRENT_THREAD() != m_thread )
     {
 	bfcp_mutex_lock(m_mutConnect);
 	lock = true;
@@ -263,7 +300,7 @@ int BFCPConnection::sendBFCPmessage(BFCP_SOCKET s, bfcp_message *message,  bool 
 {    
     int ret, transp;
 
-    if (s == INVALID_SOCKET) return -1 ;
+    if (s == BFCP_INVALID_SOCKET) return -1 ;
     if (message == NULL) return -1;
     if (m_bClose) return -1;
 
@@ -283,7 +320,7 @@ int BFCPConnection::sendBFCPmessage(BFCP_SOCKET s, bfcp_message *message,  bool 
 	std::map<BFCP_SOCKET,Client2ServerInfo>::iterator it;
 	bool lock = false;
 	
-	if ( pthread_self() != m_thread )
+	if ( BFCP_CURRENT_THREAD() != m_thread )
 	{
 	     bfcp_mutex_lock(m_mutConnect);
 	     lock = true;
@@ -322,7 +359,9 @@ int BFCPConnection::sendBFCPmessage(BFCP_SOCKET s, bfcp_message *message,  bool 
 	    bfcp_mutex_lock(m_SessionMutex);
 	    if ( IsTransactionStart( bfcp_get_primitive(message) ) ) transactionMap[transID] = t;
 	    bfcp_mutex_unlock(m_SessionMutex);
+#ifndef WIN32
 	    pthread_cond_signal(&m_timer_cond);
+#endif
 	}
 	else
 	{
@@ -349,8 +388,10 @@ int BFCPConnection::CloseOutgoingTransaction( BFCP_SOCKET s, bfcp_message * m )
 	    bfcp_mutex_lock(m_SessionMutex);
 	    transactionMap.erase(transID);
 	    bfcp_mutex_unlock(m_SessionMutex);
-	    if ( m_timer_thread != BFCP_NULL_THREAD_HANDLE) pthread_cond_signal(&m_timer_cond);
-	    
+#ifndef WIN32
+	    if ( m_timer_thread != BFCP_NULL_THREAD_HANDLE)
+          pthread_cond_signal(&m_timer_cond);
+#endif
 	    return 1;
 	}
 	return -1;
@@ -359,8 +400,9 @@ int BFCPConnection::CloseOutgoingTransaction( BFCP_SOCKET s, bfcp_message * m )
 }
 
 
-bool BFCPConnection::Client2ServerInfo::HandleRemoteRetrans( BFCPConnection * c, BFCP_SOCKET s, bfcp_message * m )
+bool BFCPConnection::Client2ServerInfo::HandleRemoteRetrans( BFCPConnection * c, BFCP_SOCKET s, bfcp_message * m)
 {
+#if 0
     if ( IsTransactionStart(bfcp_get_primitive(m)) )
     {
 	/*
@@ -380,6 +422,7 @@ bool BFCPConnection::Client2ServerInfo::HandleRemoteRetrans( BFCPConnection * c,
 	    }
 	}
     }
+#endif
     return false;
 }
 
@@ -543,7 +586,7 @@ void BFCPConnection::disconnect()
             int waitRange = 2 ;
 	    
 	    m_remoteClient.CloseSocket(m_Socket);
-	    m_Socket = INVALID_SOCKET;
+	    m_Socket = BFCP_INVALID_SOCKET;
 	    
             while ( count>0 && (m_bConnected || m_isStarted)  ) {
                 BFCP_SLEEP(waitRange);
@@ -552,12 +595,14 @@ void BFCPConnection::disconnect()
 
             //Wait for server thread to close
 	    Log(INF,"BFCP TCP disconnect role[%s] wait end of server [0x%p]",m_eRole == BFCPConnectionRole::PASSIVE?"server":"client",m_thread);
+#ifndef WIN32
 	    if ( m_timer_thread )
 	    {
 		pthread_cond_signal(&m_timer_cond);
 		pthread_join(m_timer_thread, NULL);
 	    }
-	    
+#endif
+
             if ( m_thread ) 
 	    {
 #ifndef WIN32
@@ -637,7 +682,7 @@ void * BFCPConnection::ManageRetransmission(void* pParam)
 			
 		case -1:
 			/* If a request is not answered we signal a disconnction as per the BFCP over UDP RFC */
-			c->Log(INF, "-BFCPConnection: outgoing transaction %u has expired. Socket %d will be closed", 
+			c->Log(INF, "-BFCPConnection: outgoing transaction %u has expired. Socket %d will be closed",
 			       tID, it->second.m_sockfd);
 			need_disconnect = true;
 			break;
@@ -676,7 +721,7 @@ void * BFCPConnection::ManageRetransmission(void* pParam)
 	bfcp_mutex_lock(c->m_SessionMutex);	
 	
 	
-	
+#ifndef WIN32
 	/* now wait for the next retransmission to occur */
 	/* Reminder: mutex is unlocket during wait but locked the mutex before exiting */
 	struct timespec ts;
@@ -687,6 +732,7 @@ void * BFCPConnection::ManageRetransmission(void* pParam)
 	
 		/* Reminder: mutex is unlocket during wait but locked the mutex before exiting */
 	pthread_cond_timedwait(&c->m_timer_cond, &c->m_SessionMutex, &ts);
+#endif
     }
     bfcp_mutex_unlock(c->m_SessionMutex);
     c->Log(INF, "<< BFCPConnection: retransmission thread stopping.");
@@ -712,7 +758,7 @@ void* BFCPConnection::EntryPoint(void* pParam)
             memset(&out_addr, 0, sizeof(sockaddr_in));
 	    bfcpConnection->m_Socket = bfcpConnection->m_remoteClient.CreateSocket();
 	    
-            if(bfcpConnection->m_Socket != INVALID_SOCKET) 
+            if(bfcpConnection->m_Socket != BFCP_INVALID_SOCKET)
 	    {
 		bfcpConnection->Log(INF, "BFCPConnection: created %s socket [%p]",
 				    TRANSPORT_NAME(bfcpConnection->m_remoteClient.GetTransport()), bfcpConnection->m_Socket);    
@@ -731,9 +777,8 @@ void* BFCPConnection::EntryPoint(void* pParam)
                     /* Listen */
                     if (listen(bfcpConnection->m_Socket, SOMAXCONN ) == -1) 
 		    {
-                        bfcpConnection->Log(ERR, "BFCPConnection: listen() to %s:%u failed.", 
-			bfcpConnection->m_remoteClient.GetLocalAddr(), bfcpConnection->m_remoteClient.GetLocalPort() );
-                        _GETLASTERROR();
+                        bfcpConnection->Log(ERR, "BFCPConnection: listen() to %s:%u failed, error: %s",
+			bfcpConnection->m_remoteClient.GetLocalAddr(), bfcpConnection->m_remoteClient.GetLocalPort(), GetErrorText().c_str());
                         Status = false ;
                     }
 		    else 
@@ -751,12 +796,10 @@ void* BFCPConnection::EntryPoint(void* pParam)
                 if ( Status )
 		{
                     /* Connect to the Floor Control Server */
-                    if( bfcpConnection->m_remoteClient.Connect(bfcpConnection->m_Socket) == -1) 
+                    if( bfcpConnection->m_remoteClient.Connect(bfcpConnection->m_Socket) < 0) 
 		    {
-                        bfcpConnection->Log(ERR, "BFCP ACTIVE connection failed to connect to %s:%d",
-                                            bfcpConnection->getRemoteAdress(),bfcpConnection->getRemotePort());
-
-                        _GETLASTERROR();
+                        bfcpConnection->Log(ERR, "BFCP ACTIVE connection failed to connect to %s:%d, error: %s",
+                                            bfcpConnection->getRemoteAdress(),bfcpConnection->getRemotePort(), GetErrorText().c_str());
                         Status = false ;
                     } 
 		    else 
@@ -782,10 +825,6 @@ void* BFCPConnection::EntryPoint(void* pParam)
 	{
 	    bfcpConnection->Log(ERR, "BFCPConnection: %s", e.what() );
 	}
-	catch(...)
-	{
-            bfcpConnection->Log(ERR, "BFCPConnection: exception caught in thread");
-        }
 
         bfcpConnection->m_isStarted = false ;
         bfcpConnection->m_bConnected = false ;
@@ -809,7 +848,7 @@ unsigned long BFCPConnection::availableBytes(BFCP_SOCKET p_sock) {
     if (0 == ioctlsocket(p_sock, FIONREAD, &argp)) {
         /*		char c;
         if(-1 == m_pSocket->Recv(&c, 0)) {
-        printf("Socket closed!\n");
+        Log(INF,"Socket closed!\n");
         argp = -1;
         }
         */		return argp;
@@ -824,14 +863,20 @@ int BFCPConnection::Client2ServerInfo::Connect( BFCP_SOCKET s )
 	struct sockaddr * addr = (struct sockaddr *) &m_remoteAddress;
 	if (addr->sa_family != AF_INET && addr->sa_family != AF_INET6)
 	{
-	    /* Log(ERR, "Unsupported network protocol specified for local address."); */
-	    return -2;
+		return -2;
 	}
 
-	if ( ::connect(s, (struct sockaddr *) &m_remoteAddress, m_remoteAddrLen) == -1 ) 
+	struct sockaddr_in *newAdd = (struct sockaddr_in *)addr;
+
+	if(inet_pton(AF_INET, m_remoteAddressStr, &newAdd->sin_addr)<=0)
+	{
+		return -3;
+	}
+
+	if ( ::connect(s, (struct sockaddr *) &m_remoteAddress, m_remoteAddrLen) == -1 )
 	{
 		return -1;
-        }
+	}
 	else
 	{
 		GetSockInfo(s);
@@ -904,7 +949,7 @@ bool BFCPConnection::Client2ServerInfo::SetLocalAddress(const char * addr, UINT1
     }
     return false;
 }
-void BFCPConnection::Client2ServerInfo::SetLocalAddress(sockaddr * addr, size_t addrlen)
+void BFCPConnection::Client2ServerInfo::SetLocalAddress(sockaddr * addr, socklen_t addrlen)
 {
     size_t len = (addrlen> 0 && addrlen <= sizeof(m_localAddress)) ? addrlen : sizeof(m_remoteAddress);
     memcpy(&m_localAddress, addr, len);
@@ -924,7 +969,7 @@ bool BFCPConnection::Client2ServerInfo::SetRemoteAddress(const char * addr, UINT
     return false;
 }
 
-void BFCPConnection::Client2ServerInfo::SetRemoteAddress(sockaddr * addr, size_t addrlen)
+void BFCPConnection::Client2ServerInfo::SetRemoteAddress(sockaddr * addr, socklen_t addrlen)
 {
     size_t len = (addrlen> 0 && addrlen <= sizeof(m_remoteAddress)) ? addrlen : sizeof(m_remoteAddress);
     memcpy(&m_remoteAddress, addr, len);
@@ -955,12 +1000,14 @@ void BFCPConnection::RunLoop()
         struct timeval tv ;
         tv.tv_sec = 1 ;
         tv.tv_usec = 0 ;
-        fd_set fdset;
+        fd_set fdset, allSet;
         
         FD_ZERO(&fdset);
         FD_ZERO(&allSet);
         FD_SET(m_Socket, &allSet);
+#ifndef WIN32
 	FD_SET(pipefd[0], &allSet);
+#endif
         BFCP_SOCKET listenSocket = m_Socket ;
 	
         while (!m_bClose)
@@ -968,9 +1015,9 @@ void BFCPConnection::RunLoop()
             fdset = allSet ;	   
             tv.tv_sec = 1 ; 
             int nready = select((int)listenSocket+1, &fdset, NULL, NULL,&tv);
-            if ( m_bClose || m_Socket == INVALID_SOCKET ) continue ;
+            if ( m_bClose || m_Socket == BFCP_INVALID_SOCKET ) continue ;
 	    
-            //Log(INF, "BFCPConnection::transmitLoop nready=%d",nready);	    
+            //Log(INF, "BFCPConnection::transmitLoop nready=%d",nready);
             if (nready < 0)
 	    {
 		int err = errno;
@@ -984,11 +1031,15 @@ void BFCPConnection::RunLoop()
 		    Log(INF, "BFCPConnection: one client has been removed.");
 		    
 		    listenSocket = m_Socket;
+#ifndef WIN32
 		    if (pipefd[0] > listenSocket) listenSocket = pipefd[0];
+#endif
 		    
 		    FD_ZERO(&allSet);
 		    FD_SET(m_Socket, &allSet);
+#ifndef WIN32
 		    FD_SET(pipefd[0], &allSet);
+#endif
 		    
 		    for (it=m_ClientSocket.begin(); it != m_ClientSocket.end() && !m_bClose; it++) 
 		    {
@@ -1003,7 +1054,7 @@ void BFCPConnection::RunLoop()
                 Log(INF, "BFCPConnection::RunLoop %s:%d select failed. errno=%d",
 		    getLocalAdress(),getLocalPort(), err);
 		
-                if ( m_Socket != INVALID_SOCKET )
+                if ( m_Socket != BFCP_INVALID_SOCKET )
 		{
                     FD_CLR(m_Socket,&allSet);
 		    m_remoteClient.CloseSocket(m_Socket);
@@ -1012,7 +1063,7 @@ void BFCPConnection::RunLoop()
                 m_bClose = true ;
 		bfcp_mutex_unlock(m_mutConnect);
 		OnBFCPDisconnected(m_Socket);
-                m_Socket = INVALID_SOCKET;
+                m_Socket = BFCP_INVALID_SOCKET;
 		break;
             }
 
@@ -1024,13 +1075,15 @@ void BFCPConnection::RunLoop()
 		bool disconnect = false ;
 		BFCP_SOCKET s;
 		
+#ifndef WIN32
 		if ( FD_ISSET(pipefd[0], &fdset) )
 		{
 		    char bufpipe[2];
 		    read(pipefd[0], bufpipe, 2);
 		    //Log(INF, "BFCPConnection::RunLoop - control pipe signal");
 		}
-		
+#endif
+
 		if ( m_remoteClient.CheckExpiredAnswers(this) < 0 )
 		{
 		     /* Main socket has expired GoodByeAck -> should close */
@@ -1074,7 +1127,7 @@ void BFCPConnection::RunLoop()
 				m_remoteClient.CloseSocket(m_Socket);
 				m_bClose = true;
 			    }
-			    m_Socket = INVALID_SOCKET ;
+			    m_Socket = BFCP_INVALID_SOCKET ;
 			    break;
 			}
 		    }
@@ -1091,7 +1144,7 @@ void BFCPConnection::RunLoop()
 			addrlen = sizeof(out_addr);
 			Client2ServerInfo c2s(BFCP_OVER_TCP) ;
 			BFCP_SOCKET acceptSocket = accept(m_Socket, (sockaddr *) &out_addr, &addrlen);
-			if ( acceptSocket != INVALID_SOCKET ) 
+			if ( acceptSocket != BFCP_INVALID_SOCKET )
 			{
 				//c2s.SetRemoteAddress(&out_addr, addrlen);
 				c2s.GetSockInfo(acceptSocket);
@@ -1116,7 +1169,7 @@ void BFCPConnection::RunLoop()
 		
 		/*  Now process data on all connected clients */
 		bfcp_mutex_lock(m_mutConnect);
-		s = INVALID_SOCKET;
+		s = BFCP_INVALID_SOCKET;
 		
 		for (it=m_ClientSocket.begin(); it != m_ClientSocket.end() && !m_bClose; it++) 
 		{
@@ -1141,7 +1194,7 @@ void BFCPConnection::RunLoop()
 		    if ( ! FD_ISSET(s,&fdset) ) continue;
 		    
 		    // debug traces 
-		    //Log(INF, "BFCPConnection::RunLoop - we have data to read on %s socket FD [%d]", 
+		    //Log(INF, "BFCPConnection::RunLoop - we have data to read on %s socket FD [%d]",
 		    //    TRANSPORT_NAME(it->second.GetTransport()), s);
 			
 		    ret = it->second.ReadData(this, s);
@@ -1197,7 +1250,9 @@ void BFCPConnection::RunLoop()
 
 		    /* Recompute last FD for select */
 		    listenSocket = m_Socket;
+#ifndef WIN32
 		    if (pipefd[0] > listenSocket) listenSocket = pipefd[0];
+#endif
 		    
 		    for (it=m_ClientSocket.begin(); it != m_ClientSocket.end() && !m_bClose; it++) 
 		    {
@@ -1222,7 +1277,7 @@ void BFCPConnection::RunLoop()
 
 BFCP_SOCKET BFCPConnection::Client2ServerInfo::CreateSocket()
 {
-	BFCP_SOCKET fd = INVALID_SOCKET;
+	BFCP_SOCKET fd = BFCP_INVALID_SOCKET;
 	struct sockaddr * addr = (struct sockaddr *) &m_localAddress;
 	char msg[200];
 	if (addr->sa_family != AF_INET && addr->sa_family != AF_INET6)
@@ -1255,7 +1310,7 @@ BFCP_SOCKET BFCPConnection::Client2ServerInfo::CreateSocket()
 	}
 
 	    
-        if (fd != INVALID_SOCKET) 
+        if (fd != BFCP_INVALID_SOCKET)
 	{
 		if (GetTransport() != BFCP_OVER_UDP)
 		{
@@ -1267,23 +1322,44 @@ BFCP_SOCKET BFCPConnection::Client2ServerInfo::CreateSocket()
 #endif
 			{
 				CloseSocket(fd);
-				sprintf(msg, "failed to set REUSEADDR on socket [%d]. errno=%d", fd, errno );
+				sprintf(msg, "failed to set REUSEADDR on socket [%d]. errno=%d", (int)fd, errno );
 				throw BFCPException("BFCPConnection",__LINE__, "Transport protocol", msg);
 			}
 
 #ifdef WIN32
 			yes = 0;
-			if (setsockopt(fd SOL_SOCKET, SO_LINGER, (char *)&yes, sizeof(int)) < 0) 
+			if (setsockopt(fd, SOL_SOCKET, SO_LINGER, (char *)&yes, sizeof(int)) < 0)
 			{
 				CloseSocket(fd);
-				sprintf(msg, "failed to set SO_LINGER on socket [%d]. errno=%d", fd, errno );
+				sprintf(msg, "failed to set SO_LINGER on socket [%d]. errno=%d", (int)fd, errno );
 				throw BFCPException("BFCPConnection",__LINE__, "Transport protocol", msg);
 			}
 #endif
 
 			yes = 1;
 #ifndef WIN32
-			setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &yes, sizeof(int));
+			//setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &yes, sizeof(int));
+            struct KeepConfig {
+                /** The time (in seconds) the connection needs to remain
+                 * idle before TCP starts sending keepalive probes (TCP_KEEPIDLE socket option)
+                 */
+                int keepidle;
+                /** The maximum number of keepalive probes TCP should
+                 * send before dropping the connection. (TCP_KEEPCNT socket option)
+                 */
+                int keepcnt;
+
+                /** The time (in seconds) between individual keepalive probes.
+                 *  (TCP_KEEPINTVL socket option)
+                 */
+                int keepintvl;
+            };
+            struct KeepConfig cfg = { 60, 10, 10};
+            //set the keepalive options
+            setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &cfg.keepcnt, sizeof cfg.keepcnt);
+            setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &cfg.keepidle, sizeof cfg.keepidle);
+            setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &cfg.keepintvl, sizeof cfg.keepintvl);
+            sprintf(msg, "Keep alive idle_time=%d, keepcnt=%d and keepintvl=%d", cfg.keepidle, cfg.keepcnt, cfg.keepintvl);
 #else
 			setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&yes, sizeof(int));
 #endif
@@ -1294,11 +1370,9 @@ BFCP_SOCKET BFCPConnection::Client2ServerInfo::CreateSocket()
 			/* Bind the socket to the local address */
 			if( bind(fd, addr, m_addrlen) < 0)
 			{
-			    char err[200];
-			    			    
 			    CloseSocket(fd);
-			    sprintf(msg, "failed to bind() socket [%d] to %s : %d - error: %s", fd, GetLocalAddr(),
-				    GetLocalPort(), strerror_r(errno, err, sizeof(err)) );
+			    sprintf(msg, "failed to bind() socket [%d] to %s : %d - error: %s", (int)fd, GetLocalAddr(),
+				    GetLocalPort(), GetErrorText().c_str() );
 			    throw BFCPException("Client2ServerInfo",__LINE__, "Transport protocol", msg);
 			}
 
@@ -1310,7 +1384,7 @@ BFCP_SOCKET BFCPConnection::Client2ServerInfo::CreateSocket()
 #endif
 			{
 				CloseSocket(fd);
-				sprintf(msg, "failed to set socket [%d] in non blocking mode errno=%d", fd,   errno );
+				sprintf(msg, "failed to set socket [%d] in non blocking mode errno=%d", (int)fd,   errno );
 				throw BFCPException("BFCPConnection",__LINE__, "Transport protocol", msg);
 			}			
 		}
@@ -1390,7 +1464,7 @@ bool BFCPConnection::Client2ServerInfo::GetSockInfo(BFCP_SOCKET s)
     struct sockaddr_storage sa;
     socklen_t sa_len = sizeof(sa);
     
-    if ( s == INVALID_SOCKET) return false ;
+    if ( s == BFCP_INVALID_SOCKET) return false ;
 
     if ( getsockname(s, (sockaddr*)&sa , &sa_len ) == 0 )
     {
@@ -1433,7 +1507,7 @@ void BFCPConnection::Client2ServerInfo::CleanupRead()
 int BFCPConnection::Client2ServerInfo::ReadData( BFCPConnection * c, BFCP_SOCKET s)
 {
     int error = 0;
-    size_t toread = 0;
+    int toread = 0;
     //bfcp_message *message = NULL;
     struct sockaddr_storage addr;
     socklen_t addrlen = sizeof(addr);
@@ -1443,7 +1517,6 @@ int BFCPConnection::Client2ServerInfo::ReadData( BFCPConnection * c, BFCP_SOCKET
 	case BFCP_OVER_UDP:
 	    error = recvfrom(s, (char *) recvBuffer, BFCP_MAX_ALLOWED_SIZE, 0,
 			     (struct sockaddr *) &addr, &addrlen);
-	    
 	    if (error >= 0) recvidx = error;
 	    
 	    if (error == 0)
@@ -1455,8 +1528,7 @@ int BFCPConnection::Client2ServerInfo::ReadData( BFCPConnection * c, BFCP_SOCKET
 
 	    if ( error < 0 )
 	    {
-		char errmsg[400];
-		c->Log(ERR, "BFCP UDP connection read data error on fd [%d]. Errno = %d - %s", s, errno, strerror_r(errno, errmsg, sizeof(errmsg)));
+		c->Log(ERR, "BFCP UDP connection read data error on fd [%d]. Errno = %d - %s", s, errno, GetErrorText().c_str());
 		goto transport_read_error;    
 	    }
 	    
@@ -1465,7 +1537,8 @@ int BFCPConnection::Client2ServerInfo::ReadData( BFCPConnection * c, BFCP_SOCKET
 	    {
 		if ( ! CompareAddresses( (const struct sockaddr*) &m_remoteAddress, (const struct sockaddr *) &addr) )
 		{
-		    c->Log(ERR, "BFCP connection [%d]: dropped packet received from another IP address.", s);
+		    c->Log(ERR, "BFCP connection [%d]: dropped packet received from another IP address. %s", s,m_remoteAddressAndPort);
+		    c->Log(INF, "local is %s:%d and remote is expected to be %s", m_localAddressStr , m_localPort , m_remoteAddressAndPort);
 		    return -2;
 		}
 	    }
@@ -1486,8 +1559,7 @@ int BFCPConnection::Client2ServerInfo::ReadData( BFCPConnection * c, BFCP_SOCKET
 	    
 	    if ( error < 0 )
 	    {
-		char errmsg[400];
-		c->Log(ERR, "BFCP TCP connection read data error on fd [%d]. Errno = %d - %s", s, errno, strerror_r(errno, errmsg, sizeof(errmsg)));
+		c->Log(ERR, "BFCP TCP connection read data error on fd [%d]. Errno = %d - %s", s, errno, GetErrorText().c_str());
 		goto transport_read_error;
 	    }
 	    else if (error == 0)
@@ -1570,11 +1642,11 @@ transport_read_error:
     
 #define TCP_CHUNK 1400
 
-int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET s, bfcp_message * message)
+int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET s, bfcp_message * msg)
 {
     int ret;
     
-    if ( s == INVALID_SOCKET )
+    if ( s == BFCP_INVALID_SOCKET )
     {
 	c->Log(ERR, "Cannot send data. Invalid socket");
 	return -1;    
@@ -1582,15 +1654,15 @@ int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET
     
     if (GetTransport() == BFCP_OVER_UDP)
     {
-	UINT16 trID = bfcp_get_transactionID(message);
+	UINT16 trID = bfcp_get_transactionID(msg);
 	
 	if (m_remoteAddressAndPort[0] == 0)
 	{
 	    c->Log(ERR, "UDP/BFCP Could not send msg: no destination address.");
-	    return -2;
+	    //return -2; //Don't need to return in case of UDP
 	}
 	
-	ret = sendto(s, message->buffer, message->length, 0, (struct sockaddr *) &m_remoteAddress, m_addrlen);
+	ret = sendto(s, (const char *)msg->buffer, msg->length, 0, (struct sockaddr *) &m_remoteAddress, m_addrlen);
 	if (ret == -1)
 	{
 		c->Log(ERR, "UDP/BFCP message sending failed. errno=%d", errno);
@@ -1601,14 +1673,14 @@ int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET
 	/* record answer sent */
 	if (trID > 0)
 	{
-	    Transaction t(s, message);
+	    Transaction t(s, msg);
 	    answerMap[trID] = t;
 	}
     }
     else
     {
 	int total = 0;		/* How many bytes have been sent so far */
-        //message->length;	/* How many bytes still have to be sent */
+        //msg->length;	/* How many bytes still have to be sent */
 
         /* Wait up to ten seconds before timeout */
         struct timeval tv;
@@ -1619,7 +1691,7 @@ int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET
         FD_SET(s, &wset);
 	int error;
 
-        while (total < message->length) 
+        while (total < msg->length) 
 	{
             error = select(s+1, NULL, &wset, NULL, &tv);
             if (error < 0) return -3;	/* Select error */
@@ -1632,9 +1704,9 @@ int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET
 	    
             if (FD_ISSET(s, &wset))  
 	    {
-		int len = (message->length - total > TCP_CHUNK) ? TCP_CHUNK : message->length - total;
+		int len = (msg->length - total > TCP_CHUNK) ? TCP_CHUNK : msg->length - total;
 
-                error = send(s,(char*) message->buffer + total, len, 0);
+                error = send(s,(char*) msg->buffer + total, len, 0);
                 if (error < 0)
 		{			/* Error sending the message */
 			c->Log(ERR, "UDP/BFCP message sending failed. errno=%d", errno);
@@ -1649,18 +1721,12 @@ int BFCPConnection::Client2ServerInfo::SendData( BFCPConnection * c, BFCP_SOCKET
 
 int BFCPConnection::Client2ServerInfo::CloseSocket( BFCP_SOCKET s)
 {
-    if ( s != INVALID_SOCKET )
-    {
-	//Log(INF, "BFCP shutdown socket[0x%p] ",s);
-#ifndef WIN32
-	shutdown(s, SHUT_RDWR);
-	return close(s);
-#else
-	shutdown(s, SD_BOTH);
-	return closesocket(s);
-#endif
-    }	
+  if (s == BFCP_INVALID_SOCKET)
     return -1;
+
+  //Log(INF, "BFCP shutdown socket[0x%p] ",s);
+  shutdown(s, 2);
+  return closesocket(s);
 }
     
 bool BFCPConnection::GetServerInfo(char* localIp , int* localPort ) 
@@ -1672,7 +1738,7 @@ bool BFCPConnection::GetServerInfo(char* localIp , int* localPort )
 
 BFCP_SOCKET BFCPConnection::AddClient(int transport, int role, char * localAddress, UINT16 port)
 {
-    BFCP_SOCKET fd = INVALID_SOCKET;
+    BFCP_SOCKET fd = BFCP_INVALID_SOCKET;
     const char *addr;
 
     /* Only BFCP over UDP is supported for now */
@@ -1680,41 +1746,43 @@ BFCP_SOCKET BFCPConnection::AddClient(int transport, int role, char * localAddre
     {
 	Log(ERR, "BFCPConnection: Failed to add client: unsupported transport %s.",
 		    TRANSPORT_NAME(transport));
-	return INVALID_SOCKET;    
+	return BFCP_INVALID_SOCKET;
     }
-    
+
     if (localAddress == NULL || localAddress[0] == 0)
 	addr = getLocalAdress();
     else
 	addr = localAddress;
-    
+
     Client2ServerInfo c2s(transport, role);
     if ( c2s.SetLocalAddress(addr, port) )
     {
 	try
 	{
 	    fd = c2s.CreateSocket();
-	    if (fd != INVALID_SOCKET)
+	    if (fd != BFCP_INVALID_SOCKET)
 	    {
 		Log(INF, "AddClient: openened socket [%d]", fd);
 		bfcp_mutex_lock(m_mutConnect);
 		m_ClientSocket[fd] = c2s;
 		//m_ClientSocket.insert( std::pair<BFCP_SOCKET,Client2ServerInfo>(fd,c2s) );
 		bfcp_mutex_unlock(m_mutConnect);
-		
+
+#ifndef WIN32
 		/* This will unblock the select in RunLoop ! */
 		if ( write(pipefd[1], "ok", 2) < 0)
 		{
 		     Log(INF, "BFCPConnection: failed to signal the RunLoop for a new client");
 		}
-		
+#endif
+
 		if ( localAddress != NULL && localAddress[0] == 0 )
 		{
 		    strcpy( localAddress, c2s.GetLocalAddr() );
 		}
-		
-		
-		Log(INF, "BFCPConnection: Added client %s connection on %s : %d -> fd=[%d]", 
+
+
+		Log(INF, "BFCPConnection: Added client %s connection on %s : %d -> fd=[%d]",
 		    TRANSPORT_NAME(transport), addr, port, fd);
 	    }
 	    else
@@ -1737,21 +1805,21 @@ BFCP_SOCKET BFCPConnection::AddClient(int transport, int role, char * localAddre
 
 bool BFCPConnection::RemoveClient( BFCP_SOCKET s )
 {
-    if ( s != INVALID_SOCKET )
+    if ( s != BFCP_INVALID_SOCKET )
     {
 	bool lock = false;
-	
-	if ( pthread_self() != m_thread )
+
+	if ( BFCP_CURRENT_THREAD() != m_thread )
 	{
 	    bfcp_mutex_lock(m_mutConnect);
 	    lock = true;
         }
 
-	if ( m_ClientSocket.erase(s) > 0 ) 
+	if ( m_ClientSocket.erase(s) > 0 )
 	{
 	    Client2ServerInfo::CloseSocket(s);
 	}
-	
+
 	if ( lock ) bfcp_mutex_unlock(m_mutConnect);
 	return true;
     }
@@ -1763,14 +1831,14 @@ BFCPConnection::Transaction::Transaction(BFCP_SOCKET s, bfcp_message * m) : m_so
                     message = NULL;
             else
                     message = bfcp_copy_message(m);
-	    
+
 	gettimeofday(&timerExpiration, 0);
 	timerExpiration.tv_usec += 500*1000;
         timerDuration = 500;
         m_sockfd = s;
 }
 
-BFCPConnection::Transaction::Transaction() : m_sockfd(INVALID_SOCKET)
+BFCPConnection::Transaction::Transaction() : m_sockfd(BFCP_INVALID_SOCKET)
 {
         message = NULL;
         timerExpiration.tv_sec = 0;
@@ -1799,11 +1867,11 @@ BFCPConnection::Transaction& BFCPConnection::Transaction::operator = (const Tran
 bool BFCPConnection::GetConnectionLocalInfo(BFCP_SOCKET s, char * localIp , int* localPort)
 {
     std::map<BFCP_SOCKET,Client2ServerInfo>::iterator it;
-    
-    if ( s == INVALID_SOCKET )
+
+    if ( s == BFCP_INVALID_SOCKET )
     {
 	Log(ERR, "BFCPConnection: invalid file descriptor for socket.");
-	return false; 
+	return false;
     }
 
     if (s == m_Socket)
@@ -1813,16 +1881,16 @@ bool BFCPConnection::GetConnectionLocalInfo(BFCP_SOCKET s, char * localIp , int*
 	if (localPort) *localPort = m_remoteClient.GetLocalPort();
 	return true;
     }
-    
+
     bfcp_mutex_lock(m_mutConnect);
     it = m_ClientSocket.find(s);
     if ( it == m_ClientSocket.end() )
     {
 	bfcp_mutex_unlock(m_mutConnect);
 	Log(ERR, "BFCPConnection: cannot find client connection associated with fd=[%d]", s);
-	return false; 
+	return false;
     }
-    
+
     if (localIp != NULL) strcpy(localIp, it->second.GetLocalAddr());
     if (localPort != NULL)
     {
@@ -1831,18 +1899,4 @@ bool BFCPConnection::GetConnectionLocalInfo(BFCP_SOCKET s, char * localIp , int*
     }
     bfcp_mutex_unlock(m_mutConnect);
     return true;
-}
-
-void BFCPConnection::Log(const  char* pcFile, int iLine, int iErrLevel ,const  char* pcFormat, ...)
-{
-    va_list arg;
-    char s[3000];
-    va_start(arg,pcFormat);
-    vsnprintf(s,3000,pcFormat,arg);
-    va_end(arg);
-#ifdef WIN32
-    eConfLog(pcFile,iLine,iErrLevel,s);
-#else
-    printf("%s:%d | %d | %s\n",pcFile?pcFile:"" , iLine , iErrLevel , s);
-#endif
 }

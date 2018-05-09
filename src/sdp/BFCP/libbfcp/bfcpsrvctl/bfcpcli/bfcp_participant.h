@@ -54,10 +54,10 @@
 #include <pthread.h>
 #endif
 
-#include "bfcp_messages.h"
-#include "BFCPconnection.h"
-#include "BFCP_fsm.h"
-#include "bfcp_threads.h"
+#include "../../bfcpmsg/bfcp_messages.h"
+#include "../../BFCPconnection.h"
+#include "../../BFCP_fsm.h"
+#include "../../bfcp_threads.h"
 
 
 
@@ -121,9 +121,11 @@ public:
          */
         virtual bool OnBfcpParticipantEvent(e_BFCP_ACT p_evt , st_BFCP_fsm_event* p_FsmEvent ) = 0 ;
         virtual ~ParticipantEvent() {};
+
+        virtual void Log(const  char* /*pcFile*/, int /*iLine*/, int /*iErrorLevel*/, const  char* /*pcFormat*/, va_list /*args*/) { }
     };
     // traces 
-    virtual void Log(const  char* pcFile, int iLine, int iErrorLevel, const  char* pcFormat, ...) ;
+    virtual void Log(const  char* pcFile, int iLine, int iErrorLevel, const  char* pcFormat, ...);
     /**
      * Default destructor .
      * @return void
@@ -138,7 +140,7 @@ public:
      * @param p_ParticipantEvent ParticipantEvent class for OnBfcpParticipantEvent callback .
      * @return new instance .
      */
-    BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_floorID , UINT16 p_streamID ,BFCP_Participant::ParticipantEvent* p_ParticipantEvent);
+    BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_floorID , UINT16 p_streamID ,BFCP_Participant::ParticipantEvent* p_ParticipantEvent, int transport=BFCP_OVER_TCP);
 
     /**
      * Open a new TCP connection with BFCP server . 
@@ -203,6 +205,9 @@ public:
      */
     int bfcp_floorRelease_participant();
     
+    /*GoodBye*/
+    int bfcp_Goodbye_participant();
+
     /** 
       * Retrieve current particpant information 
       *@return pointer on current participant information 
@@ -211,8 +216,12 @@ public:
 
     /** \brief BFCP Participant side Messages-related operations */
 
+    /*FloorStatus or FloorRequestStatus Ack*/
+    int bfcp_floorStatus_floorRequestStatus_Ack(e_bfcp_primitives primitive, UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID);
     /** Hello */
     int bfcp_hello_participant(st_bfcp_participant_information* participant);
+    /** HelloAck **/
+    int bfcp_helloAck_participant(UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID);
     /** FloorRequest */
     int bfcp_floorRequest_participant(st_bfcp_participant_information* participant, UINT16 beneficiaryID, e_bfcp_priority priority, bfcp_floors_participant *list_floors, char *participant_info);
     /** FloorRelease */
@@ -225,7 +234,10 @@ public:
     int bfcp_floorQuery_participant(st_bfcp_participant_information* participant, bfcp_floors_participant *list_floors);
     /** ChairAction */
     int bfcp_chairAction_participant(st_bfcp_participant_information* participant, UINT16 floorRequestID, char *statusInfo, UINT16 status, bfcp_floors_participant *list_floors, UINT16 queue_position);
-
+    /*GoodBye*/
+    int bfcp_Goodbye_participant(st_bfcp_participant_information* participant, UINT16 floorRequestID);
+    /*GoodbyeAck*/
+    int bfcp_goodbyeAck_participant(UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID);
 
     /** Helper operations */
 

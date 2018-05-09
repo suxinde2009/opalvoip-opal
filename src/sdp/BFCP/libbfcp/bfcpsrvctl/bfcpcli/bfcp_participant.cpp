@@ -1,15 +1,12 @@
 
-#ifdef WIN32
-#include "stdafx.h"
-#endif
 #include <sstream>
 
-#include "BFCPexception.h"
-#include "bfcp_participant.h"
-#include "bfcp_strings.h"
-#include "stdafx.h"
-#include "bfcp_threads.h"
+#include "../../BFCPexception.h"
+#include "../../bfcp_threads.h"
+#include "../../bfcpmsg/bfcp_strings.h"
+#include "../bfcpcli/bfcp_participant.h"
     
+
 /* Macro to check for errors after sending a BFCP message */
 #define BFCP_SEND_CHECK_ERRORS()			\
     if(arguments != NULL)					\
@@ -28,7 +25,7 @@ extern "C" void _ParticpantLog(char* pcFile, int iLine, int iErrorLevel, char* p
     return  _p.Log(pcFile, iLine, iErrorLevel, s ) ;
 }
     
-BFCP_Participant::BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_floorID , UINT16 p_streamID , BFCP_Participant::ParticipantEvent* p_ParticipantEvent)
+BFCP_Participant::BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_floorID , UINT16 p_streamID , BFCP_Participant::ParticipantEvent* p_ParticipantEvent, int transport):BFCPConnection(transport)
 {
     st_bfcp_participant_information* struct_participant;
     
@@ -55,28 +52,21 @@ BFCP_Participant::BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_f
     m_currentFloorRequestID= 0 ;
     m_ParticipantEvent = p_ParticipantEvent  ; 
     bfcp_mutex_init(count_mutex, NULL);
-    m_PartSocket = INVALID_SOCKET ;
+    m_PartSocket = BFCP_INVALID_SOCKET ;
     BFCP_msg_LogCallback(  _ParticpantLog  );
 }
 
 BFCP_Participant::~BFCP_Participant(void)
 {
     removeSession();
-#ifdef WIN32
-    if ( count_mutex ) {
-#endif
-        bfcp_mutex_lock(count_mutex);
-        if ( m_bfcp_participant_information ) {
-            bfcp_destroy_bfcp_participant(&m_bfcp_participant_information);
-            m_bfcp_participant_information = NULL ;
-        }
-        checkFloorRequestID( 0 );
-        bfcp_mutex_destroy(count_mutex);
-#ifdef WIN32
-
+    bfcp_mutex_lock(count_mutex);
+    if (m_bfcp_participant_information) {
+        bfcp_destroy_bfcp_participant(&m_bfcp_participant_information);
+        m_bfcp_participant_information = NULL;
     }
-#endif
-    m_PartSocket = INVALID_SOCKET ;
+    checkFloorRequestID(0);
+    bfcp_mutex_destroy(count_mutex);
+    m_PartSocket = BFCP_INVALID_SOCKET;
 }
 
 bool BFCP_Participant::CloseTcpConnection(){
@@ -93,7 +83,6 @@ bool BFCP_Participant::OpenTcpConnection(const char* local_address,
 {
     bool Status = false ;
     m_base_transactionID = 1 ; 
-    m_bfcp_transport = BFCP_OVER_TCP;
     if ( !m_bfcp_participant_information )
     {
         Log(ERR,"BFCP_Participant:: invalid participant ! ");
@@ -255,6 +244,200 @@ int BFCP_Participant::bfcp_hello_participant(st_bfcp_participant_information* pa
 	return 0;
 }
 
+int BFCP_Participant::bfcp_floorStatus_floorRequestStatus_Ack(e_bfcp_primitives primitive, UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID)
+{
+    e_bfcp_primitives ack;
+    if(primitive == e_primitive_FloorStatus){
+        Log(INF,"Sending FloorStatusAck:");
+        ack = e_primitive_FloorStatusAck;
+    }else{
+        Log(INF,"Sending FloorRequestStatusAck:");
+        ack = e_primitive_FloorRequestStatusAck;
+    }
+    int error;
+    bfcp_arguments *arguments;
+    bfcp_message *message;
+
+    bfcp_mutex_lock(count_mutex);
+
+    /* Prepare a new 'Hello' message */
+    arguments = bfcp_new_arguments();
+    arguments->primitive = ack;
+    arguments->entity = bfcp_new_entity(ConferenceID, TransactionID, userID);
+    /* Create a list of all the primitives the FCS supports */
+    arguments->primitives= bfcp_new_supported_list(e_primitive_FloorRequest,
+                           e_primitive_FloorRelease,
+                           e_primitive_FloorQuery,
+                           e_primitive_FloorStatus,
+                           e_primitive_Hello,
+                           e_primitive_HelloAck,
+                           e_primitive_Goodbye,
+                           e_primitive_GoodbyeAck,
+                           e_primitive_Error, 0);
+
+    /* Create a list of all the attributes the FCS supports */
+    arguments->attributes= bfcp_new_supported_list(BENEFICIARY_ID,
+                           FLOOR_ID,
+                           FLOOR_REQUEST_ID,
+                           PRIORITY,
+                           REQUEST_STATUS,
+                           ERROR_CODE,
+                           ERROR_INFO,
+                           PARTICIPANT_PROVIDED_INFO,
+                           STATUS_INFO,
+                           SUPPORTED_ATTRIBUTES,
+                           SUPPORTED_PRIMITIVES,
+                           USER_DISPLAY_NAME,
+                           USER_URI,
+                           BENEFICIARY_INFORMATION,
+                           FLOOR_REQUEST_INFORMATION,
+                           REQUESTED_BY_INFORMATION,
+                           FLOOR_REQUEST_STATUS,
+                           OVERALL_REQUEST_STATUS,
+                           NONCE,
+                           DIGEST, 0);
+    m_base_transactionID++;
+    message = bfcp_build_message(arguments);
+    if(!message) {
+        bfcp_mutex_unlock(count_mutex);
+        Log(INF,"Message ids NULL");
+        return -1;
+    }
+
+
+    bfcp_mutex_unlock(count_mutex);
+    /* Send the message to the FCS */
+    error = sendBFCPmessage(m_PartSocket,message);
+    BFCP_SEND_CHECK_ERRORS();
+
+    return 0;
+
+}
+
+
+/* HelloAck */
+int BFCP_Participant::bfcp_helloAck_participant(UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID)
+{
+    int error;
+    bfcp_arguments *arguments;
+    bfcp_message *message;
+
+    bfcp_mutex_lock(count_mutex);
+
+    /* Prepare a new 'Hello' message */
+    arguments = bfcp_new_arguments();
+    arguments->primitive = e_primitive_HelloAck;
+    arguments->entity = bfcp_new_entity(ConferenceID, TransactionID, userID);
+    /* Create a list of all the primitives the FCS supports */
+    arguments->primitives= bfcp_new_supported_list(e_primitive_FloorRequest,
+                           e_primitive_FloorRelease,
+                           e_primitive_FloorQuery,
+               e_primitive_FloorStatus,
+                           e_primitive_Hello,
+                           e_primitive_HelloAck,
+               e_primitive_Goodbye,
+               e_primitive_GoodbyeAck,
+                           e_primitive_Error, 0);
+
+    /* Create a list of all the attributes the FCS supports */
+    arguments->attributes= bfcp_new_supported_list(BENEFICIARY_ID,
+                           FLOOR_ID,
+                           FLOOR_REQUEST_ID,
+                           PRIORITY,
+                           REQUEST_STATUS,
+                           ERROR_CODE,
+                           ERROR_INFO,
+                           PARTICIPANT_PROVIDED_INFO,
+                           STATUS_INFO,
+                           SUPPORTED_ATTRIBUTES,
+                           SUPPORTED_PRIMITIVES,
+                           USER_DISPLAY_NAME,
+                           USER_URI,
+                           BENEFICIARY_INFORMATION,
+                           FLOOR_REQUEST_INFORMATION,
+                           REQUESTED_BY_INFORMATION,
+                           FLOOR_REQUEST_STATUS,
+                           OVERALL_REQUEST_STATUS,
+                           NONCE,
+                           DIGEST, 0);
+    m_base_transactionID++;
+    message = bfcp_build_message(arguments);
+    if(!message) {
+        bfcp_mutex_unlock(count_mutex);
+        Log(INF,"Message ids NULL");
+        return -1;
+    }
+
+
+    bfcp_mutex_unlock(count_mutex);
+    /* Send the message to the FCS */
+    error = sendBFCPmessage(m_PartSocket,message);
+    BFCP_SEND_CHECK_ERRORS();
+
+    return 0;
+}
+
+int BFCP_Participant::bfcp_goodbyeAck_participant(UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID)
+{
+    int error;
+    bfcp_arguments *arguments;
+    bfcp_message *message;
+
+    bfcp_mutex_lock(count_mutex);
+
+    /* Prepare a new 'Hello' message */
+    arguments = bfcp_new_arguments();
+    arguments->primitive = e_primitive_GoodbyeAck;
+    arguments->entity = bfcp_new_entity(ConferenceID, TransactionID, userID);
+    /* Create a list of all the primitives the FCS supports */
+    arguments->primitives= bfcp_new_supported_list(e_primitive_FloorRequest,
+            e_primitive_FloorRelease,
+            e_primitive_FloorQuery,
+            e_primitive_FloorStatus,
+            e_primitive_Hello,
+            e_primitive_HelloAck,
+            e_primitive_Goodbye,
+            e_primitive_GoodbyeAck,
+            e_primitive_Error, 0);
+
+    /* Create a list of all the attributes the FCS supports */
+    arguments->attributes= bfcp_new_supported_list(BENEFICIARY_ID,
+            FLOOR_ID,
+            FLOOR_REQUEST_ID,
+            PRIORITY,
+            REQUEST_STATUS,
+            ERROR_CODE,
+            ERROR_INFO,
+            PARTICIPANT_PROVIDED_INFO,
+            STATUS_INFO,
+            SUPPORTED_ATTRIBUTES,
+            SUPPORTED_PRIMITIVES,
+            USER_DISPLAY_NAME,
+            USER_URI,
+            BENEFICIARY_INFORMATION,
+            FLOOR_REQUEST_INFORMATION,
+            REQUESTED_BY_INFORMATION,
+            FLOOR_REQUEST_STATUS,
+            OVERALL_REQUEST_STATUS,
+            NONCE,
+            DIGEST, 0);
+    m_base_transactionID++;
+    message = bfcp_build_message(arguments);
+    if(!message) {
+        bfcp_mutex_unlock(count_mutex);
+        Log(INF,"Message ids NULL");
+        return -1;
+    }
+
+
+    bfcp_mutex_unlock(count_mutex);
+    /* Send the message to the FCS */
+    error = sendBFCPmessage(m_PartSocket,message);
+    BFCP_SEND_CHECK_ERRORS();
+
+    return 0;
+}
+
 int BFCP_Participant::bfcp_floorRequest_participant(UINT16 p_floorID){
     st_bfcp_participant_information* participant =  m_bfcp_participant_information ;
     UINT16 beneficiaryID = m_bfcp_participant_information->userID ;
@@ -385,6 +568,51 @@ int BFCP_Participant::bfcp_floorRelease_participant(){
 
     int error = bfcp_floorRelease_participant(participant,m_currentFloorRequestID);
     return error ;
+}
+
+/* Goodbye */
+int BFCP_Participant::bfcp_Goodbye_participant(){
+    st_bfcp_participant_information* participant =  m_bfcp_participant_information ;
+
+    Log(INF,"BFCP_Participant:: created Goodbye FloorRequestID[%d] ",m_currentFloorRequestID  );
+
+    int error = bfcp_Goodbye_participant(participant,m_currentFloorRequestID);
+    return error ;
+}
+
+int BFCP_Participant::bfcp_Goodbye_participant(st_bfcp_participant_information* participant, UINT16 floorRequestID)
+{
+    if(participant == NULL)
+        participant = m_bfcp_participant_information ;
+
+    bfcp_arguments *arguments = NULL;
+    bfcp_message *message;
+    int error;
+
+    bfcp_mutex_lock(count_mutex);
+
+    /* Prepare a new 'FloorRelease' message */
+    arguments = bfcp_new_arguments();
+    arguments->primitive = e_primitive_Goodbye;
+    arguments->entity = bfcp_new_entity(participant->conferenceID, m_base_transactionID, participant->userID);
+    m_base_transactionID++;
+
+    arguments->frqID = floorRequestID;
+
+    message = bfcp_build_message(arguments);
+    if(!message) {
+        bfcp_mutex_unlock(count_mutex);
+        return -1;
+    }
+
+
+    bfcp_mutex_unlock(count_mutex);
+    /* Send the message to the FCS */
+    error = sendBFCPmessage(m_PartSocket,message);
+    BFCP_SEND_CHECK_ERRORS();
+
+
+    return 0;
 }
 
 
@@ -822,6 +1050,19 @@ bool BFCP_Participant::bfcp_received_msg(bfcp_received_message *recv_msg)
             evt.Error_codes = (e_bfcp_error_codes)recv_msg->arguments->error->code ;
             BFCPFSM_FsmEvent( &evt );
             break;
+        case e_primitive_Hello:
+            Log(INF,"Hello:");
+            if(recv_msg->entity != NULL) {
+                evt.TransactionID = recv_msg->entity->transactionID ;
+                evt.userID        = recv_msg->entity->userID ;
+                evt.conferenceID  = recv_msg->entity->conferenceID ;
+                Log(INF,"TransactionID: %d", evt.TransactionID);
+                Log(INF,"UserID         %d", evt.userID);
+                Log(INF,"ConferenceID:  %d",evt.conferenceID);
+            }
+            bfcp_helloAck_participant(evt.conferenceID, evt.userID, evt.TransactionID);
+            BFCPFSM_FsmEvent( &evt );
+            break;
         case e_primitive_HelloAck:
             Log(INF,"HelloAck:");
             info_primitives = recv_msg->arguments->primitives;
@@ -929,6 +1170,10 @@ bool BFCP_Participant::bfcp_received_msg(bfcp_received_message *recv_msg)
                     tempInfo=tempInfo->next;
                 }
             }
+            if((evt.Status != BFCP_PENDING) && (evt.Status != BFCP_ACCEPTED)  )
+            {
+                bfcp_floorStatus_floorRequestStatus_Ack(recv_msg->primitive, conferenceID, userID, transactionID);
+            }
             BFCPFSM_FsmEvent( &evt );
             Log(INF,"");
             break;
@@ -985,6 +1230,19 @@ bool BFCP_Participant::bfcp_received_msg(bfcp_received_message *recv_msg)
             }
             BFCPFSM_FsmEvent( &evt );
             Log(INF,"");
+            break;
+        case e_primitive_Goodbye:
+            Log(INF,"Hello:");
+            if(recv_msg->entity != NULL) {
+                evt.TransactionID = recv_msg->entity->transactionID ;
+                evt.userID        = recv_msg->entity->userID ;
+                evt.conferenceID  = recv_msg->entity->conferenceID ;
+                Log(INF,"TransactionID: %d", evt.TransactionID);
+                Log(INF,"UserID         %d", evt.userID);
+                Log(INF,"ConferenceID:  %d",evt.conferenceID);
+            }
+            bfcp_goodbyeAck_participant(evt.conferenceID, evt.userID, evt.TransactionID);
+            BFCPFSM_FsmEvent( &evt );
             break;
         default:
             break;
@@ -1087,8 +1345,7 @@ bool BFCP_Participant::BFCPFSM_UpdatesBfcpFsmEvent( s_bfcp_msg_event* p_bfcp_evt
             bfcpFsmEvt.BeneficiaryID = p_bfcp_evt->BeneficiaryID ;
             bfcpFsmEvt.i_parm = p_bfcp_evt->i_parm ;
             bfcpFsmEvt.pt_param = p_bfcp_evt->pt_param ;
-            if ( p_bfcp_evt->c_param ) 
-                ft_tcsncpy(bfcpFsmEvt.c_param ,p_bfcp_evt->c_param , BFCP_STRING_SIZE );
+            strncpy(bfcpFsmEvt.c_param ,p_bfcp_evt->c_param , sizeof(bfcpFsmEvt.c_param));
         }else{
             if ( m_bfcp_participant_information ){
             bfcpFsmEvt.userID = m_bfcp_participant_information->userID ;
@@ -1263,16 +1520,16 @@ bool BFCP_Participant::BFCPFSM_UpdateHwnd(s_bfcp_msg_event* p_evt){
     return false ;
 }
 
-void BFCP_Participant::Log(const  char* pcFile, int iLine, int iErrLevel ,const  char* pcFormat, ...) {
-    va_list arg;
-    char s[3000];
-    va_start(arg,pcFormat);
-    vsnprintf(s,3000,pcFormat,arg);
-    va_end(arg);
-#ifdef WIN32
-    eConfLog(pcFile,iLine,iErrLevel,s);
-#else
-    printf("%s:%d | %d | %s\n",pcFile?pcFile:"" , iLine , iErrLevel , s);
-#endif
+void BFCP_Participant::Log(const  char* pcFile, int iLine, int iErrLevel, const  char* pcFormat, ...) {
+  va_list arg;
+  va_start(arg, pcFormat);
+  if (m_ParticipantEvent)
+    m_ParticipantEvent->Log(pcFile, iLine, iErrLevel, pcFormat, arg);
+  else {
+    fprintf(stderr, "%s:%d | %d | ", pcFile ? pcFile : "", iLine, iErrLevel);
+    vfprintf(stderr, pcFormat, arg);
+    fputc('\n', stderr);
+  }
+  va_end(arg);
 }
 

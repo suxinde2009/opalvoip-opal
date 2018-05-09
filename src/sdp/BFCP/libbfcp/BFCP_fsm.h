@@ -18,8 +18,8 @@
  #ifndef _BFCP_FSM_H_
 #define _BFCP_FSM_H_
 
-#include "bfcp_messages.h"
-#include "bfcp_strings.h"
+#include "bfcpmsg/bfcp_messages.h"
+#include "bfcpmsg/bfcp_strings.h"
 
 
 class BFCP_fsm
@@ -118,12 +118,12 @@ public:
     virtual void Log(const  char* pcFile, int iLine, int iErrorLevel, const  char* pcFormat, ...) = 0;
     // Virtual FSM transistion
     virtual void BFCPFSM_init(st_BFCP_fsm BFCPStateMachine[BFCP_ACT_LAST][BFCP_ACT_LAST]) ;
-    virtual bool BFCPFSM_NullFunction( s_bfcp_msg_event* p_evt );
-    virtual bool BFCPFSM_Connected(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_Disconnected(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_FloorStatusAccepted(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_FloorStatusGranted(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_FloorStatusAborted(  s_bfcp_msg_event* p_evt ){return true;};
+    virtual bool BFCPFSM_NullFunction(s_bfcp_msg_event* p_evt );
+    virtual bool BFCPFSM_Connected(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_Disconnected(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_FloorStatusAccepted(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_FloorStatusGranted(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_FloorStatusAborted(s_bfcp_msg_event* /*p_evt*/){return true;};
     /*
     +-------+-----------+
     | Value | Status    |
@@ -137,18 +137,18 @@ public:
     |   7   | Revoked   |  floorRequestStatusAborted
     +-------+-----------+
     */
-    virtual bool BFCPFSM_FloorRequestStatusAccepted(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_FloorRequestStatusGranted(  s_bfcp_msg_event* p_evt ) {return true;};
-    virtual bool BFCPFSM_FloorRequestStatusAborted(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_FloorReleaseStatusAborted(  s_bfcp_msg_event* p_evt ) {return true;};
-    virtual bool BFCPFSM_FloorRelease(  s_bfcp_msg_event* p_evt ) {return true;};
-    virtual bool BFCPFSM_FloorRequest(  s_bfcp_msg_event* p_evt ){return true;};
-    virtual bool BFCPFSM_UpdateHwnd(  s_bfcp_msg_event* p_evt ) {return true;};
-    virtual bool BFCPFSM_Hello(s_bfcp_msg_event* p_evt) {return true;};
-    virtual bool BFCPFSM_HelloAck(s_bfcp_msg_event* p_evt) {return true;};
-    virtual bool BFCPFSM_PrimitiveNotSupported(s_bfcp_msg_event* p_evt) {return true;};
+    virtual bool BFCPFSM_FloorRequestStatusAccepted(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_FloorRequestStatusGranted(s_bfcp_msg_event* /*p_evt*/) {return true;};
+    virtual bool BFCPFSM_FloorRequestStatusAborted(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_FloorReleaseStatusAborted(s_bfcp_msg_event* /*p_evt*/) {return true;};
+    virtual bool BFCPFSM_FloorRelease(s_bfcp_msg_event* /*p_evt*/) {return true;};
+    virtual bool BFCPFSM_FloorRequest(s_bfcp_msg_event* /*p_evt*/){return true;};
+    virtual bool BFCPFSM_UpdateHwnd(s_bfcp_msg_event* /*p_evt*/) {return true;};
+    virtual bool BFCPFSM_Hello(s_bfcp_msg_event* /*p_evt*/) {return true;};
+    virtual bool BFCPFSM_HelloAck(s_bfcp_msg_event* /*p_evt*/) {return true;};
+    virtual bool BFCPFSM_PrimitiveNotSupported(s_bfcp_msg_event* /*p_evt*/) {return true;};
     // Virtual FSM exit function
-    virtual bool BFCPFSM_UpdatesBfcpFsmEvent( s_bfcp_msg_event* p_bfcp_evt , e_BFCP_ACT p_evt ,e_BFCP_ACT p_st ){return true;};
+    virtual bool BFCPFSM_UpdatesBfcpFsmEvent( s_bfcp_msg_event* /*p_bfcp_evt*/, e_BFCP_ACT /*p_evt*/,e_BFCP_ACT /*p_st*/) { return true; }
 };
 
 static const struct _bfcp_actions {
