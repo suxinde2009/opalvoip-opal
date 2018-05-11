@@ -1308,6 +1308,12 @@ bool MyManager::Initialise(bool startMinimised)
       m_videoWindowInfo[preview][role].ReadConfig(config, VideoWindowKeyBase[preview][role]);
   }
 
+#if OPAL_H239 || OPAL_BFCP
+  value1 = m_ExtendedVideoRoles;
+  config->Read(ExtendedVideoRolesKey, &value1);
+  m_ExtendedVideoRoles = (ExtendedVideoRoles)value1;
+#endif
+
   ////////////////////////////////////////
   // Fax fields
 #if OPAL_FAX
@@ -1472,9 +1478,6 @@ bool MyManager::Initialise(bool startMinimised)
     h323EP->ForceSymmetricTCS(onoff);
 
 #if OPAL_H239
-  value1 = m_ExtendedVideoRoles;
-  config->Read(ExtendedVideoRolesKey, &value1);
-  m_ExtendedVideoRoles = (ExtendedVideoRoles)value1;
   h323EP->SetDefaultH239Control(config->Read(EnableH239ControlKey, h323EP->GetDefaultH239Control()));
 #endif
 
@@ -3875,6 +3878,9 @@ bool MyManager::AdjustVideoFormats()
       mediaFormat.SetOptionInteger(OpalVideoFormat::TargetBitRateOption(), m_VideoTargetBitRate*1000U);
       mediaFormat.SetOptionInteger(OpalVideoFormat::FrameTimeOption(), mediaFormat.GetClockRate()/frameRate);
 
+      OpalMediaType(OpalPresentationVideoMediaDefinition::Name())->SetAutoStart(
+              m_ExtendedVideoRoles != e_DisabledExtendedVideoRoles ? OpalMediaType::ReceiveTransmit : OpalMediaType::DontOffer);
+
       switch (m_ExtendedVideoRoles) {
         case e_DisabledExtendedVideoRoles :
           mediaFormat.SetOptionInteger(OpalVideoFormat::ContentRoleMaskOption(), 0);
@@ -4707,6 +4713,7 @@ OptionsDialog::OptionsDialog(MyManager * manager)
   INIT_FIELD(VideoMaxBitRate, m_manager.m_VideoMaxBitRate);
   INIT_FIELD(VideoOnHold, m_manager.pcssEP->GetVideoOnHoldDevice().deviceName);
   INIT_FIELD(VideoOnRing, m_manager.pcssEP->GetVideoOnRingDevice().deviceName);
+  INIT_FIELD(ExtendedVideoRoles, m_manager.m_ExtendedVideoRoles);
 
   PStringArray knownSizes = PVideoFrameInfo::GetSizeNames();
   m_VideoGrabFrameSize = m_manager.m_VideoGrabFrameSize;
@@ -4872,7 +4879,6 @@ OptionsDialog::OptionsDialog(MyManager * manager)
   INIT_FIELD(DisableH245inSETUP, m_manager.h323EP->IsH245inSetupDisabled() != false);
   INIT_FIELD(ForceSymmetricTCS, m_manager.h323EP->IsForcedSymmetricTCS() != false);
 
-  INIT_FIELD(ExtendedVideoRoles, m_manager.m_ExtendedVideoRoles);
   INIT_FIELD(EnableH239Control, m_manager.h323EP->GetDefaultH239Control());
 
   INIT_FIELD(GatekeeperMode, m_manager.m_gatekeeperMode);
@@ -5226,6 +5232,8 @@ bool OptionsDialog::TransferDataFromWindow()
   SAVE_FIELD_STR(VideoOnRing, videoDevice.deviceName = );
   m_manager.pcssEP->SetVideoOnRingDevice(videoDevice);
 
+  SAVE_FIELD(ExtendedVideoRoles, m_manager.m_ExtendedVideoRoles = (MyManager::ExtendedVideoRoles));
+
   ////////////////////////////////////////
   // Fax fields
 #if OPAL_FAX
@@ -5291,6 +5299,8 @@ bool OptionsDialog::TransferDataFromWindow()
     PwxString selectedFormat = m_selectedCodecs->GetString(codecIndex);
     for (mm = m_manager.m_mediaInfo.begin(); mm != m_manager.m_mediaInfo.end(); ++mm) {
       if (selectedFormat == mm->mediaFormat.GetName()) {
+        MyMedia * media = (MyMedia *)m_selectedCodecs->GetClientData(codecIndex);
+        mm->mediaFormat = PAssertNULL(media)->mediaFormat;
         mm->preferenceOrder = codecIndex;
         break;
       }
@@ -5352,7 +5362,6 @@ bool OptionsDialog::TransferDataFromWindow()
   SAVE_FIELD(DisableH245inSETUP, m_manager.h323EP->DisableH245inSetup);
   SAVE_FIELD(ForceSymmetricTCS, m_manager.h323EP->ForceSymmetricTCS);
 
-  SAVE_FIELD(ExtendedVideoRoles, m_manager.m_ExtendedVideoRoles = (MyManager::ExtendedVideoRoles));
   SAVE_FIELD(EnableH239Control, m_manager.h323EP->SetDefaultH239Control);
 
 #if OPAL_PTLIB_SSL
