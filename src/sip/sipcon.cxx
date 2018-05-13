@@ -842,7 +842,11 @@ OpalMediaStream * SIPConnection::CreateMediaStream(const OpalMediaFormat & media
     return NULL;
   }
 
+#if OPAL_VIDEO 
+  if (mediaSession->GetVideoContentRole() != OpalVideoFormat::ePresentation && mediaSession->GetMediaType() != mediaType) {
+#else
   if (mediaSession->GetMediaType() != mediaType) {
+#endif
     PTRACE(3, "Replacing " << mediaSession->GetMediaType() << " session " << sessionID << " with " << mediaType);
     mediaSession = CreateMediaSession(sessionID, mediaType, sessionType);
     ReplaceMediaSession(sessionID, mediaSession);

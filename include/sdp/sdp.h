@@ -359,6 +359,7 @@ class SDPMediaDescription : public PObject, public SDPCommonAttributes
     virtual void SetLabel(const PString & label) { m_label = label; }
 
 #if OPAL_VIDEO
+    // RFC4796
     virtual OpalVideoFormat::ContentRole GetContentRole() const { return OpalVideoFormat::eNoRole; }
     virtual void SetContentRole(OpalVideoFormat::ContentRole /*role*/) { }
 #endif // OPAL_VIDEO
@@ -548,6 +549,8 @@ class SDPVideoMediaDescription : public SDPRTPAVPMediaDescription
     virtual void OutputAttributes(ostream & str) const;
     virtual void SetAttribute(const PString & attr, const PString & value);
     virtual bool PostDecode(const OpalMediaFormatList & mediaFormats);
+    virtual bool FromSession(OpalMediaSession * session, const SDPMediaDescription * offer, RTP_SyncSourceId ssrc);
+    virtual bool ToSession(OpalMediaSession * session, RTP_SyncSourceArray & ssrcs) const;
     virtual OpalVideoFormat::ContentRole GetContentRole() const { return m_contentRole; }
     virtual void SetContentRole( OpalVideoFormat::ContentRole role ) { m_contentRole = role; }
 
@@ -575,6 +578,7 @@ class SDPVideoMediaDescription : public SDPRTPAVPMediaDescription
         unsigned m_maxTxHeight;
     };
 
+    // RFC4796
     OpalVideoFormat::ContentRole  m_contentRole;
     unsigned                      m_contentMask;
 };
@@ -592,7 +596,6 @@ class SDPApplicationMediaDescription : public SDPMediaDescription
   PCLASSINFO(SDPApplicationMediaDescription, SDPMediaDescription);
   public:
     SDPApplicationMediaDescription(const OpalTransportAddress & address);
-    virtual PCaselessString GetSDPTransportType() const;
     virtual SDPMediaFormat * CreateSDPMediaFormat();
     virtual PString GetSDPMediaType() const;
 

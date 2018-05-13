@@ -305,8 +305,16 @@ ifeq ($(OPAL_SDP),yes)
              $(OPAL_SRCDIR)/sdp/sdphttpep.cxx \
              $(OPAL_SRCDIR)/sip/sdp.cxx \
              $(OPAL_SRCDIR)/sip/ice.cxx
-endif # OPAL_SDP
 
+ifeq ($(OPAL_BFCP),yes)
+  SOURCES += $(OPAL_SRCDIR)/sdp/bfcpinterface.cxx
+
+  BFCP_DIR := $(OPAL_TOP_LEVEL_DIR)/src/sdp/BFCP
+  LIBS     := -L$(BFCP_DIR)/lib -lbfcprel $(LIBS)
+  BFCP_LIB := $(BFCP_DIR)/lib/libbfcprel.a
+endif # OPAL_BFCP
+
+endif # OPAL_SDP
 
 ########################################
 
@@ -494,6 +502,12 @@ ifdef SRTP_LIB
 	$(MAKE) -C $(SRTP_DIR)
 endif
 
+ifeq ($(OPAL_BFCP), yes)   
+  $(STATIC_LIB_FILE) : $(BFCP_LIB)	
+
+  $(BFCP_LIB) :
+	$(MAKE) -C $(BFCP_DIR) lib
+endif #OPAL_BFCP
 
 ###############################################################################
 

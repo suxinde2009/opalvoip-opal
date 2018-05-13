@@ -52,6 +52,8 @@ extern "C" void _ServerLog(char* pcFile, int iLine, int iErrorLevel, char* pcFor
 }
 
 BFCP_Server::BFCP_Server(UINT8 Max_conf ,UINT32 p_confID ,UINT32 p_userID , UINT32 p_floorID , UINT32 p_streamID , BFCP_Server::ServerEvent* p_ServerEvent, int transport ):BFCPConnection(transport) {
+    m_ServerEvent = p_ServerEvent; // Must be before Log()
+
     m_struct_server = NULL ;
     if(!Max_conf)
         Max_conf = BFCP_MAX_CONF;
@@ -100,7 +102,6 @@ BFCP_Server::BFCP_Server(UINT8 Max_conf ,UINT32 p_confID ,UINT32 p_userID , UINT
     struct_server->Actual_number_conference = 0;
     struct_server->Max_number_conference = --Max_conf;
     
-    m_ServerEvent = p_ServerEvent  ;
     m_struct_server = struct_server ;
 
     int chair_automatic_accepted_policy = 0;  // Automated policy when chair is missing: 0 = accept the request / 1 = don't

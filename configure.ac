@@ -31,6 +31,7 @@ OPAL_SIP=yes
 OPAL_IAX2=yes
 OPAL_SKINNY=yes
 OPAL_VIDEO=yes
+OPAL_BFCP=no
 OPAL_T38_CAPABILITY=yes
 OPAL_FAX=yes
 OPAL_HAS_H224=yes
@@ -346,9 +347,15 @@ dnl MSWIN_DISPLAY  sdp,SDP support
 dnl MSWIN_DEFINE   sdp,OPAL_SDP
 OPAL_SIMPLE_OPTION(sdp,OPAL_SDP, [SDP protocol support])
 
-dnl MSWIN_DISPLAY  sip,SIP support
-dnl MSWIN_DEFINE   sip,OPAL_SIP
-OPAL_SIMPLE_OPTION(sip,OPAL_SIP, [SIP protocol support], [OPAL_SDP])
+dnl MSWIN_DISPLAY    bfcp,BFCP support
+dnl MSWIN_IF_FEATURE bfcp,sdp
+dnl MSWIN_DEFINE     bfcp,OPAL_BFCP
+OPAL_SIMPLE_OPTION(  bfcp,OPAL_BFCP, [BFCP protocol support], [OPAL_SDP])
+
+dnl MSWIN_DISPLAY    sip,SIP support
+dnl MSWIN_IF_FEATURE sip,sdp
+dnl MSWIN_DEFINE     sip,OPAL_SIP
+OPAL_SIMPLE_OPTION(  sip,OPAL_SIP, [SIP protocol support], [OPAL_SDP])
 
 dnl MSWIN_DISPLAY  h323,H.323 support
 dnl MSWIN_DEFINE   h323,OPAL_H323

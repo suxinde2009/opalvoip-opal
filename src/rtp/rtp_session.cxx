@@ -2947,11 +2947,17 @@ bool OpalRTPSession::UpdateMediaFormat(const OpalMediaFormat & mediaFormat)
 }
 
 
-OpalMediaStream * OpalRTPSession::CreateMediaStream(const OpalMediaFormat & mediaFormat, 
-                                                    unsigned sessionId, 
+OpalMediaStream * OpalRTPSession::CreateMediaStream(const OpalMediaFormat & mediaFormat,
+                                                    unsigned sessionId,
                                                     bool isSource)
 {
-  if (PAssert(m_sessionId == sessionId && m_mediaType == mediaFormat.GetMediaType(), PLogicError) && UpdateMediaFormat(mediaFormat))
+  if (PAssert(m_sessionId == sessionId, PLogicError) &&
+#if OPAL_VIDEO 
+      PAssert(m_videoContentRole == OpalVideoFormat::ePresentation || m_mediaType == mediaFormat.GetMediaType(), PLogicError) &&
+#else
+      PAssert(m_mediaType == mediaFormat.GetMediaType(), PLogicError) &&
+#endif
+      UpdateMediaFormat(mediaFormat))
     return new OpalRTPMediaStream(dynamic_cast<OpalRTPConnection &>(m_connection), mediaFormat, isSource, *this);
 
   return NULL;

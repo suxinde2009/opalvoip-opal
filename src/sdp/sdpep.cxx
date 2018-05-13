@@ -558,6 +558,24 @@ bool OpalSDPConnection::OnSendOfferSDP(SDPSessionDescription & sdpOut, bool offe
       AddAudioVideoGroup();
 #endif
 
+#if OPAL_BFCP
+    // If a presentation video session was opened, then we need a BFCP session
+    for (vector<bool>::size_type sessionId = 1; sessionId < sessions.size(); ++sessionId) {
+      if (sessions[sessionId]) {
+        OpalMediaSession * session = GetMediaSession(sessionId);
+        if (session->GetMediaType() == OpalPresentationVideoMediaDefinition::Name()) {
+          unsigned nextSessionId = m_sessions.GetSize() + 1;
+          OpalMediaSession::Init init(*this, nextSessionId, BFCPMediaDefinition::Name(), false);
+          m_sessions.SetAt(nextSessionId, new BFCPSession(init, this));
+          if (sessions.size() < nextSessionId)
+            sessions.resize(nextSessionId + 1);
+          sessions[nextSessionId] = true;
+          break;
+        }
+      }
+    }
+#endif // OPAL_BFCP
+
     OpalMediaTransportPtr bundledTransport;
     for (vector<bool>::size_type sessionId = 1; sessionId < sessions.size(); ++sessionId) {
       if (sessions[sessionId]) {
@@ -594,7 +612,12 @@ bool OpalSDPConnection::OnSendOfferSDPSession(unsigned   sessionId,
   }
 
   OpalMediaType mediaType = mediaSession->GetMediaType();
-  if (!m_localMediaFormats.HasType(mediaType)) {
+  if (
+#if OPAL_BFCP
+      mediaType != BFCPMediaDefinition::Name() &&
+#endif
+      !m_localMediaFormats.HasType(mediaType))
+  {
     PTRACE(2, "No formats for RTP session " << sessionId << " of type " << mediaType << " in " << setfill(',') << m_localMediaFormats);
     return false;
   }
@@ -774,6 +797,31 @@ bool OpalSDPConnection::OnSendOfferSDPSession(OpalMediaSession * mediaSession,
     }
   }
 #endif // OPAL_RTP_FEC
+
+#if OPAL_VIDEO
+  // Set video content to media description
+  OpalVideoFormat::ContentRole role = OpalVideoFormat::eNoRole;
+  if (mediaSession->GetMediaType() == OpalPresentationVideoMediaDefinition::Name())
+    role = OpalVideoFormat::ePresentation;
+  else if (mediaSession->GetMediaType() == OpalMediaType::Video()) {
+    OpalMediaStreamPtr sendStream = GetMediaStream(mediaSession->GetSessionID(), false);
+    if (sendStream != NULL)
+      role = sendStream->GetMediaFormat().GetOptionEnum(OpalVideoFormat::ContentRoleOption(), OpalVideoFormat::eMainRole);
+    else
+      role = OpalVideoFormat::eMainRole;
+  }
+
+  if (role != OpalVideoFormat::eNoRole) {
+    localMedia->SetContentRole(role);
+    unsigned label = mediaSession->GetSessionID(); // Can be anything, really, but we try and make it easier.
+    localMedia->SetLabel(label);
+#if OPAL_BFCP
+    BFCPSession * bfcpSession = dynamic_cast<BFCPSession *>(FindSessionByMediaType(BFCPMediaDefinition::Name()));
+    if (bfcpSession != NULL)
+      bfcpSession->SetFloorStreamMapping(0, label); // Zero floor indicates use next available
+#endif
+  }
+#endif // OPAL_VIDEO
 
   return true;
 }
@@ -1173,7 +1221,16 @@ SDPMediaDescription * OpalSDPConnection::OnSendAnswerSDPSession(SDPMediaDescript
     localMedia->AddMediaFormat(*it);
 #endif
 
-	PTRACE(4, "Answered offer for media type " << mediaType << ' ' << localMedia->GetMediaAddress());
+  PTRACE(4, "Answered offer for media type " << mediaType << ' ' << localMedia->GetMediaAddress());
+
+#if OPAL_VIDEO
+  // Set video label to media description
+  if (mediaSession->GetMediaType() == OpalMediaType::Video() &&
+            GetMediaStream(mediaSession->GetSessionID(), true) != NULL &&
+            GetMediaStream(mediaSession->GetSessionID(), false) != NULL)
+      localMedia->SetLabel(mediaSession->GetSessionID());
+#endif // OPAL_BFCP
+
   return localMedia.release();
 }
 
@@ -1437,6 +1494,50 @@ bool OpalSDPConnection::OnHoldStateChanged(bool)
 void OpalSDPConnection::OnMediaStreamOpenFailed(bool)
 {
 }
+
+#if OPAL_BFCP
+
+bool OpalSDPConnection::OnBfcpConnected()
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnBfcpDisconnected()
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnFloorRequestStatusAccepted(const BFCPEvent & /*evt*/)
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnFloorRequestStatusGranted(const BFCPEvent & /*evt*/)
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnFloorRequestStatusAborted(const BFCPEvent & /*evt*/)
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnFloorStatusAccepted(const BFCPEvent & /*evt*/)
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnFloorStatusGranted(const BFCPEvent & /*evt*/)
+{
+  return true;
+}
+
+bool OpalSDPConnection::OnFloorStatusAborted(const BFCPEvent & /*evt*/)
+{
+  return true;
+}
+
+#endif // OPAL_BFCP
 
 #endif // OPAL_SDP
 

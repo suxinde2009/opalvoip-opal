@@ -36,6 +36,7 @@
 #include <rtp/rtpep.h>
 #include <rtp/rtpconn.h>
 #include <sdp/sdp.h>
+#include <sdp/bfcpinterface.h>
 
 
 class OpalSDPConnection;
@@ -133,6 +134,9 @@ class OpalSDPEndPoint : public OpalRTPEndPoint
    such as SIP, RTSP or WebRTC.
  */
 class OpalSDPConnection : public OpalRTPConnection
+#if OPAL_BFCP
+                        , public BFCPCallback
+#endif  
 {
     PCLASSINFO(OpalSDPConnection, OpalRTPConnection);
   public:
@@ -240,6 +244,18 @@ class OpalSDPConnection : public OpalRTPConnection
 
     /// Get the remote media address to initialise the RTP session on making offer.
     virtual OpalTransportAddress GetRemoteMediaAddress() = 0;
+
+#if OPAL_BFCP
+    // Callbacks from BFCP library
+    virtual bool OnBfcpConnected();
+    virtual bool OnBfcpDisconnected();
+    virtual bool OnFloorRequestStatusAccepted(const BFCPEvent & evt);
+    virtual bool OnFloorRequestStatusGranted(const BFCPEvent & evt);
+    virtual bool OnFloorRequestStatusAborted(const BFCPEvent & evt);
+    virtual bool OnFloorStatusAccepted(const BFCPEvent & evt);
+    virtual bool OnFloorStatusGranted(const BFCPEvent & evt);
+    virtual bool OnFloorStatusAborted(const BFCPEvent & evt);
+#endif // OPAL_BFCP
   //@}
 
   protected:

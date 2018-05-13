@@ -1429,6 +1429,9 @@ OpalMediaSession::OpalMediaSession(const Init & init)
   , m_mediaType(init.m_mediaType)
   , m_remoteBehindNAT(init.m_remoteBehindNAT)
   , m_connectionMode(ConnectionNotSet)
+#if OPAL_VIDEO
+  , m_videoContentRole(OpalVideoFormat::eNoRole)
+#endif
 {
   PTRACE_CONTEXT_ID_FROM(init.m_connection);
   PTRACE(5, *this << "created " << this << " for " << m_mediaType);

@@ -130,6 +130,18 @@
     <Filter Include="Source Files\RTP\libSRTP\Headers\Crypto">
       <UniqueIdentifier>{98bd392d-59cb-4b0c-b687-dd299f6dc44a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SDP\libBFCP">
+      <UniqueIdentifier>{d8ed0f85-40fd-4446-a904-3de78acbe60e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SDP\libBFCP\Messages">
+      <UniqueIdentifier>{ac7362a0-3101-4da8-ab3c-967f68aae1cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SDP\libBFCP\Client">
+      <UniqueIdentifier>{62043e81-e365-4960-9a06-7f9e58da014f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SDP\libBFCP\Server">
+      <UniqueIdentifier>{7d244188-e221-4127-be9f-8b268a65b56b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\asn\h4506.cxx">
@@ -747,6 +759,42 @@
     <ClCompile Include="..\rtp\libsrtp\crypto\cipher\null_cipher.c">
       <Filter>Source Files\RTP\libSRTP\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\sdp\bfcpinterface.cxx">
+      <Filter>Source Files\SDP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\BFCP_fsm.cpp">
+      <Filter>Source Files\SDP\libBFCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\BFCPconnection.cpp">
+      <Filter>Source Files\SDP\libBFCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpmsg\bfcp_messages.c">
+      <Filter>Source Files\SDP\libBFCP\Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpmsg\bfcp_messages_build.c">
+      <Filter>Source Files\SDP\libBFCP\Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpmsg\bfcp_messages_parse.c">
+      <Filter>Source Files\SDP\libBFCP\Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpmsg\bfcp_strings.c">
+      <Filter>Source Files\SDP\libBFCP\Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpcli\bfcp_participant.cpp">
+      <Filter>Source Files\SDP\libBFCP\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_floor_list.c">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_link_list.cpp">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_server.cpp">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_user_list.cpp">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\codec\echocancel.h">
@@ -1312,6 +1360,42 @@
     </ClInclude>
     <ClInclude Include="..\rtp\libsrtp\include\config.h">
       <Filter>Source Files\RTP\libSRTP\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\sdp\bfcpinterface.h">
+      <Filter>Header Files\SDP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpmsg\bfcp_messages.h">
+      <Filter>Source Files\SDP\libBFCP\Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpmsg\bfcp_strings.h">
+      <Filter>Source Files\SDP\libBFCP\Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpcli\bfcp_participant.h">
+      <Filter>Source Files\SDP\libBFCP\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_floor_list.h">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_link_list.h">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_server.h">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_user_list.h">
+      <Filter>Source Files\SDP\libBFCP\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\BFCPconnection.h">
+      <Filter>Source Files\SDP\libBFCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\BFCP_fsm.h">
+      <Filter>Source Files\SDP\libBFCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\bfcp_threads.h">
+      <Filter>Source Files\SDP\libBFCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdp\BFCP\libbfcp\BFCPexception.h">
+      <Filter>Source Files\SDP\libBFCP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

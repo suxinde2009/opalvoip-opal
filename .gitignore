@@ -47,6 +47,7 @@ opal.xcodeproj/xcuserdata
 /src/rtp/libsrtp/test/roc_driver
 /src/rtp/libsrtp/test/rtpw
 /src/rtp/libsrtp/test/srtp_driver
+!/src/sdp/BFCP/libbfcp/
 /plugins/config.log
 /plugins/config.status
 /plugins/aclocal.m4

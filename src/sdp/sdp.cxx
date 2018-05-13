@@ -2533,6 +2533,26 @@ bool SDPVideoMediaDescription::PreEncode()
 }
 
 
+bool SDPVideoMediaDescription::FromSession(OpalMediaSession * session, const SDPMediaDescription * offer, RTP_SyncSourceId ssrc)
+{
+  if (!SDPRTPAVPMediaDescription::FromSession(session, offer, ssrc))
+    return false;
+
+  m_contentRole = session->GetVideoContentRole();
+  return true;
+}
+
+
+bool SDPVideoMediaDescription::ToSession(OpalMediaSession * session, RTP_SyncSourceArray & ssrcs) const
+{
+  if (!SDPRTPAVPMediaDescription::ToSession(session, ssrcs))
+    return false;
+
+  session->SetVideoContentRole(m_contentRole);
+  return true;
+}
+
+
 SDPVideoMediaDescription::Format::Format(SDPVideoMediaDescription & parent)
   : SDPRTPAVPMediaDescription::Format(parent)
   , m_minRxWidth(0)
@@ -2752,12 +2772,6 @@ const PCaselessString & SDPApplicationMediaDescription::TypeName() { static PCon
 SDPApplicationMediaDescription::SDPApplicationMediaDescription(const OpalTransportAddress & address)
   : SDPMediaDescription(address, "")
 {
-}
-
-
-PCaselessString SDPApplicationMediaDescription::GetSDPTransportType() const
-{
-  return OpalRTPSession::RTP_AVP();
 }
 
 

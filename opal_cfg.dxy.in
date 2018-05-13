@@ -1266,6 +1266,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = DOCPLUSLUS \
                          DOC_PLUS_PLUS \
                          OPAL_VIDEO \
+                         OPAL_BFCP \
                          OPAL_IAX2 \
                          OPAL_SIP \
                          OPAL_H323 \

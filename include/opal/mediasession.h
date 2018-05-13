@@ -34,7 +34,7 @@
 #include <opal_config.h>
 
 #include <opal/transports.h>
-#include <opal/mediatype.h>
+#include <opal//mediafmt.h>
 #include <ptlib/notifier_ext.h>
 
 
@@ -853,6 +853,16 @@ class OpalMediaSession : public PSafeObject, public OpalMediaTransportChannelTyp
       */
     void SetStringOptions(const PStringOptions & options) { m_stringOptions = options; }
 
+#if OPAL_VIDEO
+    /**Get the video content role for the media session.
+      */
+    OpalVideoFormat::ContentRole GetVideoContentRole() const { return m_videoContentRole; }
+
+    /**Set the video content role for the media session.
+      */
+    void SetVideoContentRole(OpalVideoFormat::ContentRole role) { m_videoContentRole = role; }
+#endif
+
   protected:
     OpalConnection & m_connection;
     unsigned         m_sessionId;  // unique session ID
@@ -861,6 +871,9 @@ class OpalMediaSession : public PSafeObject, public OpalMediaTransportChannelTyp
     ConnectionMode   m_connectionMode;
     PStringOptions   m_stringOptions;
     PStringToString  m_groups;
+#if OPAL_VIDEO
+    OpalVideoFormat::ContentRole m_videoContentRole;
+#endif
 
     OpalMediaTransportPtr  m_transport;
     OpalMediaCryptoKeyList m_offeredCryptokeys;

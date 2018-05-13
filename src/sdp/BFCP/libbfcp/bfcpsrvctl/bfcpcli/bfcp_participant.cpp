@@ -27,6 +27,8 @@ extern "C" void _ParticpantLog(char* pcFile, int iLine, int iErrorLevel, char* p
     
 BFCP_Participant::BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_floorID , UINT16 p_streamID , BFCP_Participant::ParticipantEvent* p_ParticipantEvent, int transport):BFCPConnection(transport)
 {
+    m_ParticipantEvent = p_ParticipantEvent; // Must be before Log()
+
     st_bfcp_participant_information* struct_participant;
     
     if(p_confID == 0)
@@ -50,7 +52,6 @@ BFCP_Participant::BFCP_Participant(UINT32 p_confID ,UINT16 p_userID , UINT16 p_f
     bfcp_insert_floor_participant(struct_participant, p_floorID) ;
     m_bfcp_participant_information = struct_participant ;
     m_currentFloorRequestID= 0 ;
-    m_ParticipantEvent = p_ParticipantEvent  ; 
     bfcp_mutex_init(count_mutex, NULL);
     m_PartSocket = BFCP_INVALID_SOCKET ;
     BFCP_msg_LogCallback(  _ParticpantLog  );

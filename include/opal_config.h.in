@@ -134,6 +134,7 @@
 #undef  OPAL_CAPI
 #undef  OPAL_DAHDI
 #undef  OPAL_T120DATA
+#undef  OPAL_BFCP
 
 #if OPAL_PTLIB_VXML
   #undef OPAL_IVR
