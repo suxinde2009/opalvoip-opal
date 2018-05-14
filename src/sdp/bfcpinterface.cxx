@@ -201,7 +201,7 @@ PCaselessString BFCPSDPMediaDescription::GetSDPTransportType() const
 
 void BFCPSDPMediaDescription::SetSDPTransportType(const PString & type)
 {
-  SetTransportProto(type);
+  PAssert(SetTransportProto(type), PInvalidParameter);
 }
 
 
@@ -300,7 +300,7 @@ void BFCPSDPMediaDescription::SetAttribute(const PString & attr, const PString &
       PCaselessString token = tokens[1];
       if (token.NumCompare("mstrm:") != EqualTo && token.NumCompare("m-stream:") != EqualTo)
         return;
-      streamID = token.Right(token.Find(':')+1).AsUnsigned();
+      streamID = token.Mid(token.Find(':')+1).AsUnsigned();
     }
 
     m_floorStreamMap[floorID] = streamID;

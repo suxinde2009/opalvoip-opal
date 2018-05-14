@@ -1024,7 +1024,7 @@ SDPMediaDescription * OpalSDPConnection::OnSendAnswerSDPSession(SDPMediaDescript
   }
   PTRACE_CONTEXT_ID_TO(*localMedia);
 
-  /* Make sure SDP transport type in preply is same as in offer. This is primarily
+  /* Make sure SDP transport type in reply is same as in offer. This is primarily
      a workaround for broken implementations, esecially with respect to feedback
      (AVPF) and DTLS (UDP/TLS/SAFP) */
   localMedia->SetSDPTransportType(incomingMedia->GetSDPTransportType());

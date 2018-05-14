@@ -869,6 +869,8 @@ bool SDPMediaDescription::Decode(const PStringArray & tokens)
       }
   }
 
+  SetSDPTransportType(tokens[2]);
+
   CreateSDPMediaFormats(tokens);
 
   return true;
@@ -2789,7 +2791,7 @@ SDPMediaFormat * SDPApplicationMediaDescription::CreateSDPMediaFormat()
 
 bool SDPApplicationMediaDescription::Format::FromSDP(const PString & portString)
 {
-  if (portString.IsEmpty())
+  if (portString.IsEmpty() || portString == "*")
     return false;
 
   m_encodingName = portString;
