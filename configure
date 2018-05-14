@@ -661,6 +661,7 @@ OPAL_SKINNY
 OPAL_IAX2
 OPAL_H323
 OPAL_SIP
+OPAL_BFCP
 OPAL_SDP
 OPAL_VIDEO
 OPAL_RUBY
@@ -844,6 +845,7 @@ enable_ruby
 with_ruby_dir
 enable_video
 enable_sdp
+enable_bfcp
 enable_sip
 enable_h323
 enable_iax2
@@ -1556,6 +1558,7 @@ Optional Features:
   --disable-ruby          disable Ruby support
   --disable-video         disable video support
   --disable-sdp           disable SDP protocol support
+  --disable-bfcp          disable BFCP protocol support
   --disable-sip           disable SIP protocol support
   --disable-h323          disable H.323 protocol support
   --disable-iax2          disable IAX2 protocol support
@@ -6496,6 +6499,7 @@ OPAL_SIP=yes
 OPAL_IAX2=yes
 OPAL_SKINNY=yes
 OPAL_VIDEO=yes
+OPAL_BFCP=yes
 OPAL_T38_CAPABILITY=yes
 OPAL_FAX=yes
 OPAL_HAS_H224=yes
@@ -8840,6 +8844,74 @@ fi
 
 
    enable_sdp="$enableval"
+
+
+
+
+
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking BFCP protocol support" >&5
+$as_echo_n "checking BFCP protocol support... " >&6; }
+
+   # Check whether --enable-bfcp was given.
+if test "${enable_bfcp+set}" = set; then :
+  enableval=$enable_bfcp; if test "x$enableval" = xno; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabled by user" >&5
+$as_echo "disabled by user" >&6; }
+fi
+else
+
+         enableval=$OPAL_BFCP
+         if test "x$enableval" = xno; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabled by default" >&5
+$as_echo "disabled by default" >&6; }
+fi
+
+
+fi
+
+
+
+
+      if test "x${enableval}" = "xyes" && \
+             test "x$OPAL_SDP" != "x1" && \
+             test "x$OPAL_SDP" != "xyes"; then :
+
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabled due to disabled dependency OPAL_SDP=$OPAL_SDP" >&5
+$as_echo "disabled due to disabled dependency OPAL_SDP=$OPAL_SDP" >&6; }
+         enableval=no
+
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+   if test "x$enableval" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+fi
+
+   if test "x$enableval" = "xyes"; then :
+
+         OPAL_BFCP=yes
+
+
+$as_echo "#define OPAL_BFCP 1" >>confdefs.h
+
+
+else
+  OPAL_BFCP=no
+fi
+
+
+   enable_bfcp="$enableval"
 
 
 
