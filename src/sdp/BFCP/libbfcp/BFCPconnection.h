@@ -587,7 +587,7 @@ private:
 
 #ifndef WIN32
     int pipefd[2];
-    pthread_cond_t m_timer_cond
+    pthread_cond_t m_timer_cond;
 #endif
 
     BFCP_THREAD_HANDLE m_timer_thread;

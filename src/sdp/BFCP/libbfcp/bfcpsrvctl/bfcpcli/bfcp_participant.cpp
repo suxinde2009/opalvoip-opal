@@ -242,7 +242,7 @@ int BFCP_Participant::bfcp_hello_participant(st_bfcp_participant_information* pa
 	error = sendBFCPmessage(m_PartSocket,message);
 	BFCP_SEND_CHECK_ERRORS();
 	
-	return 0;
+	return error;
 }
 
 int BFCP_Participant::bfcp_floorStatus_floorRequestStatus_Ack(e_bfcp_primitives primitive, UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID)
@@ -311,7 +311,7 @@ int BFCP_Participant::bfcp_floorStatus_floorRequestStatus_Ack(e_bfcp_primitives 
     error = sendBFCPmessage(m_PartSocket,message);
     BFCP_SEND_CHECK_ERRORS();
 
-    return 0;
+    return error;
 
 }
 
@@ -375,7 +375,7 @@ int BFCP_Participant::bfcp_helloAck_participant(UINT32 ConferenceID, UINT16 user
     error = sendBFCPmessage(m_PartSocket,message);
     BFCP_SEND_CHECK_ERRORS();
 
-    return 0;
+    return error;
 }
 
 int BFCP_Participant::bfcp_goodbyeAck_participant(UINT32 ConferenceID, UINT16 userID, UINT16 TransactionID)
@@ -436,7 +436,7 @@ int BFCP_Participant::bfcp_goodbyeAck_participant(UINT32 ConferenceID, UINT16 us
     error = sendBFCPmessage(m_PartSocket,message);
     BFCP_SEND_CHECK_ERRORS();
 
-    return 0;
+    return error;
 }
 
 int BFCP_Participant::bfcp_floorRequest_participant(UINT16 p_floorID){
@@ -558,7 +558,7 @@ int BFCP_Participant::bfcp_floorRequest_participant(st_bfcp_participant_informat
 	error = sendBFCPmessage(m_PartSocket,message);
 	BFCP_SEND_CHECK_ERRORS();
 
-	return 0;
+	return error;
 }
 
 /* FloorRelease */
@@ -613,7 +613,7 @@ int BFCP_Participant::bfcp_Goodbye_participant(st_bfcp_participant_information* 
     BFCP_SEND_CHECK_ERRORS();
 
 
-    return 0;
+    return error;
 }
 
 
@@ -649,7 +649,7 @@ int BFCP_Participant::bfcp_floorRelease_participant(st_bfcp_participant_informat
 	BFCP_SEND_CHECK_ERRORS();
 
 
-	return 0;
+	return error;
 }
 
 /* FloorRequestQuery */
@@ -686,7 +686,7 @@ int BFCP_Participant::bfcp_floorRequestQuery_participant(st_bfcp_participant_inf
 	BFCP_SEND_CHECK_ERRORS();
 
 
-	return 0;
+	return error;
 }
 
 /* UserQuery */
@@ -721,7 +721,7 @@ int BFCP_Participant::bfcp_userQuery_participant(st_bfcp_participant_information
 	BFCP_SEND_CHECK_ERRORS();
 
 
-	return 0;
+	return error;
 }
 
 /* UserQuery */
@@ -778,7 +778,7 @@ int BFCP_Participant::bfcp_floorQuery_participant(st_bfcp_participant_informatio
 
 
 
-	return 0;
+	return error;
 }
 
 int BFCP_Participant::bfcp_chairAction_participant(st_bfcp_participant_information* participant, UINT16 floorRequestID, char *statusInfo, UINT16 status, bfcp_floors_participant *list_floors, UINT16 queue_position)
@@ -853,7 +853,7 @@ int BFCP_Participant::bfcp_chairAction_participant(st_bfcp_participant_informati
 	BFCP_SEND_CHECK_ERRORS();
 
 
-	return 0;
+	return error;
 }
 
 

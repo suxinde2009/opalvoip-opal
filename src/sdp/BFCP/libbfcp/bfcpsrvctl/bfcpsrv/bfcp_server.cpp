@@ -2102,7 +2102,7 @@ int BFCP_Server::bfcp_show_floor_information(UINT32 conferenceID, UINT16 Transac
         }
         freeNode = false ;
     }
-    return 0;
+    return error;
 }
 
 /* Prepare the needed arguments for a FloorRequestStatus BFCP message */
@@ -2258,7 +2258,7 @@ int BFCP_Server::bfcp_show_requestfloor_information(bfcp_list_users *list_users,
     error = sendBFCPmessage(sockfd ,message, donotresend);
     BFCP_SEND_CHECK_ERRORS();
 
-    return 0;
+    return error;
 }
 
 /* Handle a BFCP message a client sent to the FCS */
@@ -3458,7 +3458,7 @@ int BFCP_Server::bfcp_userquery_server(st_bfcp_server *server, UINT32 conference
 
     BFCP_SEND_CHECK_ERRORS();
 
-    return 0;
+    return error;
 }
 
 /* Handle an incoming FloorQuery message */
@@ -3762,7 +3762,7 @@ int BFCP_Server::bfcp_floorrequestquery_server(st_bfcp_server *server, UINT32 co
     bfcp_mutex_unlock(count_mutex);
     error = sendBFCPmessage(sockfd,message);
     BFCP_SEND_CHECK_ERRORS();
-    return 0;
+    return error;
 }
 
 /* Check if it's fine to grant a floor to an accepted request */
@@ -3883,7 +3883,7 @@ int BFCP_Server::bfcp_error_code(UINT32 conferenceID, UINT16 userID, UINT16 Tran
     }
     error = sendBFCPmessage(sockfd, message);
     BFCP_SEND_CHECK_ERRORS();
-    return 0;
+    return error;
 }
 
 /* incoming connections and messages */
@@ -4785,7 +4785,7 @@ bool BFCP_Server::FloorRequestRespons(UINT32 p_userID,  UINT32 p_beneficiaryID ,
         pfloor next, next_floors, tempnode, free_floors, tempfloors = NULL;
         bfcp_node *newnode = NULL;
         //bfcp_floor *node = NULL;
-        bfcp_queue *laccepted;
+        //bfcp_queue *laccepted;
 	int transport = 0;
 	BFCP_SOCKET sockfd;
 
@@ -5050,7 +5050,7 @@ bool BFCP_Server::FloorRequestRespons(UINT32 p_userID,  UINT32 p_beneficiaryID ,
                         }
 
 
-                        laccepted = m_struct_server->list_conferences[i].accepted;
+                        //laccepted = m_struct_server->list_conferences[i].accepted;
                         /* if you want pass accepted -> granted */
                         /* if(give_free_floors_to_the_accepted_nodes(m_struct_server->list_conferences+i, laccepted, m_struct_server->list_conferences[i].floor, NULL) == -1) {
                             Log(ERR, "give_free_floors_to_the_accepted_nodes Conference %d failed ",m_confID);
@@ -5084,7 +5084,6 @@ bool BFCP_Server::SendGoodBye(UINT32 p_userID)
 	int transport;
 	bfcp_message * m;
 	UINT16 transID = 0;
-	bool Status = true;
 	
 	/* Check if this conference exists and if user is in the conf */
 	int i = CheckConferenceAndUser(m_struct_server, m_confID, p_userID, BFCP_INVALID_SOCKET);
@@ -5111,7 +5110,6 @@ bool BFCP_Server::SendGoodBye(UINT32 p_userID)
 	sockfd = bfcp_get_user_socket(m_struct_server->list_conferences[i].user, p_userID, &transport );
 	if ( sockfd == BFCP_INVALID_SOCKET )
 	{
-	    Status = false;	
 	    Log(INF, "Cannot send GoodBye: socket of user ID %u is alread closed.", p_userID);
 	    return false;
 	}

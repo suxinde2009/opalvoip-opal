@@ -51,16 +51,17 @@ int gettimeofday(struct timeval *tv, struct timezone *)
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <vector>
 
 std::string GetErrorText()
 {
-  std::vector,char> buf;
+  std::vector<char> buf;
   buf.resize(1000);
-  strerror_r(errno, buf.data(), buf.size()-1);
-  return buf.data();
+  return strerror_r(errno, buf.data(), buf.size()-1);
 }
 
 #endif // WIN32
@@ -1079,7 +1080,8 @@ void BFCPConnection::RunLoop()
 		if ( FD_ISSET(pipefd[0], &fdset) )
 		{
 		    char bufpipe[2];
-		    read(pipefd[0], bufpipe, 2);
+		    if (read(pipefd[0], bufpipe, 2) < 0)
+                      Log(ERR, "BFCPConnection::RunLoop - could not write to pipe");
 		    //Log(INF, "BFCPConnection::RunLoop - control pipe signal");
 		}
 #endif
