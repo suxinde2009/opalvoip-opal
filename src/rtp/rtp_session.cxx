@@ -1090,10 +1090,8 @@ void OpalRTPSession::InternalAttachTransport(const OpalMediaTransportPtr & newTr
   m_rtcpPacketsReceived = 0;
 
   PIPAddress localAddress(0);
-  OpalUDPMediaTransport * udpTransport = dynamic_cast<OpalUDPMediaTransport *>(&*newTransport);
-  if (udpTransport != NULL)
-    udpTransport->GetSubChannelAsSocket(e_Media)->GetLocalAddress(localAddress);
-  m_packetOverhead = localAddress.GetVersion() == 4 ? (20 + 8 + 12) : (40 + 8 + 12);
+  if (newTransport->GetLocalAddress(e_Media).GetIpAddress(localAddress))
+    m_packetOverhead = localAddress.GetVersion() != 6 ? (20 + 8 + 12) : (40 + 8 + 12);
 
   SetQoS(m_qos);
 
@@ -1472,8 +1470,8 @@ void OpalRTPSession::SyncSource::OnRxDelayLastReceiverReport(const RTP_DelayLast
 }
 
 
-OpalRTPSession::SendReceiveStatus OpalRTPSession::OnSendData(RTP_DataFrame & frame,
-                                                             RewriteMode rewrite,
+OpalRTPSession::SendReceiveStatus OpalRTPSession::OnSendData(RewriteMode & rewrite,
+                                                             RTP_DataFrame & frame,
                                                              const PTime & now)
 {
   RTP_SyncSourceId ssrc = frame.GetSyncSource();
@@ -1542,13 +1540,16 @@ OpalRTPSession::SendReceiveStatus OpalRTPSession::OnSendData(RTP_DataFrame & fra
       break;
   }
 
-  if (syncSource->m_rtxSSRC == 0)
-    return syncSource->OnSendData(frame, e_RewriteNothing, now);
+  if (syncSource->m_rtxSSRC == 0) {
+    rewrite = e_RewriteNothing;
+    return syncSource->OnSendData(frame, rewrite, now);
+  }
 
   // Is a retransmit using RFC4588, switch to "rtx" sync source
+  rewrite = e_RewriteHeader;
   SyncSource * rtxSyncSource;
   if (GetSyncSource(syncSource->m_rtxSSRC, e_Sender, rtxSyncSource))
-    return rtxSyncSource->OnSendData(frame, e_RewriteHeader, now);
+    return rtxSyncSource->OnSendData(frame, rewrite, now);
 
   return e_IgnorePacket;
 }
@@ -3088,35 +3089,17 @@ void OpalRTPSession::SetSinglePortTx(bool singlePortTx)
 
 WORD OpalRTPSession::GetLocalDataPort() const
 {
+  PIPAddressAndPort ap;
   OpalMediaTransportPtr transport = m_transport; // This way avoids races
-  OpalUDPMediaTransport * udp = transport != NULL ? dynamic_cast<OpalUDPMediaTransport *>(&*transport) : NULL;
-  PUDPSocket * socket = udp != NULL ? udp->GetSubChannelAsSocket(e_Media) : NULL;
-  return socket != NULL ? socket->GetPort() : 0;
+  return transport != NULL && transport->GetLocalAddress(e_Media).GetIpAndPort(ap) ? ap.GetPort() : 0;
 }
 
 
 WORD OpalRTPSession::GetLocalControlPort() const
 {
+  PIPAddressAndPort ap;
   OpalMediaTransportPtr transport = m_transport; // This way avoids races
-  OpalUDPMediaTransport * udp = transport != NULL ? dynamic_cast<OpalUDPMediaTransport *>(&*transport) : NULL;
-  PUDPSocket * socket = udp != NULL ? udp->GetSubChannelAsSocket(e_Control) : NULL;
-  return socket != NULL ? socket->GetPort() : 0;
-}
-
-
-PUDPSocket & OpalRTPSession::GetDataSocket()
-{
-  OpalMediaTransportPtr transport = m_transport; // This way avoids races
-  OpalUDPMediaTransport * udp = transport != NULL ? dynamic_cast<OpalUDPMediaTransport *>(&*transport) : NULL;
-  return *PAssertNULL(udp)->GetSubChannelAsSocket(e_Media);
-}
-
-
-PUDPSocket & OpalRTPSession::GetControlSocket()
-{
-  OpalMediaTransportPtr transport = m_transport; // This way avoids races
-  OpalUDPMediaTransport * udp = transport != NULL ? dynamic_cast<OpalUDPMediaTransport *>(&*transport) : NULL;
-  return *PAssertNULL(udp)->GetSubChannelAsSocket(e_Control);
+  return transport != NULL && transport->GetLocalAddress(e_Control).GetIpAndPort(ap) ? ap.GetPort() : 0;
 }
 
 
@@ -3240,7 +3223,7 @@ OpalRTPSession::SendReceiveStatus OpalRTPSession::WriteData(RTP_DataFrame & fram
   if (!LockReadWrite(P_DEBUG_LOCATION))
     return e_AbortTransport;
 
-  SendReceiveStatus status = OnSendData(frame, rewrite, now);
+  SendReceiveStatus status = OnSendData(rewrite, frame, now);
 
   UnlockReadWrite(P_DEBUG_LOCATION);
 
