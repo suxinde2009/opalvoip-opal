@@ -51,12 +51,6 @@ const char* getBfcpPriority( e_bfcp_priority p);
  * @return error string 
  */
 const char* getBfcpErrorType( e_bfcp_error_codes p);
-/**
- * return string correspondant of parsing error code
- * @param p parsing error code value
- * @return parsing error code string 
- */
-const char* getBfcpParsingErrors( e_bfcp_specific_error_codes p);
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -317,36 +317,32 @@ typedef enum {
 
 /*     Error Codes */
 typedef enum {
-    BFCP_INVALID_ERROR_CODES=0,
-    BFCP_CONFERENCE_DOES_NOT_EXIST=1,
-    BFCP_USER_DOES_NOT_EXIST=2,
-    BFCP_UNKNOWN_PRIMITIVE=3,
-    BFCP_UNKNOWN_MANDATORY_ATTRIBUTE=4,
-    BFCP_UNAUTHORIZED_OPERATION=5,
-    BFCP_INVALID_FLOORID=6,
-    BFCP_FLOORREQUEST_DOES_NOT_EXIST=7,
-    BFCP_MAX_FLOORREQUESTS_REACHED=8,
-    BFCP_USE_TLS=9,
-    BFCP_DIGEST_ATTRIBUTE_REQUIRED=10,
-    BFCP_INVALID_NONCE=11,
-    BFCP_AUTHENTICATION_FAILED=12,
-    BFCP_UNABLE_TO_PARSE=10,
-    BFCP_USE_DTLS=11,
-    BFCP_UNSUPPORTED_VERSION=12,
-    BFCP_INCORRECT_MESSAGE_LENGTH=13,
-    BFCP_GENERIC_ERROR=14
-} e_bfcp_error_codes ;
-
+    BFCP_INVALID_ERROR_CODES,
+    BFCP_CONFERENCE_DOES_NOT_EXIST,
+    BFCP_USER_DOES_NOT_EXIST,
+    BFCP_UNKNOWN_PRIMITIVE,
+    BFCP_UNKNOWN_MANDATORY_ATTRIBUTE,
+    BFCP_UNAUTHORIZED_OPERATION,
+    BFCP_INVALID_FLOORID,
+    BFCP_FLOORREQUEST_DOES_NOT_EXIST,
+    BFCP_MAX_FLOORREQUESTS_REACHED,
+    BFCP_USE_TLS,
+    BFCP_DIGEST_ATTRIBUTE_REQUIRED,
+    BFCP_INVALID_NONCE,
+    BFCP_AUTHENTICATION_FAILED,
+    BFCP_UNABLE_TO_PARSE,
+    BFCP_USE_DTLS,
+    BFCP_UNSUPPORTED_VERSION,
+    BFCP_INCORRECT_MESSAGE_LENGTH,
+    BFCP_GENERIC_ERROR,
 /* Parsing-specific Error Codes */
-typedef enum {
-    BFCP_INVALID_SPECIFIC_ERROR_CODES=0,
-    BFCP_WRONG_VERSION=1,
-    BFCP_RESERVED_NOT_ZERO=2,
-    //BFCP_UNKNOWN_PRIMITIVE=3,
-    BFCP_UNKNOWN_ATTRIBUTE=4,
-    BFCP_WRONG_LENGTH=5,
-    BFCP_PARSING_ERROR=6
-}e_bfcp_specific_error_codes;
+    BFCP_INVALID_SPECIFIC_ERROR_CODES,
+    BFCP_WRONG_VERSION,
+    BFCP_RESERVED_NOT_ZERO,
+    BFCP_UNKNOWN_ATTRIBUTE,
+    BFCP_WRONG_LENGTH,
+    BFCP_PARSING_ERROR
+}e_bfcp_error_codes;
 
 
 /* Maximum allow size for BFCP messages is 64Kbytes, since the Payload Length in the header is 16 bit */
@@ -637,7 +633,6 @@ typedef struct {
     e_bfcp_attibutes            Attibutes;/**     @brief  attributes of request  */
     e_bfcp_priority             Priority;/**     @brief  priority of request   */
     e_bfcp_error_codes          Error_codes;/**     @brief   error code  */
-    e_bfcp_specific_error_codes Specific_error_codes;/**     @brief  specifiques error code   */
     UINT16  TransactionID ; /**     @brief  transaction ID of request  \ref BFCP-PROTOCOL-TRANSACTION */
     UINT16  userID ;  /**     @brief   user ID of request \ref BFCP-COMMON-HEADER */
     UINT32  conferenceID ;/**     @brief  conference ID of request \ref BFCP-COMMON-HEADER  */
@@ -774,8 +769,8 @@ typedef struct bfcp_received_message {
 } bfcp_received_message;
 
 typedef struct bfcp_received_message_error {
-	e_bfcp_primitives attribute;					/*     The attribute where the error happened */
 	e_bfcp_error_codes code;					/*     The Parsing-specific Error Code */
+	e_bfcp_attibutes attribute;					/*     The attribute where the error happened */
 	struct bfcp_received_message_error *next;	/*     There could be more errors, it's a linked list */
 } bfcp_received_message_error;
 
@@ -798,14 +793,14 @@ bfcp_entity *bfcp_new_entity(UINT32 conferenceID, UINT16 transactionID, UINT16 u
 int bfcp_free_entity(bfcp_entity *entity);
 
 /*     Create a new Floor ID list (first argument must be a valid ID, last argument MUST be 0) */
-bfcp_floor_id_list *bfcp_new_floor_id_list(UINT16 fID, ...);
+bfcp_floor_id_list *bfcp_new_floor_id_list(unsigned fID, ...);
 /*     Add IDs to an existing Floor ID list (last argument MUST be 0) */
-int bfcp_add_floor_id_list(bfcp_floor_id_list *list, UINT16 fID, ...);
+int bfcp_add_floor_id_list(bfcp_floor_id_list *list, unsigned fID, ...);
 /*     Free a Floor ID list */
 int bfcp_free_floor_id_list(bfcp_floor_id_list *list);
 
 /*     Create a new Supported (Primitives/Attributes) list (last argument MUST be 0) */
-bfcp_supported_list *bfcp_new_supported_list(UINT8 element, ...);
+bfcp_supported_list *bfcp_new_supported_list(unsigned element, ...);
 /*     Free a Supported (Primitives/Attributes) list */
 int bfcp_free_supported_list(bfcp_supported_list *list);
 
@@ -820,9 +815,9 @@ bfcp_error *bfcp_new_error(e_bfcp_error_codes code, bfcp_unknown_m_error_details
 int bfcp_free_error(bfcp_error *error);
 
 /*     Create a New Error Details list (for Error 4: UNKNOWN_M) (last argument MUST be 0) */
-bfcp_unknown_m_error_details *bfcp_new_unknown_m_error_details_list(UINT16 attribute, ...);
+bfcp_unknown_m_error_details *bfcp_new_unknown_m_error_details_list(unsigned attribute, ...);
 /*     Add Attributes to an existing Error Details list (for Error 4: UNKNOWN_M) (last argument MUST be 0) */
-int bfcp_add_unknown_m_error_details_list(bfcp_unknown_m_error_details *list, UINT16 attribute, ...);
+int bfcp_add_unknown_m_error_details_list(bfcp_unknown_m_error_details *list, unsigned attribute, ...);
 /*     Free an Error Details list */
 int bfcp_free_unknown_m_error_details_list(bfcp_unknown_m_error_details *details);
 
@@ -922,7 +917,7 @@ UINT16 bfcp_get_transactionID(bfcp_message *message);
 UINT16 bfcp_get_userID(bfcp_message *message);
 bfcp_received_message *bfcp_new_received_message(void);
 int bfcp_free_received_message(bfcp_received_message *recvM);
-bfcp_received_message_error *bfcp_received_message_add_error(bfcp_received_message_error *error, e_bfcp_primitives attribute, e_bfcp_error_codes code);
+bfcp_received_message_error *bfcp_received_message_add_error(bfcp_received_message_error *error, e_bfcp_attibutes attribute, e_bfcp_error_codes code);
 int bfcp_free_received_message_errors(bfcp_received_message_error *errors);
 bfcp_received_attribute *bfcp_new_received_attribute(void);
 int bfcp_free_received_attribute(bfcp_received_attribute *recvA);

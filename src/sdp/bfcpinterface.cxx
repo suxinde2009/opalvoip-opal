@@ -240,7 +240,7 @@ void BFCPSDPMediaDescription::OutputAttributes(ostream & strm) const
 
   strm << "a=floorctrl:";
   for (FloorCtrlMode mode = FloorCtrlMode::Begin(); mode < FloorCtrlMode::End(); ++mode) {
-    switch (m_floorCtrl*mode) {
+    switch ((m_floorCtrl*mode).AsBits()) {
       case FloorCtrlClientOnly:
         strm << "c-only ";
         break;

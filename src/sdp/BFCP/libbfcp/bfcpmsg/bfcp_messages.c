@@ -201,7 +201,7 @@ int bfcp_free_entity(bfcp_entity *entity)
 }
 
 /* Create a new Floor ID list (first argument must be a valid ID, last argument MUST be 0) */
-bfcp_floor_id_list *bfcp_new_floor_id_list(UINT16 fID, ...)
+bfcp_floor_id_list *bfcp_new_floor_id_list(unsigned fID, ...)
 {
 	bfcp_floor_id_list *first, *previous, *next;
 	va_list ap;
@@ -228,7 +228,7 @@ bfcp_floor_id_list *bfcp_new_floor_id_list(UINT16 fID, ...)
 }
 
 /* Add IDs to an existing Floor ID list (last argument MUST be 0) */
-int bfcp_add_floor_id_list(bfcp_floor_id_list *list, UINT16 fID, ...)
+int bfcp_add_floor_id_list(bfcp_floor_id_list *list, unsigned fID, ...)
 {
 	bfcp_floor_id_list *previous, *next;
 	va_list ap;
@@ -271,7 +271,7 @@ int bfcp_free_floor_id_list(bfcp_floor_id_list *list)
 }
 
 /* Create a new Supported (Primitives/Attributes) list (last argument MUST be 0) */
-bfcp_supported_list *bfcp_new_supported_list(UINT8 element, ...)
+bfcp_supported_list *bfcp_new_supported_list(unsigned element, ...)
 {
 	bfcp_supported_list *first, *previous, *next;
 	va_list ap;
@@ -351,7 +351,7 @@ int bfcp_free_error(bfcp_error *error)
 }
 
 /* Create a New Error Details list (for Error 4: UNKNOWN_M) (last argument MUST be 0) */
-bfcp_unknown_m_error_details *bfcp_new_unknown_m_error_details_list(UINT16 attribute, ...)
+bfcp_unknown_m_error_details *bfcp_new_unknown_m_error_details_list(unsigned attribute, ...)
 {
 	bfcp_unknown_m_error_details *first, *previous, *next;
 	va_list ap;
@@ -378,7 +378,7 @@ bfcp_unknown_m_error_details *bfcp_new_unknown_m_error_details_list(UINT16 attri
 }
 
 /* Add Attributes to an existing Error Details list (for Error 4: UNKNOWN_M) (last argument MUST be 0) */
-int bfcp_add_unknown_m_error_details_list(bfcp_unknown_m_error_details *list, UINT16 attribute, ...)
+int bfcp_add_unknown_m_error_details_list(bfcp_unknown_m_error_details *list, unsigned attribute, ...)
 {
 	bfcp_unknown_m_error_details *previous, *next;
 	va_list ap;

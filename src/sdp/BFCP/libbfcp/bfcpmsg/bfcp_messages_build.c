@@ -80,7 +80,7 @@ bfcp_message *bfcp_build_message(bfcp_arguments* arguments)
 /* Build the message Common Header */
 void bfcp_build_commonheader(bfcp_message *message, bfcp_entity *entity, e_bfcp_primitives primitive, int resp_unreliable)
 {
-	unsigned int ch32;		/* 32 bits */
+	unsigned int ch32 = 0;		/* 32 bits */
 	UINT16 ch16;	/* 16 bits */
 	unsigned char *buffer = message->buffer;
 	if ( (message->length - 12)%4 != 0) 
@@ -113,7 +113,7 @@ void bfcp_build_commonheader(bfcp_message *message, bfcp_entity *entity, e_bfcp_
 /* Build the first 16 bits of the Attribute */
 void bfcp_build_attribute_tlv(bfcp_message *message, UINT16 position, UINT16 type, UINT16 mandatory_bit, UINT16 length)
 {
-	UINT16 tlv;
+	UINT16 tlv = 0;
 	unsigned char *buffer = message->buffer+position;
 	tlv = (((tlv & !(0xFE00)) | (type)) << 9) +		/* Type takes 7 bits */
 		(((tlv & !(0x0100)) | (mandatory_bit)) << 8) +	/* M is a bit */
@@ -466,7 +466,7 @@ int bfcp_build_attribute_PRIORITY(bfcp_message *message, e_bfcp_priority priorit
 {
 	int position = message->position;	/* We keep track of where the TLV will have to be */
 	unsigned char *buffer = message->buffer+(message->position)+2;	/* We skip the TLV bytes */
-	UINT16 raw;	/* The 2-octets completing the Attribute */
+	UINT16 raw = 0;	/* The 2-octets completing the Attribute */
               BFCP_msgLog(INF,"> - PRIORITY [%d / %s] ",priority,getBfcpPriority(priority) );
 	raw = (((raw & !(0xE000)) | (priority)) << 13) +	/* First the Priority (3 bits) */
 		((raw & !(0x1FFF)) | 0);			/* and then the 13 Reserved bits */
@@ -482,7 +482,7 @@ int bfcp_build_attribute_REQUEST_STATUS(bfcp_message *message, bfcp_request_stat
 {
 	int position = message->position;	/* We keep track of where the TLV will have to be */
 	unsigned char *buffer = message->buffer+(message->position)+2;	/* We skip the TLV bytes */
-    UINT16 raw;	/* The 2-octets completing the Attribute */
+    UINT16 raw = 0;	/* The 2-octets completing the Attribute */
     BFCP_msgLog(INF,"> - REQUEST_STATUS Status[%d / %s ] Queue Position[%d]", 
         rs->rs , getBfcpStatus(rs->rs) , rs->qp );
     raw = (((raw & !(0xFF00)) | (rs->rs)) << 8) +	/* First the Request Status (8 bits) */
@@ -506,7 +506,7 @@ int bfcp_build_attribute_ERROR_CODE(bfcp_message *message, bfcp_error *error)
         int padding = 0;	/* Number of bytes of padding */
         int position = message->position;	/* We keep track of where the TLV will have to be */
         unsigned char *buffer = message->buffer+(message->position)+2;	/* We skip the TLV bytes */
-        char raw = ((raw & !(0xFF)) | (error->code));	/* The Error Code is 8 bits */
+        char raw = error->code;	/* The Error Code is 8 bits */
         BFCP_msgLog(INF,"> - ERROR_CODE [%d / %s]",error->code,getBfcpErrorType(error->code));
            
         memcpy(buffer, &raw, 1);	/* We copy the Error Code to the buffer */
@@ -986,7 +986,7 @@ int bfcp_build_attribute_DIGEST(bfcp_message *message, bfcp_digest *digest)
         int padding = 0;	/* Number of bytes of padding */
         int position = message->position;	/* We keep track of where the TLV will have to be */
         unsigned char *buffer = message->buffer+(message->position)+2;	/* We skip the TLV bytes */
-        char raw = (raw & !(0xFF)) | (digest->algorithm);	/* The Algorithm is 8 bits */
+        char raw = digest->algorithm;	/* The Algorithm is 8 bits */
         int dLen = (int)strlen(digest->text);
         BFCP_msgLog(INF,"> - DIGEST text [%s] ", digest->text?digest->text:"NULL" );
         memcpy(buffer, &raw, 1);		/* We copy the Algorithm to the buffer */

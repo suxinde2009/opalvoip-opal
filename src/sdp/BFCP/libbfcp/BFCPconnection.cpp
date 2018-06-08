@@ -61,7 +61,8 @@ std::string GetErrorText()
 {
   std::vector<char> buf;
   buf.resize(1000);
-  return strerror_r(errno, buf.data(), buf.size()-1);
+  strerror_r(errno, buf.data(), buf.size()-1);
+  return buf.data();
 }
 
 #endif // WIN32
@@ -108,11 +109,13 @@ const int BFCPConnectionRole::PASSIVE = 1;
 * isZeroTime
 *	Check if time val is 0
 *********************************/
+#if 0 // Unused
 static inline bool isZeroTime(const struct timeval *val)
 {
         //Check if it is zero
         return !(val->tv_sec & val->tv_usec);
 }
+#endif
 
 static int compareTime(const struct timeval *t1, const struct timeval *t2)
 {
@@ -1359,7 +1362,9 @@ BFCP_SOCKET BFCPConnection::Client2ServerInfo::CreateSocket()
             struct KeepConfig cfg = { 60, 10, 10};
             //set the keepalive options
             setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &cfg.keepcnt, sizeof cfg.keepcnt);
+#ifdef TCP_KEEPIDLE
             setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &cfg.keepidle, sizeof cfg.keepidle);
+#endif
             setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &cfg.keepintvl, sizeof cfg.keepintvl);
             sprintf(msg, "Keep alive idle_time=%d, keepcnt=%d and keepintvl=%d", cfg.keepidle, cfg.keepcnt, cfg.keepintvl);
 #else

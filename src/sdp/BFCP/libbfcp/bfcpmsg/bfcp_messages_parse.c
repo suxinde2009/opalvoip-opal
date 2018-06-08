@@ -164,7 +164,7 @@ int bfcp_free_received_message(bfcp_received_message *recvM)
 		return -1;
 }
 
-bfcp_received_message_error *bfcp_received_message_add_error(bfcp_received_message_error *error, e_bfcp_primitives  attribute, e_bfcp_error_codes code)
+bfcp_received_message_error *bfcp_received_message_add_error(bfcp_received_message_error *error, e_bfcp_attibutes  attribute, e_bfcp_error_codes  code)
 {
 	bfcp_received_message_error *temp, *previous;
 	

@@ -180,19 +180,6 @@ static const struct _bfcp_error_types {
 	{ BFCP_DIGEST_ATTRIBUTE_REQUIRED, "Digest Attribute Required"},
 	{ BFCP_INVALID_NONCE, "Invalid Nonce"},
 	{ BFCP_AUTHENTICATION_FAILED, "Authentication Failed"},
-};
-
-const char* getBfcpErrorType( e_bfcp_error_codes p){
-    if ( p < BFCP_CONFERENCE_DOES_NOT_EXIST || p > BFCP_AUTHENTICATION_FAILED )
-        p=BFCP_INVALID_ERROR_CODES;
-    return _bfcp_error_type[p].description ;
-}
-
-static const struct _bfcp_parsing_errors {
-	int error;
-	const char *description;
-} _bfcp_parsing_error[] = {
-    { 0 ,"Unknown parsing error" },
 	{ BFCP_WRONG_VERSION, "Wrong Version Bit" },
 	{ BFCP_RESERVED_NOT_ZERO, "Reserved bits not zeroed" },
 	{ BFCP_UNKNOWN_PRIMITIVE, "Unknown Primitive" },
@@ -201,8 +188,9 @@ static const struct _bfcp_parsing_errors {
 	{ BFCP_PARSING_ERROR, "Parsing Error" },
 };
 
-const char* getBfcpParsingErrors( e_bfcp_specific_error_codes p){
-    if ( p < BFCP_WRONG_VERSION || p > BFCP_PARSING_ERROR )
-        p=BFCP_INVALID_SPECIFIC_ERROR_CODES;
-    return _bfcp_parsing_error[p].description ;
+const char* getBfcpErrorType( e_bfcp_error_codes p){
+    if ( p < BFCP_CONFERENCE_DOES_NOT_EXIST || p > BFCP_AUTHENTICATION_FAILED )
+        p=BFCP_INVALID_ERROR_CODES;
+    return _bfcp_error_type[p].description ;
 }
+

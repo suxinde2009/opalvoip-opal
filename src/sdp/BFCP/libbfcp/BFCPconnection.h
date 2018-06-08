@@ -567,8 +567,8 @@ private:
      * Local endpoint IP socket address of the connection. null until the local
         * endpoint is set.
         */
-    char m_localAdress[PATH_MAX];
-    UINT16 m_localPort ;
+    //char m_localAdress[PATH_MAX];
+    //UINT16 m_localPort ;
 
     /**
      * Remote endpoint IP socket address of an active connection. This parameter
