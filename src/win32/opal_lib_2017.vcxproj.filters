@@ -795,6 +795,9 @@
     <ClCompile Include="..\sdp\BFCP\libbfcp\bfcpsrvctl\bfcpsrv\bfcp_user_list.cpp">
       <Filter>Source Files\SDP\libBFCP\Server</Filter>
     </ClCompile>
+    <ClCompile Include="..\ep\sockep.cxx">
+      <Filter>Source Files\Endpoints</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\codec\echocancel.h">
@@ -1396,6 +1399,9 @@
     </ClInclude>
     <ClInclude Include="..\sdp\BFCP\libbfcp\BFCPexception.h">
       <Filter>Source Files\SDP\libBFCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ep\sockep.h">
+      <Filter>Header Files\Endpoints</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

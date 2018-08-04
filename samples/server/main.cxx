@@ -36,6 +36,7 @@ const WORD DefaultHTTPPort = 1719;
 const WORD DefaultTelnetPort = 1718;
 static const PConstString TelnetPortKey("Console Port");
 static const PConstString DisplayNameKey("Display Name");
+static const PConstString MaxSimultaneousCallsKey("Maximum Simultaneous Calls");
 static const PConstString MediaTransferModeKey("Media Transfer Mode");
 static const PConstString AutoStartKeyPrefix("Auto Start ");
 static const PConstString PreferredMediaKey("Preferred Media");
@@ -277,8 +278,12 @@ PBoolean MyProcess::Initialise(const char * initMsg)
 #if OPAL_PTLIB_HTTP && OPAL_PTLIB_SSL
   m_httpNameSpace.AddResource(new OpalHTTPConnector(*m_manager, "/websocket", params.m_authority), PHTTPSpace::Overwrite);
 #endif // OPAL_PTLIB_HTTP && OPAL_PTLIB_SSL
+
 #if OPAL_SDP
   m_httpNameSpace.AddResource(new OpalSDPHTTPResource(*m_manager->FindEndPointAs<OpalSDPHTTPEndPoint>(OPAL_PREFIX_SDP), "/sdp", params.m_authority), PHTTPSpace::Overwrite);
+  PHTTPFile * webrtcTest = new PHTTPFile("/webrtc_test.html", "./webrtc_test.html", params.m_authority);
+  m_httpNameSpace.AddResource(webrtcTest, PHTTPSpace::Overwrite);
+  new OpalSockEndPoint(*m_manager);
 #endif
 
 
@@ -330,6 +335,10 @@ PBoolean MyProcess::Initialise(const char * initMsg)
 #endif // OPAL_SIP
          << PHTML::Paragraph()
          << PHTML::HotLink(cdrListPage->GetHotLink()) << "Call Detail Records" << PHTML::HotLink()
+#if OPAL_SDP
+         << PHTML::Paragraph()
+         << PHTML::HotLink(webrtcTest->GetHotLink()) << "WebRTC Test" << PHTML::HotLink()
+#endif
          << PHTML::Paragraph();
 
     if (params.m_fullLogPage != NULL)
@@ -346,7 +355,7 @@ PBoolean MyProcess::Initialise(const char * initMsg)
   }
 
   // set up the HTTP port for listening & start the first HTTP thread
-  if (ListenForHTTP(params.m_httpPort))
+  if (ListenForHTTP(params.m_httpInterfaces, params.m_httpPort))
     PSYSTEMLOG(Info, "Opened master socket(s) for HTTP: " << m_httpListeningSockets.front().GetPort());
   else {
     PSYSTEMLOG(Fatal, "Cannot run without HTTP");
@@ -436,6 +445,7 @@ bool MyManager::ConfigureCommon(OpalEndPoint * ep,
 MyManager::MyManager()
   : MyManagerParent(OPAL_CONSOLE_PREFIXES OPAL_PREFIX_PCSS " " OPAL_PREFIX_IVR " " OPAL_PREFIX_MIXER)
   , m_systemLog(PSystemLog::Info)
+  , m_maxCalls(9999)
   , m_mediaTransferMode(MediaTransferForward)
   , m_savedProductInfo(GetProductInfo())
 #if OPAL_CAPI
@@ -519,6 +529,8 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
     SetProductInfo(m_savedProductInfo);
 
   rsrc->Add(new PHTTPDividerField());
+
+  m_maxCalls = rsrc->AddIntegerField(MaxSimultaneousCallsKey, 1, 9999, m_maxCalls, "", "Maximum simultaneous calls");
 
   m_mediaTransferMode = cfg.GetEnum(MediaTransferModeKey, m_mediaTransferMode);
   static const char * const MediaTransferModeValues[] = { "0", "1", "2" };
@@ -681,7 +693,7 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
   rsrc->Add(new PHTTPDividerField());
   {
     OpalSDPHTTPEndPoint * ep = FindEndPointAs<OpalSDPHTTPEndPoint>(OPAL_PREFIX_SDP);
-    if (!ConfigureCommon(ep, "SDP", cfg, rsrc))
+    if (!ConfigureCommon(ep, "WebRTC", cfg, rsrc))
       return false;
   }
 #endif // OPAL_SDP_HTTP
@@ -866,7 +878,11 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
 
 OpalCall * MyManager::CreateCall(void *)
 {
-  return new MyCall(*this);
+  if (m_activeCalls.GetSize() < m_maxCalls)
+    return new MyCall(*this);
+
+  PTRACE(2, "Maximum simultaneous calls (" << m_maxCalls << ") exceeeded.");
+  return NULL;
 }
 
 
