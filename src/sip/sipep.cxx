@@ -864,6 +864,10 @@ bool SIPEndPoint::OnReceivedPDU(SIP_PDU * pdu)
     case SIP_PDU::Method_BYE :
     case SIP_PDU::Method_ACK :
       if (!hasToConnection && !hasFromConnection) {
+        PTRACE(4, "Does not have connection for "
+               << (hasToConnection ? "" : "To tag")
+               << (hasToConnection || hasFromConnection ? " " : " or ")
+               << (hasFromConnection ? "" : "From tag"));
         pdu->SendResponse(SIP_PDU::Failure_TransactionDoesNotExist);
         return false;
       }
@@ -2209,7 +2213,6 @@ void SIPEndPoint::AdjustToRegistration(SIP_PDU & pdu, SIPConnection * connection
     scheme = from.GetScheme();
     if (connection != NULL && to.GetDisplayName() != connection->GetDisplayName()) {
       to.SetDisplayName(connection->GetDisplayName());
-      to.Sanitise(SIPURL::ToURI);
       mime.SetTo(to);
     }
   }

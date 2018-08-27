@@ -713,11 +713,12 @@ SDPMediaDescription::SDPMediaDescription(const OpalTransportAddress & address, c
 PBoolean SDPMediaDescription::SetAddresses(const OpalTransportAddress & media,
                                            const OpalTransportAddress & control)
 {
-  PIPSocket::Address ip;
-  if (!media.GetIpAndPort(ip, m_port))
+  PIPSocket::Address dummy;
+  if (!media.GetIpAndPort(dummy, m_port))
     return false;
 
-  m_mediaAddress = OpalTransportAddress(ip, m_port, OpalTransportAddress::UdpPrefix());
+  PTRACE(3, "Set addresses: media=" << media << ", control=" << control);
+  m_mediaAddress = media;
   m_controlAddress = control;
 
   return true;
@@ -738,12 +739,7 @@ bool SDPMediaDescription::FromSession(OpalMediaSession * session,
     return true;
   }
 
-  m_mediaAddress = session->GetLocalAddress(true);
-  m_controlAddress = session->GetLocalAddress(false);
-
-  PIPSocket::Address dummy;
-  if (!m_mediaAddress.GetIpAndPort(dummy, m_port))
-    return false;
+  SetAddresses(session->GetLocalAddress(true), session->GetLocalAddress(false));
 
   switch (session->GetSetUpMode()) {
     case OpalMediaSession::SetUpModeActive :
@@ -850,7 +846,7 @@ bool SDPMediaDescription::Decode(const PStringArray & tokens)
     case 0 :
       PTRACE(3, "Ignoring media session " << m_mediaType << " with port=0");
       m_direction = Inactive;
-      m_mediaAddress = m_controlAddress = PString::Empty();
+      m_mediaAddress = m_controlAddress = OpalTransportAddress();
       break;
 
     case 65535 :
@@ -1641,7 +1637,7 @@ bool SDPRTPAVPMediaDescription::Decode(const PStringArray & tokens)
   PIPSocket::Address ip;
   if (m_mediaAddress.GetIpAddress(ip)) {
     m_controlAddress = OpalTransportAddress(ip, m_port+1, OpalTransportAddress::UdpPrefix());
-    PTRACE(4, "Setting rtcp connection address " << m_controlAddress);
+    PTRACE(4, "Setting control connection address " << m_controlAddress);
   }
 
   m_transportType = tokens[2];
@@ -1858,6 +1854,9 @@ void SDPRTPAVPMediaDescription::OutputAttributes(ostream & strm) const
   if (m_reducedSizeRTCP)
     strm << "a=rtcp-rsize\r\n";
 
+  if (!m_label.IsEmpty())
+    strm << "a=label:" << m_label << CRLF;
+
   /* Specification does not seem to say to do this, but all the RFC examples group
      the FID ssrc parameters together, so we do the same to maximise interoperability */
   std::set<RTP_SyncSourceId> ssrcInfoDone;
@@ -2022,11 +2021,16 @@ void SDPRTPAVPMediaDescription::SetAttribute(const PString & attr, const PString
     return;
   }
 
+  if (attr *= "label") {
+    m_label = value;
+    PTRACE(4, "m level label: \"" << m_label << '"');
+  }
+
   if (attr *= "msid") {
     m_msid = value;
     for (SsrcInfo::iterator it = m_ssrcInfo.begin(); it != m_ssrcInfo.end(); ++it) {
       SetMediaStreamAndTrackIds(value, it->second);
-      PTRACE(2, "SSRC: " << RTP_TRACE_SRC(it->first) << " m level msid: \"" << m_msid << '"');
+      PTRACE(4, "SSRC: " << RTP_TRACE_SRC(it->first) << " m level msid: \"" << m_msid << '"');
     }
     return;
   }
@@ -2041,7 +2045,7 @@ void SDPRTPAVPMediaDescription::SetAttribute(const PString & attr, const PString
     else {
       if (!m_msid.IsEmpty()) {
         SetMediaStreamAndTrackIds(m_msid, m_ssrcInfo[ssrc]);
-        PTRACE(2, "SSRC: " << RTP_TRACE_SRC(ssrc) << " m level msid: \"" << m_msid << '"');
+        PTRACE(4, "SSRC: " << RTP_TRACE_SRC(ssrc) << " m level msid: \"" << m_msid << '"');
       }
 
       PCaselessString key = value(space + 1, endToken - 1);
@@ -2076,6 +2080,8 @@ bool SDPRTPAVPMediaDescription::FromSession(OpalMediaSession * session,
   OpalRTPSession * rtpSession = dynamic_cast<OpalRTPSession *>(session);
   if (rtpSession != NULL) {
     PTRACE(4, "Setting SDP from RTP session " << *rtpSession);
+    m_label = rtpSession->GetLabel();
+
     if (offer != NULL) {
       m_headerExtensions = rtpSession->GetHeaderExtensions();
       m_reducedSizeRTCP = rtpSession->UseReducedSizeRTCP();
@@ -2152,7 +2158,7 @@ bool SDPRTPAVPMediaDescription::FromSession(OpalMediaSession * session,
     }
 
     PStringList groups = rtpSession->GetGroups();
-    PTRACE(4, "Adding groups: " << setfill(',') << groups);
+    PTRACE_IF(4, !groups.empty(), "Adding groups: " << setfill(',') << groups);
     for (PStringList::iterator it = groups.begin(); it != groups.end(); ++it) {
       if (singleSSRC != 0)
         m_groups.SetAt(*it, PSTRSTRM(rtpSession->GetGroupMediaId(*it) << '_' << singleSSRC));
@@ -2180,11 +2186,12 @@ bool SDPRTPAVPMediaDescription::ToSession(OpalMediaSession * session, RTP_SyncSo
 
     /* Set single port or disjoint RTCP port, must be done before Open()
        and before SDPMediaDescription::ToSession() */
-    rtpSession->SetSinglePortTx(m_controlAddress == m_mediaAddress);
-    if (m_stringOptions.GetBoolean(OPAL_OPT_RTCP_MUX))
-      rtpSession->SetSinglePortRx();
+    bool singlePort = m_controlAddress == m_mediaAddress;
+    rtpSession->SetSinglePortTx(singlePort);
+    rtpSession->SetSinglePortRx(singlePort && m_stringOptions.GetBoolean(OPAL_OPT_RTCP_MUX));
     rtpSession->SetReducedSizeRTCP(m_reducedSizeRTCP);
     rtpSession->SetHeaderExtensions(GetHeaderExtensions());
+    rtpSession->SetLabel(m_label);
 
     for (SsrcInfo::const_iterator it = m_ssrcInfo.begin(); it != m_ssrcInfo.end(); ++it) {
       RTP_SyncSourceId ssrc = it->first;

@@ -104,6 +104,15 @@ OpalSockConnection::~OpalSockConnection()
 
 void OpalSockConnection::OnReleased()
 {
+  if (m_audioSocket != NULL)
+    m_audioSocket->Close();
+
+#if OPAL_VIDEO
+  if (m_videoSocket != NULL)
+    m_videoSocket->Close();
+#endif
+
+  OpalLocalConnection::OnReleased();
 }
 
 
@@ -112,7 +121,13 @@ OpalMediaFormatList OpalSockConnection::GetMediaFormats() const
   OpalMediaFormatList fmts;
   fmts += m_stringOptions.GetString(OPAL_OPT_SOCK_EP_AUDIO_CODEC, OPAL_OPUS48);
 #if OPAL_VIDEO
-  fmts += m_stringOptions.GetString(OPAL_OPT_SOCK_EP_VIDEO_CODEC, OPAL_H264_MODE1);
+  OpalMediaFormat video = m_stringOptions.GetString(OPAL_OPT_SOCK_EP_VIDEO_CODEC, OPAL_H264_MODE1);
+  if (video.IsValid()) {
+    double fps = m_stringOptions.GetReal(OPAL_OPT_SOCK_EP_FRAME_RATE);
+    if (fps > 0)
+      video.SetOptionInteger(OpalMediaFormat::FrameTimeOption(), static_cast<int>(video.GetClockRate() / fps));
+    fmts += video;
+  }
 #endif
   return fmts;
 }
@@ -198,12 +213,13 @@ bool OpalSockConnection::OpenMediaSocket(PIPSocket * & socket,
 #pragma pack(1)
 struct MediaSockHeader {
   uint8_t  m_headerSize;
-  uint8_t m_length[3];
+  uint8_t  m_flags;    // bit 0 is marker bit (last packet in video frame)
+  PUInt16b m_length;
 };
 #pragma pack()
 
 
-bool OpalSockConnection::OnReadMediaData(const OpalMediaStream & mediaStream,
+bool OpalSockConnection::OnReadMediaData(OpalMediaStream & mediaStream,
                                          void * data,
                                          PINDEX size,
                                          PINDEX & length)
@@ -232,7 +248,8 @@ bool OpalSockConnection::OnReadMediaData(const OpalMediaStream & mediaStream,
     PTRACE(2, "Socket read error for " << mediaType << " - " << socket->GetErrorText());
     return false;
   }
-  length = (hdr.m_length[0] << 16) | (hdr.m_length[1] << 8) | hdr.m_length[2];
+  length = hdr.m_length;
+  mediaStream.SetMarker((hdr.m_flags & 1) != 0);
 
   if (length > size) {
     PTRACE(2, "Unexpectedly large data for " << mediaType << ": " << length << " > " << size);
@@ -273,9 +290,8 @@ bool OpalSockConnection::OnWriteMediaData(const OpalMediaStream & mediaStream,
 
   MediaSockHeader hdr;
   hdr.m_headerSize = sizeof(hdr);
-  hdr.m_length[0] = length >> 16;
-  hdr.m_length[1] = length >> 8;
-  hdr.m_length[2] = length;
+  hdr.m_flags = mediaStream.GetMarker() ? 1 : 0;
+  hdr.m_length = length;
   if (!socket->Write(&hdr, sizeof(hdr)) || !socket->Write(data, length)) {
     PTRACE(2, "Socket write error for " << mediaType << " - " << socket->GetErrorText());
     return false;

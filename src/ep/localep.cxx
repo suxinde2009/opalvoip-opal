@@ -202,8 +202,8 @@ bool OpalLocalEndPoint::OnWriteMediaFrame(const OpalLocalConnection & /*connecti
 }
 
 
-bool OpalLocalEndPoint::OnReadMediaData(const OpalLocalConnection & /*connection*/,
-                                        const OpalMediaStream & /*mediaStream*/,
+bool OpalLocalEndPoint::OnReadMediaData(OpalLocalConnection & /*connection*/,
+                                        OpalMediaStream & /*mediaStream*/,
                                         void * data,
                                         PINDEX size,
                                         PINDEX & length)
@@ -529,7 +529,8 @@ void OpalLocalConnection::InternalAcceptIncoming()
   PThread::Sleep(100);
 
   if (LockReadWrite()) {
-    AlertingIncoming();
+    if (!m_stringOptions.GetBoolean(OPAL_OPT_EXPLICIT_ALERTING, false))
+      AlertingIncoming();
     InternalOnConnected();
     AutoStartMediaStreams();
     UnlockReadWrite();
@@ -549,7 +550,7 @@ bool OpalLocalConnection::OnWriteMediaFrame(const OpalMediaStream & mediaStream,
 }
 
 
-bool OpalLocalConnection::OnReadMediaData(const OpalMediaStream & mediaStream, void * data, PINDEX size, PINDEX & length)
+bool OpalLocalConnection::OnReadMediaData(OpalMediaStream & mediaStream, void * data, PINDEX size, PINDEX & length)
 {
   return m_endpoint.OnReadMediaData(*this, mediaStream, data, size, length);
 }
@@ -702,6 +703,8 @@ PBoolean OpalLocalMediaStream::WritePacket(RTP_DataFrame & frame)
 }
 
 
+static PINDEX const MaxDataLen = 8;
+
 PBoolean OpalLocalMediaStream::ReadData(BYTE * data, PINDEX size, PINDEX & length)
 {
   if (!m_connection.OnReadMediaData(*this, data, size, length))
@@ -709,7 +712,13 @@ PBoolean OpalLocalMediaStream::ReadData(BYTE * data, PINDEX size, PINDEX & lengt
 
   m_timestamp += OpalMediaStream::m_frameTime;
 
-  PTRACE(m_readLogThrottle, "ReadData: length=" << length << ", timestamp=" << m_timestamp << m_readLogThrottle);
+  PTRACE(m_readLogThrottle, "ReadData:"
+         " marker=" << m_marker << ","
+         " timestamp=" << m_timestamp << ","
+         " length=" << length << ","
+         " data=" << PHexDump(data, std::min(MaxDataLen, length)) <<
+         " on " << *this <<
+         m_readLogThrottle);
 
   if (m_synchronicity == OpalLocalEndPoint::e_SimulateSynchronous)
     Pace(false, size, m_marker);
@@ -732,7 +741,14 @@ PBoolean OpalLocalMediaStream::WriteData(const BYTE * data, PINDEX length, PINDE
   if (!m_connection.OnWriteMediaData(*this, data, length, written))
     return false;
 
-  PTRACE(m_readLogThrottle, "WriteData: length=" << length << ", timestamp=" << m_timestamp << m_readLogThrottle);
+  PTRACE(m_writeLogThrottle, "WriteData:"
+         " marker=" << m_marker << ","
+         " timestamp=" << m_timestamp << ","
+         " length=" << length << ","
+         " written=" << written << ","
+         " data=" << PHexDump(data, std::min(MaxDataLen, length)) <<
+         " on " << *this <<
+         m_writeLogThrottle);
 
   if (m_synchronicity == OpalLocalEndPoint::e_SimulateSynchronous)
     Pace(false, written, m_marker);
