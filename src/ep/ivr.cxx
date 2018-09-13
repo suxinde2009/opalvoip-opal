@@ -190,6 +190,7 @@ OpalIVRConnection::OpalIVRConnection(OpalCall & call,
   , endpoint(ep)
   , m_vxmlScript(vxml)
   , P_DISABLE_MSVC_WARNINGS(4355, m_vxmlSession(*this, PFactory<PTextToSpeech>::CreateInstance(ep.GetDefaultTextToSpeech()), true))
+  , m_vxmlStarted(false)
 {
 #if P_VIDEO
   m_autoStartInfo[OpalMediaType::Video()] = OpalMediaType::DontOffer;
@@ -215,11 +216,19 @@ PString OpalIVRConnection::GetLocalPartyURL() const
 }
 
 
-void OpalIVRConnection::OnEstablished()
+void OpalIVRConnection::OnStartMediaPatch(OpalMediaPatch & patch)
 {
-  OpalConnection::OnEstablished();
+  OpalLocalConnection::OnStartMediaPatch(patch);
 
-  if (!m_vxmlSession.IsLoaded())
+  for (StreamDict::const_iterator it = m_mediaStreams.begin(); it != m_mediaStreams.end(); ++it) {
+    OpalMediaStreamPtr mediaStream = it->second;
+    if (mediaStream != NULL && !mediaStream->IsEstablished()) {
+      PTRACE(4, "Delayed starting VXML, not yet established " << *mediaStream);
+      return;
+    }
+  }
+
+  if (!m_vxmlStarted.exchange(true))
     StartVXML(m_vxmlScript);
 }
 
