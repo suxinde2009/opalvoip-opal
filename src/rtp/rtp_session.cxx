@@ -419,7 +419,7 @@ OpalRTPSession::SyncSource::SyncSource(OpalRTPSession & session, RTP_SyncSourceI
   , m_lastSequenceNumber(0)
   , m_firstSequenceNumber(0)
   , m_extendedSequenceNumber(0)
-  , m_lastFIRSequenceNumber(256) // Impossible value
+  , m_lastFIRSequenceNumber(0)
   , m_lastTSTOSequenceNumber(0)
   , m_consecutiveOutOfOrderPackets(0)
   , m_nextOutOfOrderPacket(0)
@@ -2341,7 +2341,8 @@ OpalRTPSession::SendReceiveStatus OpalRTPSession::OnReceiveControl(RTP_ControlFr
                        " last-sn=" << ssrc->m_lastFIRSequenceNumber << ","
                        " receiver SSRC=" << RTP_TRACE_SRC(targetSSRC) << ","
                        " sender SSRC=" << RTP_TRACE_SRC(senderSSRC));
-                if (ssrc->m_lastFIRSequenceNumber != sequenceNumber) {
+                // Allow for SN always zero from some brain dead endpoints.
+                if (sequenceNumber == 0 || ssrc->m_lastFIRSequenceNumber != sequenceNumber) {
                   ssrc->m_lastFIRSequenceNumber = sequenceNumber;
                   m_connection.ExecuteMediaCommand(OpalVideoUpdatePicture(m_sessionId, targetSSRC), true);
                 }
