@@ -689,7 +689,6 @@ SDPMediaDescription::SDPMediaDescription()
   : m_port(0)
   , m_portCount(1)
   , m_bundleOnly(false)
-  , m_reducedSizeRTCP(false)
   , m_setupMode(SetupNotSet)
   , m_connectionMode(OpalMediaSession::ConnectionNotSet)
 {
@@ -702,7 +701,6 @@ SDPMediaDescription::SDPMediaDescription(const OpalTransportAddress & address, c
   , m_portCount(1)
   , m_mediaType(type)
   , m_bundleOnly(false)
-  , m_reducedSizeRTCP(false)
   , m_setupMode(SetupNotSet)
   , m_connectionMode(OpalMediaSession::ConnectionNotSet)
 {
