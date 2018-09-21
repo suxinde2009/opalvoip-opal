@@ -41,18 +41,21 @@ else ifndef OPALDIR
 else
   ifeq (,$(target))
     ifeq (,$(OS))
-      OS:=$(shell uname -s)
+      OS := $(shell uname -s)
     endif
     ifeq (,$(CPU))
-      CPU=$(shell uname -m)
+      CPU := $(shell uname -m)
     endif
-    target = $(OS)_$(CPU)
+    target := $(OS)_$(CPU)
   endif
-  ifneq (,$(wildcard $(OPALDIR)/lib_$(target)/make/$(OPAL_CONFIG_MAK)))
-    include $(OPALDIR)/lib_$(target)/make/$(OPAL_CONFIG_MAK)
-  else
-    include $(OPALDIR)/make/$(OPAL_CONFIG_MAK)
+
+  OPAL_CONFIG_MAK_PATH := $(OPALDIR)/lib_$(target)/make/$(OPAL_CONFIG_MAK)
+  ifeq (,$(wildcard $(OPAL_CONFIG_MAK_PATH)))
+    OPAL_CONFIG_MAK_PATH := $(OPALDIR)/make/$(OPAL_CONFIG_MAK)
   endif
+  #$(info Including $(OPAL_CONFIG_MAK_PATH))
+  include $(OPAL_CONFIG_MAK_PATH)
+
   OPAL_INCFLAGS := -I$(OPALDIR)/include
   OPAL_LIBDIR = $(OPALDIR)/lib_$(target)
   LIBDIRS := $(OPALDIR) $(LIBDIRS)  # Submodules built with make lib
@@ -100,7 +103,7 @@ OPAL_LIBS = -L$(OPAL_LIBDIR) -l$(OPAL_LIB_BASE)$(LIB_DEBUG_SUFFIX)$(LIB_STATIC_S
 
 BUNDLE_FILES += $(OPAL_SHARED_LIB_FILE) $(OPAL_SHARED_LIB_LINK)
 ifneq ($(OPAL_LIBDIR),$(PTLIB_LIBDIR))
-  BUNDLE_FILES += `find $(OPAL_LIBDIR) -name \*$(PTLIB_PLUGIN_SUFFIX).$(SHAREDLIBEXT)`
+  BUNDLE_FILES += `find $(OPAL_LIBDIR) -name \*$(PTLIB_PLUGIN_SUFFIX).$(SHAREDLIBEXT)` `find $(OPAL_LIBDIR) -name h264_video_pwplugin_helper`
 endif
 
 
