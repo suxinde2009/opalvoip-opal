@@ -4,15 +4,12 @@ EXPORTS
     ___local_stdio_printf_options @50255 NONAME
     ___local_stdio_scanf_options @50256 NONAME
     ___isa_available_default @35266 NONAME
-    __speex_putc @50212 NONAME
     __vfprintf_l @50248 NONAME
     __vsnprintf_l @50249 NONAME
     __vsprintf_l @50250 NONAME
     __vsscanf_l @50251 NONAME
     __local_stdio_printf_options @49754 NONAME
     __local_stdio_scanf_options @49755 NONAME
-    __ParticpantLog @49982 NONAME
-    __ServerLog @50124 NONAME
     _CTA2?AVbad_cast@std@@ @47922 NONAME
     _a2u @49750 NONAME
     _aes_decrypt_with_raw_key @49751 NONAME
@@ -37,8 +34,8 @@ EXPORTS
     _octet_weight @49782 NONAME
     _powf @49783 NONAME
     _printf @49784 NONAME
-    _sprintf @49571 NONAME
     _print_vec @49785 NONAME
+    _sprintf @49812 NONAME
     _sscanf @49969 NONAME
     _stat_test_monobit @49970 NONAME
     _stat_test_poker @49971 NONAME
@@ -56,16 +53,6 @@ EXPORTS
     _vsnprintf_l @49750 NONAME
     _vsprintf_l @49751 NONAME
     _vsscanf_l @49752 NONAME
-    _DumpBfcpBuff @49198 NONAME
-    _getBfcpAttribute @49199 NONAME
-    _getBfcpDescPrimitive @49200 NONAME
-    _getBfcpErrorType @49201 NONAME
-    _getBfcpParsingErrors @49202 NONAME
-    _getBfcpPriority @49203 NONAME
-    _getBfcpStatus @49204 NONAME
-    _remove_request_from_the_floor @49715 NONAME
-    _ParticpantLog @49982 NONAME
-    _ServerLog @50124 NONAME
 	a2u @49512 NONAME
     aes_decrypt_with_raw_key @49513 NONAME
     alaw2linear @49514 NONAME
@@ -100,21 +87,19 @@ EXPORTS
     ut_next_index @49737 NONAME
     vfprintf @49743 NONAME
     vsnprintf @49744 NONAME
-    _v128_*
-    v128_*
-    _SHA*
-    SHA*
-    _kiss*
-    kiss_*
-    _speex_*
-    speex_*
-    _spx_*
-    spx_*
-    _srtp_*
-    srtp_*
-    _srtcp_*
-    srtcp_*
-    _bfcp_*
-    bfcp_*
-    _bitvector_*
     bitvector_*
+    _bitvector_*
+    kiss_*
+    _kiss_*
+    speex_*
+    _speex_*
+    spx_*
+    _spx_*
+    srtcp_*
+    _srtcp_*
+    srtp_*
+    _srtp_*
+    SHA_*
+    _SHA_*
+    v128_*
+    _v128_*
