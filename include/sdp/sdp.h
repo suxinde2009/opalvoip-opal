@@ -187,7 +187,7 @@ class SDPCommonAttributes
       SendRecv
     };
 
-    typedef PDictionary<PString, PStringSet> GroupDict;
+    typedef PDictionary<PString, PStringArray> GroupDict;
 
     SDPCommonAttributes()
       : m_direction(Undefined)
