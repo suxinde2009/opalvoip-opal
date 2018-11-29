@@ -408,7 +408,12 @@ void OpalRTPConnection::ReplaceMediaSession(unsigned sessionId, OpalMediaSession
 
     mediaSession->SetRemoteAddress(remoteMedia, true);
     mediaSession->SetRemoteAddress(remoteCtrl, false);
-    PTRACE(4, "Replacing session " << sessionId << " media=" << remoteMedia << " ctrl=" << remoteCtrl);
+    PTRACE(3, "Replacing " << it->second->GetMediaType() << " session " << sessionId
+           << " (" << it->second->GetSessionType() << ")"
+	      " with " << mediaSession->GetMediaType()
+           << " (" << mediaSession->GetSessionType() << ")"
+	      " using media=" << remoteMedia << ","
+              " ctrl=" << remoteCtrl);
   }
 
   OpalRTPSession * rtpSession = dynamic_cast<OpalRTPSession *>(mediaSession);
@@ -613,6 +618,7 @@ void OpalRTPConnection::AdjustMediaFormats(bool   local,
       rtxList.Remove(m_stringOptions(OPAL_OPT_REMOVE_CODEC).Lines());
       rtxList.Remove(GetEndPoint().GetManager().GetMediaFormatMask());
       mediaFormats += rtxList;
+      mediaFormats.OptimisePayloadTypes();
     }
     else {
       OpalMediaFormatList::iterator fmt = mediaFormats.begin();

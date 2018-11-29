@@ -1,5 +1,5 @@
 /*
- * sdpep.h
+ * sdphttpep.h
  *
  * Open Phone Abstraction Library (OPAL)
  *
@@ -137,8 +137,7 @@ class OpalSDPHTTPEndPoint : public OpalSDPEndPoint
 
     /// Handle incoming HTTP from OpalSDPHTTPResource
     virtual bool OnReceivedHTTP(
-      PHTTPServer & server,         ///< HTTP server that received the request
-      const PHTTPConnectionInfo & conInfo  ///< HTTP connection information
+      PHTTPRequest & request  ///< HTTP request information
     );
   //@}
 
@@ -166,13 +165,12 @@ class OpalSDPHTTPResource : public PHTTPResource
       const PHTTPAuthority & auth ///< Authorisation for the resource.
     );
 
-    virtual bool OnGET(
-      PHTTPServer & server,         ///< HTTP server that received the request
-      const PHTTPConnectionInfo & conInfo  ///< HTTP connection information
+    virtual PBoolean OnGETData(
+      PHTTPRequest & request                      ///< request state information
     );
-    virtual bool OnPOST(
-      PHTTPServer & server,         ///< HTTP server that received the request
-      const PHTTPConnectionInfo & conInfo  ///< HTTP connection information
+    virtual PBoolean OnPOSTData(
+      PHTTPRequest & request,        ///< request information
+      const PStringToString & data   ///< Variables in the POST data.
     );
 
   protected:
@@ -267,8 +265,7 @@ class OpalSDPHTTPConnection : public OpalSDPConnection
   //@{
     /// Handle incoming HTTP from OpalSDPHTTPResource
     virtual bool OnReceivedHTTP(
-      PHTTPServer & server,         ///< HTTP server that received the request
-      const PHTTPConnectionInfo & conInfo  ///< HTTP connection information
+      PHTTPRequest & request  ///< HTTP request information
     );
   //@}
 

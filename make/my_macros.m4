@@ -304,24 +304,28 @@ dnl $2 variable prefix
 AC_DEFUN([MY_VERSION_FILE],[
    AS_VAR_SET_IF([$2[_MAJOR]],[major=${$2[_MAJOR]}],[major=`cat $1 | grep MAJOR_VERSION | cut -f3 -d' '`])
    AS_VAR_SET_IF([$2[_MINOR]],[minor=${$2[_MINOR]}],[minor=`cat $1 | grep MINOR_VERSION | cut -f3 -d' '`])
-   AS_VAR_SET_IF([$2[_BUILD]],[build=${$2[_BUILD]}],[build=`cat $1 | grep BUILD_NUMBER  | cut -f3 -d' ' | sed 's/0x@<:@1-9@:>@*0*//'`])
-   AS_VAR_SET_IF([$2[_STAGE]],[stage=${$2[_STAGE]}],[stage=`cat $1 | grep BUILD_TYPE    | cut -f 3 -d ' ' | sed 's/BetaCode/-beta/' | sed 's/AlphaCode/-alpha/' | sed 's/ReleaseCode/\./'`])
-   version="${major}.${minor}.${build}"
+   AS_VAR_SET_IF([$2[_PATCH]],[patch=${$2[_PATCH]}],[patch=`cat $1 | grep PATCH_VERSION | cut -f3 -d' '`])
+   AS_VAR_SET_IF([$2[_OEM]]  ,[  oem=${$2[_OEM]}],  [  oem=`cat $1 | grep OEM_VERSION   | cut -f3 -d' '`])
+   AS_VAR_SET_IF([$2[_STAGE]],[stage=${$2[_STAGE]}],[stage=`cat $1 | grep BUILD_TYPE    | cut -f3 -d' ' | sed 's/BetaCode/-beta/' | sed 's/AlphaCode/-alpha/' | sed 's/ReleaseCode/\./'`])
 
-   AS_IF([test -z "$major" -o -z "$minor" -o -z "$build"], AC_MSG_ERROR(Could not determine version number from $1))
+   AS_IF([test -z "$major" -o -z "$minor" -o -z "$patch"], AC_MSG_ERROR(Could not determine version number from $1))
+
+   AS_VAR_IF([oem],[0],[version="${major}.${minor}.${patch}"],[version="${major}.${minor}.${patch}-${oem}"])
 
    AC_SUBST($2[_MAJOR], $major)
    AC_SUBST($2[_MINOR], $minor)
-   AC_SUBST($2[_BUILD], $build)
+   AC_SUBST($2[_PATCH], $patch)
+   AC_SUBST($2[_OEM],   $oem)
    AC_SUBST($2[_STAGE], $stage)
    AC_SUBST($2[_VERSION], "${version}")
 
-   AC_DEFINE_UNQUOTED([$2[_MAJOR]],   [${major}], [Major version])
-   AC_DEFINE_UNQUOTED([$2[_MINOR]],   [${minor}], [Minor version])
-   AC_DEFINE_UNQUOTED([$2[_BUILD]],   [${build}], [Build number])
+   AC_DEFINE_UNQUOTED([$2[_MAJOR]],   [${major}],  [Major version])
+   AC_DEFINE_UNQUOTED([$2[_MINOR]],   [${minor}],  [Minor version])
+   AC_DEFINE_UNQUOTED([$2[_PATCH]],   [${patch}],  [Patch version])
+   AC_DEFINE_UNQUOTED([$2[_OEM]],     [${oem}],    [OEM version])
    AC_DEFINE_UNQUOTED([$2[_VERSION]], ["$version"],[PTLib version])
 
-   AC_MSG_NOTICE([$2 version is $version])
+   AC_MSG_NOTICE([$2 version is $version (${major}.${minor}${stage}${patch}-${oem})])
 ])
 
 
@@ -511,8 +515,8 @@ case "$target_os" in
       target_os=Darwin
       target_release=`xcodebuild -showsdks | sed -n 's/.*macosx\(.*\)/\1/p' | sort | tail -n 1`
 
-      CPPFLAGS="-mmacosx-version-min=10.12 $CPPFLAGS"
-      LDFLAGS="-mmacosx-version-min=10.12 $LDFLAGS"
+      CPPFLAGS="-mmacosx-version-min=$target_release $CPPFLAGS"
+      LDFLAGS="-mmacosx-version-min=$target_release $LDFLAGS"
       LIBS="-framework AVFoundation -framework CoreVideo -framework CoreMedia -framework AudioUnit $LIBS"
    ;;
 
