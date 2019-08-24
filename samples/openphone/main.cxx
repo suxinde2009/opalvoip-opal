@@ -7890,7 +7890,7 @@ static void SetGauge(wxGauge * gauge, int level)
     gauge->Show(false);
   else {
     gauge->Show();
-    gauge->SetValue(val+127);
+    gauge->SetValue(level + 127); // Convert -127..0 to 0..127 as gauge doesn't do negatives
   }
 }
 
