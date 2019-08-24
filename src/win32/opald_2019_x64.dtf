@@ -37818,7 +37818,6 @@ EXPORTS
     ?GenerateCallReference@Q931@@SAIXZ @38847 NONAME
     ?GenerateTag@SIPURL@@SA?AVPString@@XZ @38848 NONAME
     ?Get@OpalCapiMessage@@QEBA_NAEA_KPEAE_KAEAVPString@@@Z @38849 NONAME
-    ?Get@PStringOptions@@QEBA?AVPString@@AEBVPCaselessString@@PEBD@Z @38850 NONAME
     ?Get@PStringOptions@@QEBA?AVPString@@P6AAEBVPCaselessString@@XZAEBV2@@Z @38851 NONAME
     ?Get@PStringOptions@@QEBA?AVPString@@PEBD0@Z @38852 NONAME
     ?Get@PStringOptions@@QEBA?AVPString@@PEBDAEBV2@@Z @38853 NONAME
@@ -45059,7 +45058,6 @@ EXPORTS
     ?SessionType@H2356_Session@@SAAEBVPCaselessString@@XZ @46135 NONAME
     ?SessionType@OpalDummySession@@SAAEBVPCaselessString@@XZ @46136 NONAME
     ?Set@?$PSafePtr@VOpalMediaPatch@@VPSafePtrMultiThreaded@@@@QEAA?AV1@PEAVOpalMediaPatch@@@Z @46137 NONAME
-    ?Set@PStringOptions@@QEAA_NAEBVPCaselessString@@AEBVPString@@@Z @46138 NONAME
     ?Set@PStringOptions@@QEAA_NAEBVPString@@0@Z @46139 NONAME
     ?Set@PStringOptions@@QEAA_NPEBDAEBVPString@@@Z @46140 NONAME
     ?SetAbsoluteTime@RTP_DataFrame@@QEAAXAEBVPTime@@@Z @46141 NONAME
