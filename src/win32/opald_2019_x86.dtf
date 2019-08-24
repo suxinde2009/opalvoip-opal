@@ -642,6 +642,8 @@ EXPORTS
     ??$GetConnectionFromArgs@VOpalPCSSConnection@@@OpalManagerConsole@@QBE_NAAVArguments@PCLI@@AAV?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@@Z @122 NONAME
     ??$GetConnectionFromArgs@VOpalRTPConnection@@@OpalManagerConsole@@QBE_NAAVArguments@PCLI@@AAV?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@@Z @123 NONAME
     ??$GetConnectionWithLockAs@VOpalLocalConnection@@@OpalEndPoint@@QBE?AV?$PSafePtr@VOpalLocalConnection@@VPSafePtrBase@@@@ABVPString@@W4PSafetyMode@@@Z @124 NONAME
+    ??$GetConnectionWithLockAs@VOpalSDPHTTPConnection@@@OpalEndPoint@@QBE?AV?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@ABVPString@@W4PSafetyMode@@@Z @48422 NONAME
+    ;public: class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> __thiscall OpalEndPoint::GetConnectionWithLockAs<class OpalSDPHTTPConnection>(class PString const &,enum PSafetyMode)const 
     ??$GetEnum@W4SubProtocol@SIP_Presentity@@@PStringOptions@@QBE?AW4SubProtocol@SIP_Presentity@@ABVPCaselessString@@W412@@Z @125 NONAME
     ??$GetEnum@W4SubProtocol@SIP_Presentity@@@PStringOptions@@QBE?AW4SubProtocol@SIP_Presentity@@P6AABVPCaselessString@@XZW412@@Z @126 NONAME
     ??$GetFactoryAs@V?$PFactory@VFrameDetector@OpalAudioFormat@@VPCaselessString@@@@@PFactoryBase@@KAAAV?$PFactory@VFrameDetector@OpalAudioFormat@@VPCaselessString@@@@XZ @127 NONAME
@@ -794,6 +796,8 @@ EXPORTS
     ??$PSafePtrCast@VOpalConnection@@VOpalLocalConnection@@@@YA?AV?$PSafePtr@VOpalLocalConnection@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalConnection@@VPSafePtrBase@@@@@Z @274 NONAME
     ??$PSafePtrCast@VOpalConnection@@VOpalPCSSConnection@@@@YA?AV?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalConnection@@VPSafePtrBase@@@@@Z @275 NONAME
     ??$PSafePtrCast@VOpalConnection@@VOpalRTPConnection@@@@YA?AV?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalConnection@@VPSafePtrBase@@@@@Z @276 NONAME
+    ??$PSafePtrCast@VOpalConnection@@VOpalSDPHTTPConnection@@@@YA?AV?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalConnection@@VPSafePtrBase@@@@@Z @48423 NONAME
+    ;class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> __cdecl PSafePtrCast<class OpalConnection,class OpalSDPHTTPConnection>(class PSafePtr<class OpalConnection,class PSafePtrBase> const &)
     ??$PSafePtrCast@VOpalConnection@@VSIPConnection@@@@YA?AV?$PSafePtr@VSIPConnection@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalConnection@@VPSafePtrBase@@@@@Z @277 NONAME
     ??$PSafePtrCast@VOpalIMContext@@VOpalSIPIMContext@@@@YA?AV?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalIMContext@@VPSafePtrBase@@@@@Z @278 NONAME
     ??$PSafePtrCast@VOpalMediaStream@@VGstMediaStream@@@@YA?AV?$PSafePtr@VGstMediaStream@@VPSafePtrBase@@@@ABV?$PSafePtr@VOpalMediaStream@@VPSafePtrBase@@@@@Z @279 NONAME
@@ -1392,6 +1396,10 @@ EXPORTS
     ??0?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@QAE@PAVOpalPresentity@@W4PSafetyMode@@@Z @876 NONAME
     ??0?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@QAE@ABV0@@Z @877 NONAME
     ??0?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@QAE@PAVOpalRTPConnection@@W4PSafetyMode@@@Z @878 NONAME
+    ??0?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@QAE@ABV0@@Z @48428 NONAME
+    ;public: __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>(class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> const &)
+    ??0?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@QAE@PAVOpalSDPHTTPConnection@@W4PSafetyMode@@@Z @48429 NONAME
+    ;public: __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>(class OpalSDPHTTPConnection *,enum PSafetyMode)
     ??0?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@QAE@ABV0@@Z @879 NONAME
     ??0?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@QAE@PAVOpalSIPIMContext@@W4PSafetyMode@@@Z @880 NONAME
     ??0?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@QAE@ABV0@@Z @881 NONAME
@@ -1504,6 +1512,8 @@ EXPORTS
     ??0?$SIPTimeoutWorkItem@VSIPConnection@@@@QAE@AAVSIPEndPoint@@ABVPString@@P8SIPConnection@@AEXXZ@Z @988 NONAME
     ??0?$SIPTimeoutWorkItem@VSIPHandler@@@@QAE@AAVSIPEndPoint@@ABVPString@@P8SIPHandler@@AEXXZ@Z @989 NONAME
     ??0?$SIPTimeoutWorkItem@VSIPTransaction@@@@QAE@AAVSIPEndPoint@@ABVPString@@P8SIPTransaction@@AEXXZ@Z @990 NONAME
+    ??0?$Throttle@$01$0CHBA@$03$00@PTrace@@QAE@XZ @48430 NONAME
+    ;public: __thiscall PTrace::Throttle<2,10000,4,1>::Throttle<2,10000,4,1>(void)
     ??0?$Throttle@$01$0OKGA@$05$00@PTrace@@QAE@XZ @991 NONAME
     ??0?$Throttle@$02$0BPE@$05$00@PTrace@@QAE@XZ @992 NONAME
     ??0?$Throttle@$02$0CHBA@$05$00@PTrace@@QAE@XZ @993 NONAME
@@ -1584,6 +1594,8 @@ EXPORTS
     ??0BuddyInfo@OpalPresentity@@QAE@ABVPURL@@ABVPString@@@Z @1072 NONAME
     ??0BundleMergeInfo@OpalSDPConnection@@QAE@I@Z @1073 NONAME
     ??0CachedAudio@OpalAudioStreamMixer@@QAE@XZ @1074 NONAME
+    ??0CalculateDB@OpalSilenceDetector@@QAE@XZ @48435 NONAME
+    ;public: __thiscall OpalSilenceDetector::CalculateDB::CalculateDB(void)
     ??0CallDict@OpalManager@@QAE@AAV1@@Z @1075 NONAME
     ??0CallEndReason@OpalConnection@@QAE@J@Z @1076 NONAME
     ??0CallEndReason@OpalConnection@@QAE@W4CallEndReasonCodes@1@I@Z @1077 NONAME
@@ -1690,6 +1702,12 @@ EXPORTS
     ??0const_iterator@?$PSafeDictionary@V?$PKey@I@@VOpalMediaSession@@@@QAE@ABV01@@Z @1178 NONAME
     ??0const_iterator@?$PSafeDictionary@V?$PKey@I@@VOpalMediaSession@@@@QAE@ABViterator@1@@Z @1179 NONAME
     ??0const_iterator@?$PSafeDictionary@V?$PKey@I@@VOpalMediaSession@@@@QAE@XZ @1180 NONAME
+    ??0const_iterator@?$PSafeDictionary@VPString@@VOpalConnection@@@@IAE@PBV1@@Z @48436 NONAME
+    ;protected: __thiscall PSafeDictionary<class PString,class OpalConnection>::const_iterator::const_iterator(class PSafeDictionary<class PString,class OpalConnection> const *)
+    ??0const_iterator@?$PSafeDictionary@VPString@@VOpalConnection@@@@QAE@ABV01@@Z @48437 NONAME
+    ;public: __thiscall PSafeDictionary<class PString,class OpalConnection>::const_iterator::const_iterator(class PSafeDictionary<class PString,class OpalConnection>::const_iterator const &)
+    ??0const_iterator@?$PSafeDictionary@VPString@@VOpalConnection@@@@QAE@XZ @48438 NONAME
+    ;public: __thiscall PSafeDictionary<class PString,class OpalConnection>::const_iterator::const_iterator(void)
     ??0const_iterator@?$PSafeDictionary@VPString@@VSIPHandler@@@@IAE@PBV1@@Z @1181 NONAME
     ??0const_iterator@?$PSafeDictionary@VPString@@VSIPHandler@@@@QAE@ABV01@@Z @1182 NONAME
     ??0const_iterator@?$PSafeDictionary@VPString@@VSIPHandler@@@@QAE@XZ @1183 NONAME
@@ -4256,7 +4274,8 @@ EXPORTS
     ??0Info@RTP_TransportWideCongestionControlHandler@@QAE@$$QAU01@@Z @3762 NONAME
     ??0Info@RTP_TransportWideCongestionControlHandler@@QAE@IABVPTime@@@Z @3763 NONAME
     ??0Init@OpalJitterBuffer@@QAE@ABU01@@Z @3764 NONAME
-    ??0Init@OpalJitterBuffer@@QAE@ABVOpalManager@@I@Z @3765 NONAME
+    ??0Init@OpalJitterBuffer@@QAE@ABUParams@1@IH@Z @48457 NONAME
+    ;public: __thiscall OpalJitterBuffer::Init::Init(struct OpalJitterBuffer::Params const &,unsigned int,int)
     ??0Init@OpalMediaSession@@QAE@AAVOpalConnection@@IABVOpalMediaType@@_N@Z @3766 NONAME
     ??0Init@SIPConnection@@QAE@AAVOpalCall@@AAVSIPEndPoint@@@Z @3767 NONAME
     ??0InlineValue@PvCard@@QAE@ABV01@@Z @3768 NONAME
@@ -4618,7 +4637,8 @@ EXPORTS
     ??0OpalListenerWSS@@QAE@AAVOpalEndPoint@@ABVOpalTransportAddress@@W4BindOptions@2@@Z @4124 NONAME
     ??0OpalListenerWSS@@QAE@AAVOpalEndPoint@@VAddress@PIPSocket@@G_N@Z @4125 NONAME
     ??0OpalLocalConnection@@QAE@AAVOpalCall@@AAVOpalLocalEndPoint@@PAXIPAVStringOptions@OpalConnection@@D@Z @4126 NONAME
-    ??0OpalLocalEndPoint@@QAE@AAVOpalManager@@PBD_N@Z @4127 NONAME
+    ??0OpalLocalEndPoint@@QAE@AAVOpalManager@@PBD_NW4Synchronicity@0@@Z @48458 NONAME
+    ;public: __thiscall OpalLocalEndPoint::OpalLocalEndPoint(class OpalManager &,char const *,bool,enum OpalLocalEndPoint::Synchronicity)
     ??0OpalLocalEndPoint_C@@QAE@AAVOpalManager_C@@@Z @4128 NONAME
     ??0OpalLocalMediaStream@@QAE@AAVOpalLocalConnection@@ABVOpalMediaFormat@@I_NW4Synchronicity@OpalLocalEndPoint@@@Z @4129 NONAME
     ??0OpalManager@@QAE@XZ @4130 NONAME
@@ -4711,7 +4731,8 @@ EXPORTS
     ??0OpalOpusFormatInternal@@QAE@PBDII@Z @4217 NONAME
     ??0OpalPassiveMediaPatch@@QAE@AAVOpalMediaStream@@@Z @4218 NONAME
     ??0OpalPCAPFile@@QAE@XZ @4219 NONAME
-    ??0OpalPCM16SilenceDetector@@QAE@ABUParams@OpalSilenceDetector@@@Z @4220 NONAME
+    ??0OpalPCM16SilenceDetector@@QAE@ABUParams@OpalSilenceDetector@@I@Z @48459 NONAME
+    ;public: __thiscall OpalPCM16SilenceDetector::OpalPCM16SilenceDetector(struct OpalSilenceDetector::Params const &,unsigned int)
     ??0OpalPCSSConnection@@QAE@AAVOpalCall@@AAVOpalPCSSEndPoint@@ABVPString@@2IPAVStringOptions@OpalConnection@@@Z @4221 NONAME
     ??0OpalPCSSEndPoint@@QAE@AAVOpalManager@@PBD@Z @4222 NONAME
     ??0OpalPCSSEndPoint_C@@QAE@AAVOpalManager_C@@@Z @4223 NONAME
@@ -4772,7 +4793,8 @@ EXPORTS
     ??0OpalSDPHTTPResource@@QAE@AAVOpalSDPHTTPEndPoint@@ABVPURL@@ABVPHTTPAuthority@@@Z @4278 NONAME
     ??0OpalSendMessageToCommand@@QAE@XZ @4279 NONAME
     ??0OpalSetLocalPresenceCommand@@QAE@W4State@OpalPresenceInfo@@@Z @4280 NONAME
-    ??0OpalSilenceDetector@@QAE@ABUParams@0@@Z @4281 NONAME
+    ??0OpalSilenceDetector@@QAE@ABUParams@0@I@Z @48460 NONAME
+    ;public: __thiscall OpalSilenceDetector::OpalSilenceDetector(struct OpalSilenceDetector::Params const &,unsigned int)
     ??0OpalSIPIMContext@@QAE@XZ @4282 NONAME
     ??0OpalSIPIMMediaDefinition@@QAE@XZ @4283 NONAME
     ??0OpalSIPIMSDPMediaDescription@@QAE@ABVOpalTransportAddress@@0ABVPString@@@Z @4284 NONAME
@@ -4868,7 +4890,8 @@ EXPORTS
     ??0Options@OpalRecordManager@@QAE@_NW4VideoMode@1@PBD2III0@Z @4374 NONAME
     ??0Params@OpalEchoCanceler@@QAE@XZ @4375 NONAME
     ??0Params@OpalJitterBuffer@@QAE@II@Z @4376 NONAME
-    ??0Params@OpalSilenceDetector@@QAE@W4Modes@1@IIII@Z @4377 NONAME
+    ??0Params@OpalSilenceDetector@@QAE@W4Modes@1@HIII@Z @48461 NONAME
+    ;public: __thiscall OpalSilenceDetector::Params::Params(enum OpalSilenceDetector::Modes,int,unsigned int,unsigned int,unsigned int)
     ??0Params@SIPInfo@@QAE@ABVPString@@0@Z @4378 NONAME
     ??0Params@SIPMessage@@QAE@ABU01@@Z @4379 NONAME
     ??0Params@SIPMessage@@QAE@XZ @4380 NONAME
@@ -4935,7 +4958,6 @@ EXPORTS
     ??0PTimedMutex_mutex@SafeString@@QAE@XZ @4441 NONAME
     ??0PTimedMutex_m_aliasMutex@H323EndPoint@@QAE@XZ @4442 NONAME
     ??0PTimedMutex_m_aliasMutex@H323Gatekeeper@@QAE@XZ @4443 NONAME
-    ??0PTimedMutex_m_averagingMutex@OpalRawMediaStream@@QAE@XZ @4444 NONAME
     ??0PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@QAE@XZ @4445 NONAME
     ??0PTimedMutex_m_callBacksMutex@OpalMSRPManager@@QAE@XZ @4446 NONAME
     ??0PTimedMutex_m_callNumbLock@IAX2EndPoint@@QAE@XZ @4447 NONAME
@@ -4946,6 +4968,8 @@ EXPORTS
     ??0PTimedMutex_m_connectionsByRtpMutex@OpalRTPEndPoint@@QAE@XZ @4452 NONAME
     ??0PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@QAE@XZ @4453 NONAME
     ??0PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@QAE@XZ @4454 NONAME
+    ??0PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@QAE@XZ @48462 NONAME
+    ;public: __thiscall OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::PTimedMutex_m_dbCalculatorMutex(void)
     ??0PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@QAE@XZ @4455 NONAME
     ??0PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@QAE@XZ @4456 NONAME
     ??0PTimedMutex_m_devicesMutex@OpalVideoMediaStream@@QAE@XZ @4457 NONAME
@@ -5591,6 +5615,8 @@ EXPORTS
     ??1?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@UAE@XZ @5101 NONAME
     ??1?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@UAE@XZ @5102 NONAME
     ??1?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@UAE@XZ @5103 NONAME
+    ??1?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@UAE@XZ @48467 NONAME
+    ;public: virtual __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::~PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>(void)
     ??1?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@UAE@XZ @5104 NONAME
     ??1?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@UAE@XZ @5105 NONAME
     ??1?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@UAE@XZ @5106 NONAME
@@ -5801,6 +5827,8 @@ EXPORTS
     ??1ConnectionDict@OpalEndPoint@@UAE@XZ @5315 NONAME
     ??1const_iterator@?$PSafeDictionary@UStreamKey@OpalConnection@@VOpalMediaStream@@@@QAE@XZ @5316 NONAME
     ??1const_iterator@?$PSafeDictionary@V?$PKey@I@@VOpalMediaSession@@@@QAE@XZ @5317 NONAME
+    ??1const_iterator@?$PSafeDictionary@VPString@@VOpalConnection@@@@QAE@XZ @48472 NONAME
+    ;public: __thiscall PSafeDictionary<class PString,class OpalConnection>::const_iterator::~const_iterator(void)
     ??1const_iterator@?$PSafeDictionary@VPString@@VSIPHandler@@@@QAE@XZ @5318 NONAME
     ??1Context@H2356_Session@@QAE@XZ @5319 NONAME
     ??1ContinueAction_PNotifier@OpalH281Client@@UAE@XZ @5320 NONAME
@@ -7473,7 +7501,6 @@ EXPORTS
     ??1PTimedMutex_mutex@SafeString@@UAE@XZ @6996 NONAME
     ??1PTimedMutex_m_aliasMutex@H323EndPoint@@UAE@XZ @6997 NONAME
     ??1PTimedMutex_m_aliasMutex@H323Gatekeeper@@UAE@XZ @6998 NONAME
-    ??1PTimedMutex_m_averagingMutex@OpalRawMediaStream@@UAE@XZ @6999 NONAME
     ??1PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@UAE@XZ @7000 NONAME
     ??1PTimedMutex_m_callBacksMutex@OpalMSRPManager@@UAE@XZ @7001 NONAME
     ??1PTimedMutex_m_callNumbLock@IAX2EndPoint@@UAE@XZ @7002 NONAME
@@ -7484,6 +7511,8 @@ EXPORTS
     ??1PTimedMutex_m_connectionsByRtpMutex@OpalRTPEndPoint@@UAE@XZ @7007 NONAME
     ??1PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@UAE@XZ @7008 NONAME
     ??1PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@UAE@XZ @7009 NONAME
+    ??1PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@UAE@XZ @48482 NONAME
+    ;public: virtual __thiscall OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::~PTimedMutex_m_dbCalculatorMutex(void)
     ??1PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@UAE@XZ @7010 NONAME
     ??1PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@UAE@XZ @7011 NONAME
     ??1PTimedMutex_m_devicesMutex@OpalVideoMediaStream@@UAE@XZ @7012 NONAME
@@ -12379,6 +12408,10 @@ EXPORTS
     ??4?$PSafePtr@VOpalMixerNode@@VPSafePtrBase@@@@QAEAAV0@ABV0@@Z @11937 NONAME
     ??4?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@QAEAAV0@ABV0@@Z @11938 NONAME
     ??4?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@QAEAAV0@ABV0@@Z @11939 NONAME
+    ??4?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@QAEAAV0@ABV0@@Z @48518 NONAME
+    ;public: class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> & __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::operator=(class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> const &)
+    ??4?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@QAEAAV0@PAVOpalSDPHTTPConnection@@@Z @48519 NONAME
+    ;public: class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> & __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::operator=(class OpalSDPHTTPConnection *)
     ??4?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@QAEAAV0@PAVOpalSkinnyConnection@@@Z @11940 NONAME
     ??4?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@QAEAAV0@ABV0@@Z @11941 NONAME
     ??4?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@QAEAAV0@PAVOpalTransport@@@Z @11942 NONAME
@@ -12789,6 +12822,8 @@ EXPORTS
     ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4RegistrationFailReasons@H323Gatekeeper@@@Z @12347 NONAME
     ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4RemoteAddressSources@OpalMediaTransport@@@Z @12348 NONAME
     ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4RemoteHoldStates@H323Connection@@@Z @12349 NONAME
+    ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4Result@OpalSilenceDetector@@@Z @48520 NONAME
+    ;class std::basic_ostream<char,struct std::char_traits<char> > & __cdecl operator<<(class std::basic_ostream<char,struct std::char_traits<char> > &,enum OpalSilenceDetector::Result)
     ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4SendUserInputModes@OpalConnection@@@Z @12350 NONAME
     ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4SoftKeyEvents@OpalSkinnyEndPoint@@@Z @12351 NONAME
     ??6@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AAV01@W4State@OpalPresenceInfo@@@Z @12352 NONAME
@@ -13096,6 +13131,8 @@ EXPORTS
     ??B?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@QBEPAVOpalPCSSConnection@@XZ @12657 NONAME
     ??B?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@QBEPAVOpalPresentity@@XZ @12658 NONAME
     ??B?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@QBEPAVOpalRTPConnection@@XZ @12659 NONAME
+    ??B?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@QBEPAVOpalSDPHTTPConnection@@XZ @48524 NONAME
+    ;public: __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::operator class OpalSDPHTTPConnection *(void)const 
     ??B?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@QBEPAVOpalSIPIMContext@@XZ @12660 NONAME
     ??B?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@QBEPAVOpalSkinnyConnection@@XZ @12661 NONAME
     ??B?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@QBEPAVOpalTransport@@XZ @12662 NONAME
@@ -14312,6 +14349,8 @@ EXPORTS
     ??C?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@QBEPAVOpalPCSSConnection@@XZ @13873 NONAME
     ??C?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@QBEPAVOpalPresentity@@XZ @13874 NONAME
     ??C?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@QBEPAVOpalRTPConnection@@XZ @13875 NONAME
+    ??C?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@QBEPAVOpalSDPHTTPConnection@@XZ @48525 NONAME
+    ;public: class OpalSDPHTTPConnection * __thiscall PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::operator->(void)const 
     ??C?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@QBEPAVOpalSIPIMContext@@XZ @13876 NONAME
     ??C?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@QBEPAVOpalSkinnyConnection@@XZ @13877 NONAME
     ??C?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@QBEPAVOpalTransport@@XZ @13878 NONAME
@@ -14344,6 +14383,8 @@ EXPORTS
     ??Cconst_iterator@?$PList@VSink@OpalMediaPatch@@@@QBEPBVSink@OpalMediaPatch@@XZ @13905 NONAME
     ??Cconst_iterator@?$PSafeDictionary@UStreamKey@OpalConnection@@VOpalMediaStream@@@@QBEPBViterator_pair@1@XZ @13906 NONAME
     ??Cconst_iterator@?$PSafeDictionary@V?$PKey@I@@VOpalMediaSession@@@@QBEPBViterator_pair@1@XZ @13907 NONAME
+    ??Cconst_iterator@?$PSafeDictionary@VPString@@VOpalConnection@@@@QBEPBViterator_pair@1@XZ @48526 NONAME
+    ;public: class PSafeDictionary<class PString,class OpalConnection>::iterator_pair const * __thiscall PSafeDictionary<class PString,class OpalConnection>::const_iterator::operator->(void)const 
     ??Cconst_iterator@?$PSafeDictionary@VPString@@VSIPHandler@@@@QBEPBViterator_pair@1@XZ @13908 NONAME
     ??Cconst_iterator@?$PSortedList@VOpalMediaOption@@@@QBEPBVOpalMediaOption@@XZ @13909 NONAME
     ??Citerator@?$PDictionary@VH323ChannelNumber@@VH245NegLogicalChannel@@@@QBEPBV?$iterator_pair@VH323ChannelNumber@@VH245NegLogicalChannel@@@1@XZ @13910 NONAME
@@ -14469,6 +14510,8 @@ EXPORTS
     ??Econst_iterator@?$PList@VSink@OpalMediaPatch@@@@QAE?AV01@XZ @14030 NONAME
     ??Econst_iterator@?$PSafeDictionary@UStreamKey@OpalConnection@@VOpalMediaStream@@@@QAE?AV01@XZ @14031 NONAME
     ??Econst_iterator@?$PSafeDictionary@V?$PKey@I@@VOpalMediaSession@@@@QAE?AV01@XZ @14032 NONAME
+    ??Econst_iterator@?$PSafeDictionary@VPString@@VOpalConnection@@@@QAE?AV01@XZ @48527 NONAME
+    ;public: class PSafeDictionary<class PString,class OpalConnection>::const_iterator __thiscall PSafeDictionary<class PString,class OpalConnection>::const_iterator::operator++(void)
     ??Econst_iterator@?$PSafeDictionary@VPString@@VSIPHandler@@@@QAE?AV01@XZ @14033 NONAME
     ??EH323ChannelNumber@@QAEAAV0@H@Z @14034 NONAME
     ??Eiterator@?$PDictionary@VH323ChannelNumber@@VH245NegLogicalChannel@@@@QAE?AV01@XZ @14035 NONAME
@@ -14881,6 +14924,8 @@ EXPORTS
     ??_7?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@6B@ @14446 NONAME
     ??_7?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@6B@ @14447 NONAME
     ??_7?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@6B@ @14448 NONAME
+    ??_7?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@6B@ @48532 NONAME
+    ;const PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::`vftable'
     ??_7?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@6B@ @14449 NONAME
     ??_7?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@6B@ @14450 NONAME
     ??_7?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@6B@ @14451 NONAME
@@ -16793,8 +16838,6 @@ EXPORTS
     ??_7PTimedMutex_m_aliasMutex@H323EndPoint@@6BPSync@@@ @16371 NONAME
     ??_7PTimedMutex_m_aliasMutex@H323Gatekeeper@@6BPMutexExcessiveLockInfo@@@ @16372 NONAME
     ??_7PTimedMutex_m_aliasMutex@H323Gatekeeper@@6BPSync@@@ @16373 NONAME
-    ??_7PTimedMutex_m_averagingMutex@OpalRawMediaStream@@6BPMutexExcessiveLockInfo@@@ @16374 NONAME
-    ??_7PTimedMutex_m_averagingMutex@OpalRawMediaStream@@6BPSync@@@ @16375 NONAME
     ??_7PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@6BPMutexExcessiveLockInfo@@@ @16376 NONAME
     ??_7PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@6BPSync@@@ @16377 NONAME
     ??_7PTimedMutex_m_callBacksMutex@OpalMSRPManager@@6BPMutexExcessiveLockInfo@@@ @16378 NONAME
@@ -16815,6 +16858,10 @@ EXPORTS
     ??_7PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@6BPSync@@@ @16393 NONAME
     ??_7PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@6BPMutexExcessiveLockInfo@@@ @16394 NONAME
     ??_7PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@6BPSync@@@ @16395 NONAME
+    ??_7PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@6BPMutexExcessiveLockInfo@@@ @48546 NONAME
+    ;const OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`vftable'{for `PMutexExcessiveLockInfo'}
+    ??_7PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@6BPSync@@@ @48547 NONAME
+    ;const OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`vftable'{for `PSync'}
     ??_7PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@6BPMutexExcessiveLockInfo@@@ @16396 NONAME
     ??_7PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@6BPSync@@@ @16397 NONAME
     ??_7PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@6BPMutexExcessiveLockInfo@@@ @16398 NONAME
@@ -17151,7 +17198,8 @@ EXPORTS
     ??_8OpalWAVFile@@7B?$basic_ostream@DU?$char_traits@D@std@@@std@@@ @16729 NONAME
     ??_8XCAPClient@@7B?$basic_istream@DU?$char_traits@D@std@@@std@@@ @16730 NONAME
     ??_8XCAPClient@@7B?$basic_ostream@DU?$char_traits@D@std@@@std@@@ @16731 NONAME
-    ??_9OpalConnection@@$BBGE@AE @16732 NONAME
+    ??_9OpalConnection@@$BBGI@AE @48548 NONAME
+    ;[thunk]: __thiscall OpalConnection::`vcall'{360,{flat}}' }'
     ??_9OpalMediaPatch@@$BCE@AE @16733 NONAME
     ??_9OpalMediaPatch@@$BFE@AE @16734 NONAME
     ??_9OpalMediaStream@@$BDI@AE @16735 NONAME
@@ -17217,7 +17265,6 @@ EXPORTS
     ??_R0?AUPTimedMutex_mutex@SafeString@@@8 @18134 NONAME
     ??_R0?AUPTimedMutex_m_aliasMutex@H323EndPoint@@@8 @18135 NONAME
     ??_R0?AUPTimedMutex_m_aliasMutex@H323Gatekeeper@@@8 @18136 NONAME
-    ??_R0?AUPTimedMutex_m_averagingMutex@OpalRawMediaStream@@@8 @18137 NONAME
     ??_R0?AUPTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@@8 @18138 NONAME
     ??_R0?AUPTimedMutex_m_callBacksMutex@OpalMSRPManager@@@8 @18139 NONAME
     ??_R0?AUPTimedMutex_m_callNumbLock@IAX2EndPoint@@@8 @18140 NONAME
@@ -17228,6 +17275,8 @@ EXPORTS
     ??_R0?AUPTimedMutex_m_connectionsByRtpMutex@OpalRTPEndPoint@@@8 @18145 NONAME
     ??_R0?AUPTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@@8 @18146 NONAME
     ??_R0?AUPTimedMutex_m_controllerMutex@OpalCapiEndPoint@@@8 @18147 NONAME
+    ??_R0?AUPTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@@8 @49880 NONAME
+    ;struct OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex `RTTI Type Descriptor'
     ??_R0?AUPTimedMutex_m_defaultsMutex@OpalIVREndPoint@@@8 @18148 NONAME
     ??_R0?AUPTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@@8 @18149 NONAME
     ??_R0?AUPTimedMutex_m_devicesMutex@OpalVideoMediaStream@@@8 @18150 NONAME
@@ -17570,6 +17619,8 @@ EXPORTS
     ??_R0?AV?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@@8 @18491 NONAME
     ??_R0?AV?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@@8 @18492 NONAME
     ??_R0?AV?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@@8 @18493 NONAME
+    ??_R0?AV?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@@8 @49885 NONAME
+    ;class PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase> `RTTI Type Descriptor'
     ??_R0?AV?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@@8 @18494 NONAME
     ??_R0?AV?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@@8 @18495 NONAME
     ??_R0?AV?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@@8 @18496 NONAME
@@ -19855,6 +19906,8 @@ EXPORTS
     ??_R1A@?0A@EA@?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@8 @20793 NONAME
     ??_R1A@?0A@EA@?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@8 @20794 NONAME
     ??_R1A@?0A@EA@?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@8 @20795 NONAME
+    ??_R1A@?0A@EA@?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@8 @49903 NONAME
+    ;PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::`RTTI Base Class Descriptor at (0,-1,0,64)'
     ??_R1A@?0A@EA@?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@8 @20796 NONAME
     ??_R1A@?0A@EA@?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@8 @20797 NONAME
     ??_R1A@?0A@EA@?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@8 @20798 NONAME
@@ -21721,7 +21774,6 @@ EXPORTS
     ??_R1A@?0A@EA@PTimedMutex_mutex@SafeString@@8 @22672 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_aliasMutex@H323EndPoint@@8 @22673 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_aliasMutex@H323Gatekeeper@@8 @22674 NONAME
-    ??_R1A@?0A@EA@PTimedMutex_m_averagingMutex@OpalRawMediaStream@@8 @22675 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@8 @22676 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_callBacksMutex@OpalMSRPManager@@8 @22677 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_callNumbLock@IAX2EndPoint@@8 @22678 NONAME
@@ -21732,6 +21784,8 @@ EXPORTS
     ??_R1A@?0A@EA@PTimedMutex_m_connectionsByRtpMutex@OpalRTPEndPoint@@8 @22683 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@8 @22684 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@8 @22685 NONAME
+    ??_R1A@?0A@EA@PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@8 @49917 NONAME
+    ;OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`RTTI Base Class Descriptor at (0,-1,0,64)'
     ??_R1A@?0A@EA@PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@8 @22686 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@8 @22687 NONAME
     ??_R1A@?0A@EA@PTimedMutex_m_devicesMutex@OpalVideoMediaStream@@8 @22688 NONAME
@@ -22000,8 +22054,10 @@ EXPORTS
     ??_R1BMI@?0A@EA@OpalFaxStatistics@@8 @22951 NONAME
     ??_R1CAI@?0A@EA@OpalMediaStreamPacing@@8 @22952 NONAME
     ??_R1CE@?0A@EA@H323TransactionPDU@@8 @22953 NONAME
-    ??_R1CJI@?0A@EA@OpalMediaDataCallbacks@@8 @22954 NONAME
-    ??_R1CJI@?0A@EA@OpalMixerNodeManager@@8 @22955 NONAME
+    ??_R1CKA@?0A@EA@OpalMediaDataCallbacks@@8 @49918 NONAME
+    ;OpalMediaDataCallbacks::`RTTI Base Class Descriptor at (672,-1,0,64)'
+    ??_R1CKA@?0A@EA@OpalMixerNodeManager@@8 @49919 NONAME
+    ;OpalMixerNodeManager::`RTTI Base Class Descriptor at (672,-1,0,64)'
     ??_R1COI@?0A@EA@OpalConsoleEndPoint@@8 @22956 NONAME
     ??_R1COI@?0A@EA@OpalRTPConsoleEndPoint@@8 @22957 NONAME
     ??_R1DAA@?0A@EA@OpalConsoleEndPoint@@8 @22958 NONAME
@@ -22009,14 +22065,18 @@ EXPORTS
     ??_R1DI@?0A@EA@SIPTransactionOwner@@8 @22960 NONAME
     ??_R1DII@?0A@EA@OpalConsoleEndPoint@@8 @22961 NONAME
     ??_R1EAI@?0A@EA@OpalPluginTranscoder@@8 @22962 NONAME
-    ??_R1EFI@?0A@EA@OpalConsoleEndPoint@@8 @22963 NONAME
-    ??_R1EFI@?0A@EA@OpalMediaDataCallbacks@@8 @22964 NONAME
+    ??_R1EGA@?0A@EA@OpalConsoleEndPoint@@8 @49920 NONAME
+    ;OpalConsoleEndPoint::`RTTI Base Class Descriptor at (1120,-1,0,64)'
+    ??_R1EGA@?0A@EA@OpalMediaDataCallbacks@@8 @49921 NONAME
+    ;OpalMediaDataCallbacks::`RTTI Base Class Descriptor at (1120,-1,0,64)'
     ??_R1EI@?0A@EN@PDebugLocation@@8 @22965 NONAME
-    ??_R1EIA@?0A@EA@OpalConsoleEndPoint@@8 @22966 NONAME
+    ??_R1EII@?0A@EA@OpalConsoleEndPoint@@8 @49922 NONAME
+    ;OpalConsoleEndPoint::`RTTI Base Class Descriptor at (1160,-1,0,64)'
     ??_R1EMI@?0A@EA@OpalConsoleEndPoint@@8 @22967 NONAME
     ??_R1FA@?0A@EA@OpalNetworkStatistics@@8 @22968 NONAME
     ??_R1FCI@?0A@EA@PValidatedNotifierTarget@@8 @22969 NONAME
-    ??_R1GBI@?0A@EA@OpalConsoleEndPoint@@8 @22970 NONAME
+    ??_R1GCA@?0A@EA@OpalConsoleEndPoint@@8 @49923 NONAME
+    ;OpalConsoleEndPoint::`RTTI Base Class Descriptor at (1568,-1,0,64)'
     ??_R1HI@?0A@EA@H323GenericCapabilityInfo@@8 @22971 NONAME
     ??_R1HI@?0A@EA@H323NonStandardCapabilityInfo@@8 @22972 NONAME
     ??_R1HI@?0A@EA@H323PluginCapabilityInfo@@8 @22973 NONAME
@@ -22307,6 +22367,8 @@ EXPORTS
     ??_R2?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@8 @23262 NONAME
     ??_R2?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@8 @23263 NONAME
     ??_R2?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@8 @23264 NONAME
+    ??_R2?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@8 @49928 NONAME
+    ;PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::`RTTI Base Class Array'
     ??_R2?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@8 @23265 NONAME
     ??_R2?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@8 @23266 NONAME
     ??_R2?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@8 @23267 NONAME
@@ -24173,7 +24235,6 @@ EXPORTS
     ??_R2PTimedMutex_mutex@SafeString@@8 @25141 NONAME
     ??_R2PTimedMutex_m_aliasMutex@H323EndPoint@@8 @25142 NONAME
     ??_R2PTimedMutex_m_aliasMutex@H323Gatekeeper@@8 @25143 NONAME
-    ??_R2PTimedMutex_m_averagingMutex@OpalRawMediaStream@@8 @25144 NONAME
     ??_R2PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@8 @25145 NONAME
     ??_R2PTimedMutex_m_callBacksMutex@OpalMSRPManager@@8 @25146 NONAME
     ??_R2PTimedMutex_m_callNumbLock@IAX2EndPoint@@8 @25147 NONAME
@@ -24184,6 +24245,8 @@ EXPORTS
     ??_R2PTimedMutex_m_connectionsByRtpMutex@OpalRTPEndPoint@@8 @25152 NONAME
     ??_R2PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@8 @25153 NONAME
     ??_R2PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@8 @25154 NONAME
+    ??_R2PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@8 @49942 NONAME
+    ;OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`RTTI Base Class Array'
     ??_R2PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@8 @25155 NONAME
     ??_R2PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@8 @25156 NONAME
     ??_R2PTimedMutex_m_devicesMutex@OpalVideoMediaStream@@8 @25157 NONAME
@@ -24699,6 +24762,8 @@ EXPORTS
     ??_R3?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@8 @25671 NONAME
     ??_R3?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@8 @25672 NONAME
     ??_R3?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@8 @25673 NONAME
+    ??_R3?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@8 @49947 NONAME
+    ;PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::`RTTI Class Hierarchy Descriptor'
     ??_R3?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@8 @25674 NONAME
     ??_R3?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@8 @25675 NONAME
     ??_R3?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@8 @25676 NONAME
@@ -26565,7 +26630,6 @@ EXPORTS
     ??_R3PTimedMutex_mutex@SafeString@@8 @27550 NONAME
     ??_R3PTimedMutex_m_aliasMutex@H323EndPoint@@8 @27551 NONAME
     ??_R3PTimedMutex_m_aliasMutex@H323Gatekeeper@@8 @27552 NONAME
-    ??_R3PTimedMutex_m_averagingMutex@OpalRawMediaStream@@8 @27553 NONAME
     ??_R3PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@8 @27554 NONAME
     ??_R3PTimedMutex_m_callBacksMutex@OpalMSRPManager@@8 @27555 NONAME
     ??_R3PTimedMutex_m_callNumbLock@IAX2EndPoint@@8 @27556 NONAME
@@ -26576,6 +26640,8 @@ EXPORTS
     ??_R3PTimedMutex_m_connectionsByRtpMutex@OpalRTPEndPoint@@8 @27561 NONAME
     ??_R3PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@8 @27562 NONAME
     ??_R3PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@8 @27563 NONAME
+    ??_R3PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@8 @49961 NONAME
+    ;OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`RTTI Class Hierarchy Descriptor'
     ??_R3PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@8 @27564 NONAME
     ??_R3PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@8 @27565 NONAME
     ??_R3PTimedMutex_m_devicesMutex@OpalVideoMediaStream@@8 @27566 NONAME
@@ -27102,6 +27168,8 @@ EXPORTS
     ??_R4?$PSafePtr@VOpalPCSSConnection@@VPSafePtrBase@@@@6B@ @28091 NONAME
     ??_R4?$PSafePtr@VOpalPresentity@@VPSafePtrBase@@@@6B@ @28092 NONAME
     ??_R4?$PSafePtr@VOpalRTPConnection@@VPSafePtrBase@@@@6B@ @28093 NONAME
+    ??_R4?$PSafePtr@VOpalSDPHTTPConnection@@VPSafePtrBase@@@@6B@ @49966 NONAME
+    ;const PSafePtr<class OpalSDPHTTPConnection,class PSafePtrBase>::`RTTI Complete Object Locator'
     ??_R4?$PSafePtr@VOpalSIPIMContext@@VPSafePtrBase@@@@6B@ @28094 NONAME
     ??_R4?$PSafePtr@VOpalSkinnyConnection@@VPSafePtrBase@@@@6B@ @28095 NONAME
     ??_R4?$PSafePtr@VOpalTransport@@VPSafePtrBase@@@@6B@ @28096 NONAME
@@ -29014,8 +29082,6 @@ EXPORTS
     ??_R4PTimedMutex_m_aliasMutex@H323EndPoint@@6BPSync@@@ @30016 NONAME
     ??_R4PTimedMutex_m_aliasMutex@H323Gatekeeper@@6BPMutexExcessiveLockInfo@@@ @30017 NONAME
     ??_R4PTimedMutex_m_aliasMutex@H323Gatekeeper@@6BPSync@@@ @30018 NONAME
-    ??_R4PTimedMutex_m_averagingMutex@OpalRawMediaStream@@6BPMutexExcessiveLockInfo@@@ @30019 NONAME
-    ??_R4PTimedMutex_m_averagingMutex@OpalRawMediaStream@@6BPSync@@@ @30020 NONAME
     ??_R4PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@6BPMutexExcessiveLockInfo@@@ @30021 NONAME
     ??_R4PTimedMutex_m_bufferMutex@OpalAudioJitterBuffer@@6BPSync@@@ @30022 NONAME
     ??_R4PTimedMutex_m_callBacksMutex@OpalMSRPManager@@6BPMutexExcessiveLockInfo@@@ @30023 NONAME
@@ -29036,6 +29102,10 @@ EXPORTS
     ??_R4PTimedMutex_m_contextsByNamesMutex@OpalIMEndPoint@@6BPSync@@@ @30038 NONAME
     ??_R4PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@6BPMutexExcessiveLockInfo@@@ @30039 NONAME
     ??_R4PTimedMutex_m_controllerMutex@OpalCapiEndPoint@@6BPSync@@@ @30040 NONAME
+    ??_R4PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@6BPMutexExcessiveLockInfo@@@ @49980 NONAME
+    ;const OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`RTTI Complete Object Locator'{for `PMutexExcessiveLockInfo'}
+    ??_R4PTimedMutex_m_dbCalculatorMutex@OpalRawMediaStream@@6BPSync@@@ @49981 NONAME
+    ;const OpalRawMediaStream::PTimedMutex_m_dbCalculatorMutex::`RTTI Complete Object Locator'{for `PSync'}
     ??_R4PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@6BPMutexExcessiveLockInfo@@@ @30041 NONAME
     ??_R4PTimedMutex_m_defaultsMutex@OpalIVREndPoint@@6BPSync@@@ @30042 NONAME
     ??_R4PTimedMutex_m_delayGatekeeperMutex@H323EndPoint@@6BPMutexExcessiveLockInfo@@@ @30043 NONAME
@@ -29394,6 +29464,8 @@ EXPORTS
     ?AcceptIncomingCall@OpalLocalEndPoint@@UAE_NABVPString@@PAVStringOptions@OpalConnection@@@Z @30400 NONAME
     ?AcceptIncomingConnection@OpalPCSSEndPoint@@UAE_NABVPString@@@Z @30401 NONAME
     ?AcceptOtherPayloads@OpalTranscoder@@UBE_NXZ @30402 NONAME
+    ?Accumulate@CalculateDB@OpalSilenceDetector@@QAEAAV12@PBXH@Z @49986 NONAME
+    ;public: class OpalSilenceDetector::CalculateDB & __thiscall OpalSilenceDetector::CalculateDB::Accumulate(void const *,int)
     ?Action@OpalH281Client@@QAE_NW4Types@PVideoControlInfo@@HABVPTimeInterval@@@Z @30403 NONAME
     ?Activate@IAX2Processor@@QAEXXZ @30404 NONAME
     ?ActivateKeepAliveRTCP@H46019UDPSocket@@QAEXI@Z @30405 NONAME
@@ -29562,7 +29634,6 @@ EXPORTS
     ?AlertingIncoming@OpalPCSSConnection@@UAEX_N@Z @30568 NONAME
     ?AlertingIncomingCall@OpalLocalEndPoint@@UAE_NABVPString@@PAVStringOptions@OpalConnection@@_N@Z @30569 NONAME
     ?All@?$PBitwiseEnum@W4Details_Bits@OpalMediaStream@@$0CA@I@@SA?AW4Details_Bits@OpalMediaStream@@XZ @30570 NONAME
-    ?All@?$PBitwiseEnum@W4KeyExchangeModes_Bits@OpalMediaCryptoSuite@@$03I@@SA?AW4KeyExchangeModes_Bits@OpalMediaCryptoSuite@@XZ @30571 NONAME
     ?AllMediaFailed@OpalConnection@@QBE_NXZ @30572 NONAME
     ?AllocateAlias@H323GatekeeperServer@@UAE?AVPString@@AAVH225_RegistrationRequest@@@Z @30573 NONAME
     ?AllocateBandwidth@H323GatekeeperServer@@UAEIII@Z @30574 NONAME
@@ -29714,6 +29785,8 @@ EXPORTS
     ?begin@?$PSafeDictionary@VH225_AliasAddress@@VH323RegisteredEndPoint@@@@QAE?AViterator@1@XZ @30720 NONAME
     ?begin@?$PSafeDictionary@VOpalTransportAddress@@VOpalTransport@@@@QAE?AViterator@1@XZ @30721 NONAME
     ?begin@?$PSafeDictionary@VPString@@VOpalConnection@@@@QAE?AViterator@1@XZ @30722 NONAME
+    ?begin@?$PSafeDictionary@VPString@@VOpalConnection@@@@QBE?AVconst_iterator@1@XZ @49987 NONAME
+    ;public: class PSafeDictionary<class PString,class OpalConnection>::const_iterator __thiscall PSafeDictionary<class PString,class OpalConnection>::begin(void)const 
     ?begin@?$PSafeDictionary@VPString@@VOpalIMContext@@@@QAE?AViterator@1@XZ @30723 NONAME
     ?begin@?$PSafeDictionary@VPString@@VOpalMixerMediaStream@@@@QAE?AViterator@1@XZ @30724 NONAME
     ?begin@?$PSafeDictionary@VPString@@VSIPHandler@@@@QAE?AViterator@1@XZ @30725 NONAME
@@ -33152,7 +33225,6 @@ EXPORTS
     ?CmdVideoReceive@OpalManagerCLI@@MAEXAAVArguments@PCLI@@H@Z @34180 NONAME
     ?CmdVideoTransmit@OpalManagerCLI@@MAEXAAVArguments@PCLI@@H@Z @34181 NONAME
     ?CmdVolume@OpalConsolePCSSEndPoint@@UAEXAAVArguments@PCLI@@H@Z @34182 NONAME
-    ?CollectAverage@OpalRawMediaStream@@IAEXPBEH@Z @34183 NONAME
     ?Compare@?$H235_ENCRYPTED@VH235_EncodedGeneralToken@@@@UBE?AW4Comparison@PObject@@ABV3@@Z @34184 NONAME
     ?Compare@?$H235_ENCRYPTED@VH235_EncodedKeySyncMaterial@@@@UBE?AW4Comparison@PObject@@ABV3@@Z @34185 NONAME
     ?Compare@?$H235_ENCRYPTED@VH235_EncodedPwdCertToken@@@@UBE?AW4Comparison@PObject@@ABV3@@Z @34186 NONAME
@@ -35799,7 +35871,8 @@ EXPORTS
     ?CreateConnection@SIPEndPoint@@UAEPAVSIPConnection@@ABUInit@2@@Z @36849 NONAME
     ?CreateContext@OpalIMEndPoint@@QAE?AV?$PSafePtr@VOpalIMContext@@VPSafePtrBase@@@@AAVOpalCall@@@Z @36850 NONAME
     ?CreateContext@OpalIMEndPoint@@QAE?AV?$PSafePtr@VOpalIMContext@@VPSafePtrBase@@@@ABVPURL@@0PBD@Z @36851 NONAME
-    ?CreateContext@OpalPluginTranscoder@@IAE_NXZ @36852 NONAME
+    ?CreateContext@OpalPluginTranscoder@@IAE_NPBEI@Z @50032 NONAME
+    ;protected: bool __thiscall OpalPluginTranscoder::CreateContext(unsigned char const *,unsigned int)
     ?CreateCryptoToken@H235Authenticator@@EAEPAVH225_CryptoH323Token@@XZ @36853 NONAME
     ?CreateCryptoToken@H235Authenticator@@UAEPAVH225_CryptoH323Token@@_N@Z @36854 NONAME
     ?CreateCryptoToken@H235Authenticator@@UAEPAVH225_CryptoH323Token@@_NI@Z @36855 NONAME
@@ -37031,7 +37104,10 @@ EXPORTS
     ?DetachTransport@OpalDummySession@@UAE?AV?$PSafePtr@VOpalMediaTransport@@VPSafePtrMultiThreaded@@@@XZ @38090 NONAME
     ?DetachTransport@OpalMediaSession@@UAE?AV?$PSafePtr@VOpalMediaTransport@@VPSafePtrMultiThreaded@@@@XZ @38091 NONAME
     ?DetachTransport@OpalRTPSession@@UAE?AV?$PSafePtr@VOpalMediaTransport@@VPSafePtrMultiThreaded@@@@XZ @38092 NONAME
-    ?Detect@OpalSilenceDetector@@QAE?AW4Result@1@PBEHI@Z @38093 NONAME
+    ?Detect@OpalSilenceDetector@@QAE?AW4Result@1@ABVRTP_DataFrame@@@Z @50042 NONAME
+    ;public: enum OpalSilenceDetector::Result __thiscall OpalSilenceDetector::Detect(class RTP_DataFrame const &)
+    ?Detect@OpalSilenceDetector@@QAE?AW4Result@1@PBEHIH@Z @50043 NONAME
+    ;public: enum OpalSilenceDetector::Result __thiscall OpalSilenceDetector::Detect(unsigned char const *,int,unsigned int,int)
     ?DetectInBandDTMFDisabled@OpalManager@@QBE_NXZ @38094 NONAME
     ?DetermineRTPNAT@H323Connection@@UAEXABVOpalTransport@@ABVOpalTransportAddress@@@Z @38095 NONAME
     ?DetermineRTPNAT@OpalRTPConnection@@UAEXABVOpalTransport@@ABVOpalTransportAddress@@@Z @38096 NONAME
@@ -37690,6 +37766,8 @@ EXPORTS
     ?end@?$PSafeDictionary@VH225_AliasAddress@@VH323RegisteredEndPoint@@@@QAE?AViterator@1@XZ @38754 NONAME
     ?end@?$PSafeDictionary@VOpalTransportAddress@@VOpalTransport@@@@QAE?AViterator@1@XZ @38755 NONAME
     ?end@?$PSafeDictionary@VPString@@VOpalConnection@@@@QAE?AViterator@1@XZ @38756 NONAME
+    ?end@?$PSafeDictionary@VPString@@VOpalConnection@@@@QBE?AVconst_iterator@1@XZ @50049 NONAME
+    ;public: class PSafeDictionary<class PString,class OpalConnection>::const_iterator __thiscall PSafeDictionary<class PString,class OpalConnection>::end(void)const 
     ?end@?$PSafeDictionary@VPString@@VOpalIMContext@@@@QAE?AViterator@1@XZ @38757 NONAME
     ?end@?$PSafeDictionary@VPString@@VOpalMixerMediaStream@@@@QAE?AViterator@1@XZ @38758 NONAME
     ?end@?$PSafeDictionary@VPString@@VSIPHandler@@@@QAE?AViterator@1@XZ @38759 NONAME
@@ -37764,6 +37842,8 @@ EXPORTS
     ?FarEndCameraControl@OpalLocalConnection@@QAE_NW4Types@PVideoControlInfo@@HABVPTimeInterval@@@Z @38828 NONAME
     ?Fax@OpalMediaType@@SAABV1@XZ @38829 NONAME
     ?FilterFrame@OpalMediaPatch@@UAEXAAVRTP_DataFrame@@ABVOpalMediaFormat@@@Z @38830 NONAME
+    ?Finalise@CalculateDB@OpalSilenceDetector@@QAEHXZ @50050 NONAME
+    ;public: int __thiscall OpalSilenceDetector::CalculateDB::Finalise(void)
     ?Finalise@DiscoveryInfo@OpalPCAPFile@@QAE_NAAUDiscoveredRTPInfo@2@ABV?$map@W4PayloadTypes@RTP_DataFrame@@VOpalMediaFormat@@U?$less@W4PayloadTypes@RTP_DataFrame@@@std@@V?$allocator@U?$pair@$$CBW4PayloadTypes@RTP_DataFrame@@VOpalMediaFormat@@@std@@@5@@std@@@Z @38831 NONAME
     ?Finalise@H235Authenticator@@UAE_NAAVPBYTEArray@@@Z @38832 NONAME
     ?Finalise@H235AuthProcedure1@@UAE_NAAVPBYTEArray@@@Z @38833 NONAME
@@ -37955,7 +38035,8 @@ EXPORTS
     ?GarbageCollection@OpalManager@@QAEXXZ @39019 NONAME
     ?GarbageCollection@OpalMediaTransport@@MAE_NXZ @39020 NONAME
     ?GarbageCollection@OpalMixerEndPoint@@UAE_NXZ @39021 NONAME
-    ?GarbageCollection@OpalMixerEndPoint@@WCJI@AE_NXZ @39022 NONAME
+    ?GarbageCollection@OpalMixerEndPoint@@WCKA@AE_NXZ @50051 NONAME
+    ;[thunk]:public: virtual bool __thiscall OpalMixerEndPoint::GarbageCollection`adjustor{672}' (void)
     ?GarbageCollection@OpalMixerNodeManager@@UAE_NXZ @39023 NONAME
     ?GarbageCollection@OpalRTPConnection@@MAE_NXZ @39024 NONAME
     ?GarbageCollection@OpalSkinnyEndPoint@@UAE_NXZ @39025 NONAME
@@ -38086,13 +38167,30 @@ EXPORTS
     ?GetAttributes@OpalPresentity@@QAEAAVPStringOptions@@XZ @39151 NONAME
     ?GetAttributeTypes@SIP_Presentity@@UBE?AVPStringArray@@XZ @39152 NONAME
     ?GetAudioDataPtr@AudioStream@OpalAudioMixer@@QAEPBFXZ @39153 NONAME
+    ?GetAudioLevelDB@OpalConnection@@UAEH_N@Z @50052 NONAME
+    ;public: virtual int __thiscall OpalConnection::GetAudioLevelDB(bool)
+    ?GetAudioLevelDB@OpalLine@@UAEH_N@Z @50053 NONAME
+    ;public: virtual int __thiscall OpalLine::GetAudioLevelDB(bool)
+    ?GetAudioLevelDB@OpalLineConnection@@UAEH_N@Z @50054 NONAME
+    ;public: virtual int __thiscall OpalLineConnection::GetAudioLevelDB(bool)
+    ?GetAudioLevelDB@OpalLineInterfaceDevice@@UAEHI_N@Z @50055 NONAME
+    ;public: virtual int __thiscall OpalLineInterfaceDevice::GetAudioLevelDB(unsigned int,bool)
+    ?GetAudioLevelDB@OpalLineSilenceDetector@@UAEHPBEH@Z @50056 NONAME
+    ;public: virtual int __thiscall OpalLineSilenceDetector::GetAudioLevelDB(unsigned char const *,int)
+    ?GetAudioLevelDB@OpalPCM16SilenceDetector@@UAEHPBEH@Z @50057 NONAME
+    ;public: virtual int __thiscall OpalPCM16SilenceDetector::GetAudioLevelDB(unsigned char const *,int)
+    ?GetAudioLevelDB@OpalPCSSConnection@@UAEH_N@Z @50058 NONAME
+    ;public: virtual int __thiscall OpalPCSSConnection::GetAudioLevelDB(bool)
+    ?GetAudioLevelDB@OpalPluginLID@@UAEHI_N@Z @50059 NONAME
+    ;public: virtual int __thiscall OpalPluginLID::GetAudioLevelDB(unsigned int,bool)
+    ?GetAudioLevelDB@OpalRawMediaStream@@UAEHXZ @50060 NONAME
+    ;public: virtual int __thiscall OpalRawMediaStream::GetAudioLevelDB(void)
+    ?GetAudioLevelHdrExtURI@OpalRTPSession@@SAABVPString@@XZ @50061 NONAME
+    ;public: static class PString const & __cdecl OpalRTPSession::GetAudioLevelHdrExtURI(void)
     ?GetAudioMute@GstConnection@@UAE_N_NAA_N@Z @39154 NONAME
     ?GetAudioMute@GstMediaStream@@UAE_NAA_N@Z @39155 NONAME
     ?GetAudioMute@OpalConnection@@UAE_N_NAA_N@Z @39156 NONAME
     ?GetAudioMute@OpalPCSSConnection@@UAE_N_NAA_N@Z @39157 NONAME
-    ?GetAudioSignalLevel@OpalConnection@@UAEI_N@Z @39158 NONAME
-    ?GetAudioSignalLevel@OpalLineConnection@@UAEI_N@Z @39159 NONAME
-    ?GetAudioSignalLevel@OpalPCSSConnection@@UAEI_N@Z @39160 NONAME
     ?GetAudioSinkDevice@GstEndPoint@@QBEABVPString@@XZ @39161 NONAME
     ?GetAudioSourceDevice@GstEndPoint@@QBEABVPString@@XZ @39162 NONAME
     ?GetAudioVolume@GstConnection@@UAE_N_NAAI@Z @39163 NONAME
@@ -38133,13 +38231,6 @@ EXPORTS
     ?GetAverageBitRate@OpalMediaStatistics@@QBE?AVPString@@PBDI@Z @39198 NONAME
     ?GetAverageFrameRate@OpalMediaStatistics@@QBE?AVPString@@PBDI@Z @39199 NONAME
     ?GetAveragePacketRate@OpalMediaStatistics@@QBE?AVPString@@PBDI@Z @39200 NONAME
-    ?GetAverageSignalLevel@OpalLine@@UAEI_N@Z @39201 NONAME
-    ?GetAverageSignalLevel@OpalLineInterfaceDevice@@UAEII_N@Z @39202 NONAME
-    ?GetAverageSignalLevel@OpalLineSilenceDetector@@UAEIPBEH@Z @39203 NONAME
-    ?GetAverageSignalLevel@OpalPCM16SilenceDetector@@UAEIPBEH@Z @39204 NONAME
-    ?GetAverageSignalLevel@OpalPluginLID@@UAEII_N@Z @39205 NONAME
-    ?GetAverageSignalLevel@OpalRawMediaStream@@UAEIXZ @39206 NONAME
-    ?GetAverageSignalLevelPCM16@OpalSilenceDetector@@SAIPBEH_N@Z @39207 NONAME
     ?GetB2BUA@SIPConnection@@IAE?AV?$PSafePtr@VSIPConnection@@VPSafePtrBase@@@@XZ @39208 NONAME
     ?GetBandwidth@SDPCommonAttributes@@UBE?AVOpalBandwidth@@ABVPString@@@Z @39209 NONAME
     ?GetBandwidth@SDPCommonAttributes@@UBEABVSDPBandwidth@@XZ @39210 NONAME
@@ -38922,6 +39013,8 @@ EXPORTS
     ?GetDefaultSignalPort@OpalSkinnyEndPoint@@UBEGXZ @39996 NONAME
     ?GetDefaultSignalPort@SIPEndPoint@@UBEGXZ @39997 NONAME
     ?GetDefaultStringOptions@OpalEndPoint@@QBEABVStringOptions@OpalConnection@@XZ @39998 NONAME
+    ?GetDefaultSynchronicity@OpalLocalEndPoint@@QBE?AW4Synchronicity@1@ABVOpalMediaType@@_N@Z @50071 NONAME
+    ;public: enum OpalLocalEndPoint::Synchronicity __thiscall OpalLocalEndPoint::GetDefaultSynchronicity(class OpalMediaType const &,bool)const 
     ?GetDefaultTextToSpeech@OpalIVREndPoint@@QBE?AVPString@@XZ @39999 NONAME
     ?GetDefaultTransport@H323EndPoint@@UBE?AVPString@@XZ @40000 NONAME
     ?GetDefaultTransport@IAX2EndPoint@@UBE?AVPString@@XZ @40001 NONAME
@@ -38948,7 +39041,6 @@ EXPORTS
     ?GetDestinationAddress@OpalCapiConnection@@UAE?AVPString@@XZ @40026 NONAME
     ?GetDestinationAddress@OpalConnection@@UAE?AVPString@@XZ @40027 NONAME
     ?GetDestinationAddress@OpalLineConnection@@UAE?AVPString@@XZ @40028 NONAME
-    ?GetDestinationAddress@OpalSDPHTTPConnection@@UAE?AVPString@@XZ @40029 NONAME
     ?GetDestinationAddress@SIPConnection@@UAE?AVPString@@XZ @40030 NONAME
     ?GetDestinationAlias@H323SignalPDU@@QBE?AVPString@@_N@Z @40031 NONAME
     ?GetDestinationAliases@H323GatekeeperCall@@QBEABVPStringArray@@XZ @40032 NONAME
@@ -39236,6 +39328,8 @@ EXPORTS
     ?GetIdentifier@H323PresenceIdentifiers@@QAE?AVPGloballyUniqueID@@H@Z @40322 NONAME
     ?GetIdentifier@H323RegisteredEndPoint@@QBEABVPString@@XZ @40323 NONAME
     ?GetIdentifier@OpalConnection@@UBE?AVPString@@XZ @40324 NONAME
+    ?GetIdentifier@OpalSDPHTTPConnection@@UBE?AVPString@@XZ @50084 NONAME
+    ;public: virtual class PString __thiscall OpalSDPHTTPConnection::GetIdentifier(void)const 
     ?GetIdentifier@SIPConnection@@UBE?AVPString@@XZ @40325 NONAME
     ?GetIdFactor@RTCP_XR_Metrics@@IBEMXZ @40326 NONAME
     ?GetIE@Q931@@QBE?AVPBYTEArray@@W4InformationElementCodes@1@H@Z @40327 NONAME
@@ -39266,6 +39360,8 @@ EXPORTS
     ?GetIpAndPort@OpalTransportAddressArray@@QAEXHAAVAddressAndPort@PIPSocket@@@Z @40352 NONAME
     ?GetJitterBuffer@SyncSource@OpalRTPSession@@QBEPAVOpalJitterBuffer@@XZ @40353 NONAME
     ?GetJitterBufferDelay@OpalRTPMediaStream@@UBEXAAUInit@OpalJitterBuffer@@@Z @40354 NONAME
+    ?GetJitterParameters@OpalConnection@@QBEABUParams@OpalJitterBuffer@@XZ @50085 NONAME
+    ;public: struct OpalJitterBuffer::Params const & __thiscall OpalConnection::GetJitterParameters(void)const 
     ?GetJitterParameters@OpalManager@@QBEABUParams@OpalJitterBuffer@@XZ @40355 NONAME
     ?GetKeepAliveAddress@H46019Server@@QBE?AVH323TransportAddress@@XZ @40356 NONAME
     ?GetKeepAliveTTL@H46019Server@@QBEIXZ @40357 NONAME
@@ -39347,6 +39443,8 @@ EXPORTS
     ?GetKeyValue@IAX2IeVersion@@UBEEXZ @40433 NONAME
     ?GetLabel@OpalRTPSession@@QBE?AVPString@@XZ @40434 NONAME
     ?GetLastEntry@IAX2SoundList@@QAEPAVPBYTEArray@@XZ @40435 NONAME
+    ?GetLastError@OpalMediaTransport@@QBE?AW4Errors@PChannel@@W4SubChannels@OpalMediaTransportChannelTypes@@@Z @50086 NONAME
+    ;public: enum PChannel::Errors __thiscall OpalMediaTransport::GetLastError(enum OpalMediaTransportChannelTypes::SubChannels)const 
     ?GetLastFrame@IAX2FrameList@@QAEPAVIAX2Frame@@XZ @40436 NONAME
     ?GetLastReceived@PMonitoredSocketChannel@@QBEXAAVAddress@PIPSocket@@AAG@Z @40437 NONAME
     ?GetLastReceivedAddress@OpalTransport@@UBE?AVOpalTransportAddress@@XZ @40438 NONAME
@@ -39727,6 +39825,8 @@ EXPORTS
     ?GetOpalSpeexWB@@YAABVOpalAudioFormat@@XZ @40817 NONAME
     ?GetOpalT140@@YAABVOpalMediaFormat@@XZ @40818 NONAME
     ?GetOpalT38@@YAABVOpalMediaFormat@@XZ @40819 NONAME
+    ?GetOpalT38_RTP@@YAABVOpalMediaFormat@@XZ @50091 NONAME
+    ;class OpalMediaFormat const & __cdecl GetOpalT38_RTP(void)
     ?GetOpalVP8@@YAABVOpalVideoFormat@@XZ @40820 NONAME
     ?GetOpalYUV420P@@YAABVOpalVideoFormat@@XZ @40821 NONAME
     ?GetOptimalDataFrameSize@OpalFaxTranscoder@@UBEH_N@Z @40822 NONAME
@@ -39990,7 +40090,8 @@ EXPORTS
     ?GetResendFramesDeleteOldFrames@IAX2FrameList@@QAEXAAV1@@Z @41080 NONAME
     ?GetResponse@IAX2WaitingForAck@@QAE?AW4ResponseToAck@1@XZ @41081 NONAME
     ?GetResponseAsString@IAX2WaitingForAck@@QBE?AVPString@@XZ @41082 NONAME
-    ?GetResult@OpalSilenceDetector@@QBE?AW4Result@1@PAI0@Z @41083 NONAME
+    ?GetResult@OpalSilenceDetector@@QBE?AW4Result@1@PAH0@Z @50092 NONAME
+    ;public: enum OpalSilenceDetector::Result __thiscall OpalSilenceDetector::GetResult(int *,int *)const 
     ?GetRetryTimeoutMax@SIPEndPoint@@QBEABVPTimeInterval@@XZ @41084 NONAME
     ?GetRetryTimeoutMin@SIPEndPoint@@QBEABVPTimeInterval@@XZ @41085 NONAME
     ?GetRFactor@RTCP_XR_Metrics@@IBEIW4QualityType@1@@Z @41086 NONAME
@@ -40392,6 +40493,8 @@ EXPORTS
     ?GetWorkSize@QueuedWorkerThread@?$PQueuedThreadPool@VSIPWorkItem@@@@UBEIXZ @41482 NONAME
     ?GetWritableMediaFormat@H323Capability@@IBEAAVOpalMediaFormat@@XZ @41483 NONAME
     ?GetWritableMediaFormat@SDPMediaFormat@@QAEAAVOpalMediaFormat@@XZ @41484 NONAME
+    ?GetWritableMetaData@RTP_DataFrame@@QAEAAUMetaData@1@XZ @50093 NONAME
+    ;public: struct RTP_DataFrame::MetaData & __thiscall RTP_DataFrame::GetWritableMetaData(void)
     ?GetWritableValue@PASN_OctetString@@QAEAAVPBYTEArray@@XZ @41485 NONAME
     ?GetWriteFormat@OpalLine@@UAE?AVOpalMediaFormat@@XZ @41486 NONAME
     ?GetWriteFormat@OpalPluginLID@@UAE?AVOpalMediaFormat@@I@Z @41487 NONAME
@@ -40807,9 +40910,12 @@ EXPORTS
     ?InternalRelease@OpalConnection@@QAE_NUCallEndReason@1@@Z @41897 NONAME
     ?InternalReset@OpalAudioJitterBuffer@@IAEXXZ @41898 NONAME
     ?InternalRestartGatekeeper@H323EndPoint@@IAE_N_N@Z @41899 NONAME
-    ?InternalRxData@OpalICEMediaTransport@@MAEXW4SubChannels@OpalMediaTransportChannelTypes@@ABVPBYTEArray@@@Z @41900 NONAME
-    ?InternalRxData@OpalMediaTransport@@MAEXW4SubChannels@OpalMediaTransportChannelTypes@@ABVPBYTEArray@@@Z @41901 NONAME
-    ?InternalRxData@OpalUDPMediaTransport@@MAEXW4SubChannels@OpalMediaTransportChannelTypes@@ABVPBYTEArray@@@Z @41902 NONAME
+    ?InternalRxData@OpalICEMediaTransport@@MAE_NW4SubChannels@OpalMediaTransportChannelTypes@@ABVPBYTEArray@@@Z @50094 NONAME
+    ;protected: virtual bool __thiscall OpalICEMediaTransport::InternalRxData(enum OpalMediaTransportChannelTypes::SubChannels,class PBYTEArray const &)
+    ?InternalRxData@OpalMediaTransport@@MAE_NW4SubChannels@OpalMediaTransportChannelTypes@@ABVPBYTEArray@@@Z @50095 NONAME
+    ;protected: virtual bool __thiscall OpalMediaTransport::InternalRxData(enum OpalMediaTransportChannelTypes::SubChannels,class PBYTEArray const &)
+    ?InternalRxData@OpalUDPMediaTransport@@MAE_NW4SubChannels@OpalMediaTransportChannelTypes@@ABVPBYTEArray@@@Z @50096 NONAME
+    ;protected: virtual bool __thiscall OpalUDPMediaTransport::InternalRxData(enum OpalMediaTransportChannelTypes::SubChannels,class PBYTEArray const &)
     ?InternalSend@OpalIMContext@@MAE?AW4MessageDisposition@1@XZ @41903 NONAME
     ?InternalSend@SIP_PDU@@IAE?AW4StatusCodes@1@_N@Z @41904 NONAME
     ?InternalSendInsideCall@OpalIMContext@@MAE?AW4MessageDisposition@1@AAVOpalIM@@@Z @41905 NONAME
@@ -42370,6 +42476,8 @@ EXPORTS
     ?Names@PEnumNames_Modes@OpalSilenceDetector@@SAPBQBDXZ @43473 NONAME
     ?Names@PEnumNames_Phases@OpalConnection@@SAPBQBDXZ @43474 NONAME
     ?Names@PEnumNames_RemoteHoldStates@H323Connection@@SAPBQBDXZ @43475 NONAME
+    ?Names@PEnumNames_Result@OpalSilenceDetector@@SAPBQBDXZ @50110 NONAME
+    ;public: static char const * const * __cdecl OpalSilenceDetector::PEnumNames_Result::Names(void)
     ?Names@PEnumNames_SendUserInputModes@OpalConnection@@SAPBQBDXZ @43476 NONAME
     ?Names@PEnumNames_SoftKeyEvents@OpalSkinnyEndPoint@@SAPBQBDXZ @43477 NONAME
     ?Names@PEnumNames_State@OpalPresenceInfo@@SAPBQBDXZ @43478 NONAME
@@ -42602,7 +42710,8 @@ EXPORTS
     ?OnGatekeeperStatus@H323ConsoleEndPoint@@UAEXAAVH323Gatekeeper@@W4RegistrationFailReasons@2@@Z @43705 NONAME
     ?OnGatekeeperStatus@H323EndPoint@@UAEXAAVH323Gatekeeper@@W4RegistrationFailReasons@2@@Z @43706 NONAME
     ?OnGatekeeperStatus@H323EndPoint@@UAEXW4RegistrationFailReasons@H323Gatekeeper@@@Z @43707 NONAME
-    ?OnGET@OpalSDPHTTPResource@@UAE_NAAVPHTTPServer@@ABVPHTTPConnectionInfo@@@Z @43708 NONAME
+    ?OnGETData@OpalSDPHTTPResource@@UAE_NAAVPHTTPRequest@@@Z @50111 NONAME
+    ;public: virtual bool __thiscall OpalSDPHTTPResource::OnGETData(class PHTTPRequest &)
     ?OnH239FlowControlRequest@H323Connection@@UAE_NII@Z @43709 NONAME
     ?OnH239FlowControlResponse@H323Connection@@UAE_NI_N@Z @43710 NONAME
     ?OnH239Message@H323Connection@@UAE_NIABVH245_ArrayOf_GenericParameter@@@Z @43711 NONAME
@@ -42700,10 +42809,16 @@ EXPORTS
     ?OnMediaCommand@OpalSockConnection@@UAE_NAAVOpalMediaStream@@ABVOpalMediaCommand@@@Z @43803 NONAME
     ?OnMediaCommand@SIPConnection@@UAE_NAAVOpalMediaStream@@ABVOpalMediaCommand@@@Z @43804 NONAME
     ?OnMediaControlXML@SIPConnection@@UAE_NAAVSIP_PDU@@@Z @43805 NONAME
+    ?OnMediaFailed@OpalConnection@@EAE_NI@Z @50112 NONAME
+    ;private: virtual bool __thiscall OpalConnection::OnMediaFailed(unsigned int)
     ?OnMediaFailed@OpalConnection@@EAE_NI_N@Z @43806 NONAME
-    ?OnMediaFailed@OpalConnection@@UAE_NI@Z @43807 NONAME
+    ?OnMediaFailed@OpalConnection@@UAE_NIW4Errors@PChannel@@@Z @50113 NONAME
+    ;public: virtual bool __thiscall OpalConnection::OnMediaFailed(unsigned int,enum PChannel::Errors)
+    ?OnMediaFailed@OpalManager@@EAE_NAAVOpalConnection@@I@Z @50114 NONAME
+    ;private: virtual bool __thiscall OpalManager::OnMediaFailed(class OpalConnection &,unsigned int)
     ?OnMediaFailed@OpalManager@@EAE_NAAVOpalConnection@@I_N@Z @43808 NONAME
-    ?OnMediaFailed@OpalManager@@UAE_NAAVOpalConnection@@I@Z @43809 NONAME
+    ?OnMediaFailed@OpalManager@@UAE_NAAVOpalConnection@@IW4Errors@PChannel@@@Z @50115 NONAME
+    ;public: virtual bool __thiscall OpalManager::OnMediaFailed(class OpalConnection &,unsigned int,enum PChannel::Errors)
     ?OnMediaPatchStart@OpalConnection@@EAEXI_N@Z @43810 NONAME
     ?OnMediaPatchStop@OpalConnection@@EAEXI_N@Z @43811 NONAME
     ?OnMediaStreamOpenFailed@OpalSDPConnection@@MAEX_N@Z @43812 NONAME
@@ -42781,7 +42896,8 @@ EXPORTS
     ?OnPatchStop@OpalMediaStream@@EAEXXZ @43884 NONAME
     ?OnPauseMediaStream@OpalConnection@@UAEXAAVOpalMediaStream@@_N@Z @43885 NONAME
     ?OnPauseMediaStream@SIPConnection@@UAEXAAVOpalMediaStream@@_N@Z @43886 NONAME
-    ?OnPOST@OpalSDPHTTPResource@@UAE_NAAVPHTTPServer@@ABVPHTTPConnectionInfo@@@Z @43887 NONAME
+    ?OnPOSTData@OpalSDPHTTPResource@@UAE_NAAVPHTTPRequest@@ABVPStringToString@@@Z @50116 NONAME
+    ;public: virtual bool __thiscall OpalSDPHTTPResource::OnPOSTData(class PHTTPRequest &,class PStringToString const &)
     ?OnPreReceiveData@H2356_Session@@UAE?AW4SendReceiveStatus@OpalRTPSession@@AAVRTP_DataFrame@@ABVPTime@@@Z @43888 NONAME
     ?OnPreReceiveData@OpalRTPSession@@EAE?AW4SendReceiveStatus@1@AAVRTP_DataFrame@@@Z @43889 NONAME
     ?OnPreReceiveData@OpalRTPSession@@UAE?AW4SendReceiveStatus@1@AAVRTP_DataFrame@@ABVPTime@@@Z @43890 NONAME
@@ -42886,8 +43002,10 @@ EXPORTS
     ?OnReceivedForbidden@SIPHandler@@UAEXAAVSIPTransaction@@AAVSIP_PDU@@@Z @43989 NONAME
     ?OnReceivedFrame@OpalH224Handler@@UAE_NAAVH224_Frame@@@Z @43990 NONAME
     ?OnReceivedGenericPDU@H323GenericCapabilityInfo@@MAE_NAAVOpalMediaFormat@@ABVH245_GenericCapability@@W4CommandType@H323Capability@@@Z @43991 NONAME
-    ?OnReceivedHTTP@OpalSDPHTTPConnection@@UAE_NAAVPHTTPServer@@ABVPHTTPConnectionInfo@@@Z @43992 NONAME
-    ?OnReceivedHTTP@OpalSDPHTTPEndPoint@@UAE_NAAVPHTTPServer@@ABVPHTTPConnectionInfo@@@Z @43993 NONAME
+    ?OnReceivedHTTP@OpalSDPHTTPConnection@@UAE_NAAVPHTTPRequest@@@Z @50117 NONAME
+    ;public: virtual bool __thiscall OpalSDPHTTPConnection::OnReceivedHTTP(class PHTTPRequest &)
+    ?OnReceivedHTTP@OpalSDPHTTPEndPoint@@UAE_NAAVPHTTPRequest@@@Z @50118 NONAME
+    ;public: virtual bool __thiscall OpalSDPHTTPEndPoint::OnReceivedHTTP(class PHTTPRequest &)
     ?OnReceivedINFO@SIPConnection@@UAEXAAVSIP_PDU@@@Z @43994 NONAME
     ?OnReceivedInfoPackage@SIPConnection@@UAE_NABVPString@@0@Z @43995 NONAME
     ?OnReceivedInfoPackage@SIPEndPoint@@UAE_NAAVSIPConnection@@ABVPString@@1@Z @43996 NONAME
@@ -44742,7 +44860,6 @@ EXPORTS
     ?Randomise@KeyInfo@OpalMediaClearText@@UAEXXZ @45850 NONAME
     ?Randomise@OpalSRTPKeyInfo@@UAEXXZ @45851 NONAME
     ?RateControlPeriodOption@OpalVideoFormat@@SAABVPString@@XZ @45852 NONAME
-    ?RateMan@?1???0OpalT38MediaFormatInternal@?1??GetOpalT38@@YAABVOpalMediaFormat@@XZ@QAE@XZ@4QBQBDB @45853 NONAME
     ?rbegin@?$PList@VIAX2Frame@@@@QAE?AViterator@1@XZ @45854 NONAME
     ?Read1Byte@IAX2Frame@@IAE_NAAE@Z @45855 NONAME
     ?Read2Bytes@IAX2Frame@@IAE_NAAG@Z @45856 NONAME
@@ -45033,6 +45150,8 @@ EXPORTS
     ?RequiresPatchThread@GstMediaStream@@UBE_NPAVOpalMediaStream@@@Z @46141 NONAME
     ?RequiresPatchThread@OpalH224MediaStream@@UBE_NXZ @46142 NONAME
     ?RequiresPatchThread@OpalLineMediaStream@@UBE_NPAVOpalMediaStream@@@Z @46143 NONAME
+    ?RequiresPatchThread@OpalLocalMediaStream@@UBE_NPAVOpalMediaStream@@@Z @50124 NONAME
+    ;public: virtual bool __thiscall OpalLocalMediaStream::RequiresPatchThread(class OpalMediaStream *)const 
     ?RequiresPatchThread@OpalMediaStream@@UBE_NPAV1@@Z @46144 NONAME
     ?RequiresPatchThread@OpalMediaStream@@UBE_NXZ @46145 NONAME
     ?RequiresPatchThread@OpalMixerMediaStream@@UBE_NXZ @46146 NONAME
@@ -45049,6 +45168,8 @@ EXPORTS
     ?ResequenceOutOfOrderPackets@OpalRTPSession@@MBE_NAAUSyncSource@1@@Z @46157 NONAME
     ?ResequenceOutOfOrderPackets@OpalSRTPSession@@MBE_NAAUSyncSource@OpalRTPSession@@@Z @46158 NONAME
     ?Reset@Analyser@OpalJitterBuffer@@QAEXXZ @46159 NONAME
+    ?Reset@CalculateDB@OpalSilenceDetector@@QAEXXZ @50125 NONAME
+    ;public: void __thiscall OpalSilenceDetector::CalculateDB::Reset(void)
     ?ResetCall@IAX2RegProcessor@@IAEXXZ @46160 NONAME
     ?ResetCounters@RTCP_XR_Metrics@@IAEXXZ @46161 NONAME
     ?ResetIdle@OpalTransport@@QAEXXZ @46162 NONAME
@@ -45503,6 +45624,8 @@ EXPORTS
     ?SetDefaultLocalPartyName@OpalEndPoint@@UAEXABVPString@@@Z @46620 NONAME
     ?SetDefaultStringOption@OpalEndPoint@@QAEXABVPCaselessString@@ABVPString@@@Z @46621 NONAME
     ?SetDefaultStringOptions@OpalEndPoint@@QAEXABVStringOptions@OpalConnection@@_N@Z @46622 NONAME
+    ?SetDefaultSynchronicity@OpalLocalEndPoint@@QAEXABVOpalMediaType@@_NW4Synchronicity@1@@Z @50134 NONAME
+    ;public: void __thiscall OpalLocalEndPoint::SetDefaultSynchronicity(class OpalMediaType const &,bool,enum OpalLocalEndPoint::Synchronicity)
     ?SetDefaultUserName@OpalManager@@QAEXABVPString@@_N@Z @46623 NONAME
     ?SetDefaultVideoSourceSynchronicity@OpalLocalEndPoint@@QAEXW4Synchronicity@1@@Z @46624 NONAME
     ?SetDefaultVXML@OpalIVREndPoint@@QAEXABVPString@@@Z @46625 NONAME
@@ -45908,6 +46031,8 @@ EXPORTS
     ?SetState@SIPHandler@@QAEXW4State@1@@Z @47025 NONAME
     ?SetStatusCode@SIP_PDU@@QAEXW4StatusCodes@1@@Z @47026 NONAME
     ?SetString@OpalMessageBuffer@@QAEXPAPBDPBD@Z @47027 NONAME
+    ?SetString@PStringOptions@@QAE_NPBDABVPString@@@Z @50135 NONAME
+    ;public: bool __thiscall PStringOptions::SetString(char const *,class PString const &)
     ?SetStringOptions@OpalConnection@@QAEXABVStringOptions@1@_N@Z @47028 NONAME
     ?SetStringOptions@OpalMediaSession@@QAEXABVPStringOptions@@@Z @47029 NONAME
     ?SetStringOptions@SDPCommonAttributes@@QAEXABVPStringOptions@@@Z @47030 NONAME
@@ -46038,7 +46163,8 @@ EXPORTS
     ?ShutDown@OpalEndPoint@@UAEXXZ @47155 NONAME
     ?ShutDown@OpalIMEndPoint@@UAEXXZ @47156 NONAME
     ?ShutDown@OpalMixerEndPoint@@UAEXXZ @47157 NONAME
-    ?ShutDown@OpalMixerEndPoint@@WCJI@AEXXZ @47158 NONAME
+    ?ShutDown@OpalMixerEndPoint@@WCKA@AEXXZ @50136 NONAME
+    ;[thunk]:public: virtual void __thiscall OpalMixerEndPoint::ShutDown`adjustor{672}' (void)
     ?ShutDown@OpalMixerNode@@QAEXXZ @47159 NONAME
     ?ShutDown@OpalMixerNodeManager@@UAEXXZ @47160 NONAME
     ?ShutDown@OpalSkinnyEndPoint@@UAEXXZ @47161 NONAME
@@ -46225,6 +46351,8 @@ EXPORTS
     ?Strings@?1??Names@PEnumNames_Modes@OpalSilenceDetector@@SAPBQBDXZ@4QBQBDB @47342 NONAME
     ?Strings@?1??Names@PEnumNames_Phases@OpalConnection@@SAPBQBDXZ@4QBQBDB @47343 NONAME
     ?Strings@?1??Names@PEnumNames_RemoteHoldStates@H323Connection@@SAPBQBDXZ@4QBQBDB @47344 NONAME
+    ?Strings@?1??Names@PEnumNames_Result@OpalSilenceDetector@@SAPBQBDXZ@4QBQBDB @50137 NONAME
+    ;char const * const * const `public: static char const * const * __cdecl OpalSilenceDetector::PEnumNames_Result::Names(void)'::`2'::Strings
     ?Strings@?1??Names@PEnumNames_SendUserInputModes@OpalConnection@@SAPBQBDXZ@4QBQBDB @47345 NONAME
     ?Strings@?1??Names@PEnumNames_SoftKeyEvents@OpalSkinnyEndPoint@@SAPBQBDXZ@4QBQBDB @47346 NONAME
     ?Strings@?1??Names@PEnumNames_State@OpalPresenceInfo@@SAPBQBDXZ@4QBQBDB @47347 NONAME
@@ -46235,6 +46363,8 @@ EXPORTS
     ?Strings@?1??Names@PEnumNames_VideoFormat@PVideoDevice@@SAPBQBDXZ@4QBQBDB @47352 NONAME
     ?Strings@?1??Names@RTCPFeedback@OpalMediaFormat@@UBEPBQBDXZ@4QBQBDB @47353 NONAME
     ?StringsAvailable@SafeStrings@@QAE_NXZ @47354 NONAME
+    ?StripPrefixName@OpalEndPoint@@QBE?AVPString@@ABV2@@Z @50138 NONAME
+    ;public: class PString __thiscall OpalEndPoint::StripPrefixName(class PString const &)const 
     ?strstr@@YAPADQADQBD@Z @47355 NONAME
     ?SubModeFromBooleans@SIPRefer@@SA?AW4ReferSubMode@1@_N0@Z @47356 NONAME
     ?SubProtocolKey@SIP_Presentity@@SAABVPCaselessString@@XZ @47357 NONAME
