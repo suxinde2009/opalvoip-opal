@@ -2542,12 +2542,12 @@ void OpalManager_C::HandleMediaStream(const OpalMessage & command, OpalMessageBu
     return;
 
   PSafePtr<OpalConnection> connection = call->GetConnection(0, PSafeReadOnly);
-  while (connection->IsNetworkConnection()) {
+  while (connection != NULL && connection->IsNetworkConnection())
     ++connection;
-    if (connection == NULL) {
-      response.SetError("No suitable connection for media stream control.");
-      return;
-    }
+
+  if (connection == NULL) {
+    response.SetError("No suitable connection for media stream control.");
+    return;
   }
 
   PCaselessString typeStr = command.m_param.m_mediaStream.m_type;
