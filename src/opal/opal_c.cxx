@@ -1656,11 +1656,13 @@ void OpalManager_C::HandleSetGeneral(const OpalMessage & command, OpalMessageBuf
       response->m_param.m_general.m_mediaTiming = (OpalMediaTiming)(localEP->GetDefaultAudioSynchronicity()+1);
       if (command.m_param.m_general.m_mediaTiming != 0)
         localEP->SetDefaultAudioSynchronicity((OpalLocalEndPoint::Synchronicity)(command.m_param.m_general.m_mediaTiming-1));
+#if OPAL_VIDEO
       if (m_apiVersion >= 27) {
         response->m_param.m_general.m_videoSourceTiming = (OpalMediaTiming)(localEP->GetDefaultVideoSourceSynchronicity()+1);
         if (command.m_param.m_general.m_mediaTiming != 0)
           localEP->SetDefaultVideoSourceSynchronicity((OpalLocalEndPoint::Synchronicity)(command.m_param.m_general.m_videoSourceTiming-1));
       }
+#endif // OPAL_VIDEO
     }
   }
 
@@ -2542,12 +2544,12 @@ void OpalManager_C::HandleMediaStream(const OpalMessage & command, OpalMessageBu
     return;
 
   PSafePtr<OpalConnection> connection = call->GetConnection(0, PSafeReadOnly);
-  while (connection->IsNetworkConnection()) {
+  while (connection != NULL && connection->IsNetworkConnection())
     ++connection;
-    if (connection == NULL) {
-      response.SetError("No suitable connection for media stream control.");
-      return;
-    }
+
+  if (connection == NULL) {
+    response.SetError("No suitable connection for media stream control.");
+    return;
   }
 
   PCaselessString typeStr = command.m_param.m_mediaStream.m_type;

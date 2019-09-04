@@ -401,6 +401,7 @@ class OpalLocalEndPoint : public OpalEndPoint
     */
     void SetDefaultAudioSynchronicity(Synchronicity sync);
 
+#if OPAL_VIDEO
     /**Get default synchronous mode for video sources.
        For backward combatibility, should use GetDefaultSynchronicity().
     */
@@ -410,6 +411,7 @@ class OpalLocalEndPoint : public OpalEndPoint
        For backward combatibility, should use SetDefaultSynchronicity().
     */
     void SetDefaultVideoSourceSynchronicity(Synchronicity sync);
+#endif // OPAL_VIDEO
 
     /**Indicate OnAlerting() is be deferred or immediate.
       */

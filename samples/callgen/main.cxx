@@ -724,11 +724,8 @@ bool MyLocalConnection::OnReadMediaData(const OpalMediaStream & mediaStream, voi
 bool MyLocalConnection::OnReadMediaFrame(const OpalMediaStream & mediaStream, RTP_DataFrame & frame)
 {
   OpalPCAPFile * pcapFile;
-  if (mediaStream.GetMediaFormat().GetMediaType() == OpalMediaType::Audio()) {
+  if (mediaStream.GetMediaFormat().GetMediaType() == OpalMediaType::Audio())
     pcapFile = dynamic_cast<OpalPCAPFile *>(m_audioFile);
-    if (pcapFile == NULL)
-      return OpalLocalConnection::OnReadMediaFrame(mediaStream, frame);
-  }
 
 #if OPAL_VIDEO
   else {
@@ -742,10 +739,12 @@ bool MyLocalConnection::OnReadMediaFrame(const OpalMediaStream & mediaStream, RT
       return true;
     }
 
-    if ((pcapFile = dynamic_cast<OpalPCAPFile *>(m_videoFile)) == NULL)
-      return true;
+    pcapFile = dynamic_cast<OpalPCAPFile *>(m_videoFile);
   }
 #endif
+
+  if (pcapFile == NULL)
+    return OpalLocalConnection::OnReadMediaFrame(mediaStream, frame);
 
   if (pcapFile->GetRTP(frame) < 0) {
     PTRACE(3, "Could not get RTP from PCAP file.");

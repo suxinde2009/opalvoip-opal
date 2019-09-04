@@ -55,7 +55,9 @@ OpalLocalEndPoint::OpalLocalEndPoint(OpalManager & mgr, const char * prefix, boo
   PTRACE(3, "Created endpoint.");
 
   SetDefaultAudioSynchronicity(defaultSynchronicity);
+#if OPAL_VIDEO
   SetDefaultVideoSourceSynchronicity(defaultSynchronicity);
+#endif // OPAL_VIDEO
 
   if (useCallbacks) {
     OpalMediaTypeList mediaTypes = OpalMediaType::GetList();
@@ -276,6 +278,7 @@ void OpalLocalEndPoint::SetDefaultAudioSynchronicity(Synchronicity sync)
 }
 
 
+#if OPAL_VIDEO
 OpalLocalEndPoint::Synchronicity OpalLocalEndPoint::GetDefaultVideoSourceSynchronicity() const
 {
   return GetDefaultSynchronicity(OpalMediaType::Video(), true);
@@ -286,6 +289,7 @@ void OpalLocalEndPoint::SetDefaultVideoSourceSynchronicity(Synchronicity sync)
 {
   SetDefaultSynchronicity(OpalMediaType::Video(), true, sync);
 }
+#endif // OPAL_VIDEO
 
 
 OpalLocalEndPoint::Synchronicity OpalLocalEndPoint::GetSynchronicity(const OpalMediaFormat & mediaFormat, bool isSource) const
