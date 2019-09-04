@@ -52,7 +52,9 @@ OpalLocalEndPoint::OpalLocalEndPoint(OpalManager & mgr, const char * prefix, boo
   , m_deferredAnswer(false)
   , m_pauseTransmitMediaOnHold(true)
   , m_defaultAudioSynchronicity(e_Synchronous)
+#if OPAL_VIDEO
   , m_defaultVideoSourceSynchronicity(e_Synchronous)
+#endif // OPAL_VIDEO
 {
   PTRACE(3, "Created endpoint.");
 

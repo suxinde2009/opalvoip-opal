@@ -384,8 +384,6 @@ void PlayRTP::Play(OpalPCAPFile & pcap)
   unsigned frameTimeStampCount = 0;
 
   PINDEX totalBytes = 0;
-  unsigned intraFrames = 0;
-  int qualitySum = 0;
   unsigned fragmentationCount = 0;
   RTP_SequenceNumber nextSequenceNumber = 0;
   unsigned missingPackets = 0;
@@ -393,6 +391,8 @@ void PlayRTP::Play(OpalPCAPFile & pcap)
 
   RTP_DataFrame extendedData;
 #if OPAL_VIDEO
+  int qualitySum = 0;
+  unsigned intraFrames = 0;
   m_videoError = false;
   m_videoFrames = 0;
 #endif

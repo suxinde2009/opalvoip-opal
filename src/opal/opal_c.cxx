@@ -1656,11 +1656,13 @@ void OpalManager_C::HandleSetGeneral(const OpalMessage & command, OpalMessageBuf
       response->m_param.m_general.m_mediaTiming = (OpalMediaTiming)(localEP->GetDefaultAudioSynchronicity()+1);
       if (command.m_param.m_general.m_mediaTiming != 0)
         localEP->SetDefaultAudioSynchronicity((OpalLocalEndPoint::Synchronicity)(command.m_param.m_general.m_mediaTiming-1));
+#if OPAL_VIDEO
       if (m_apiVersion >= 27) {
         response->m_param.m_general.m_videoSourceTiming = (OpalMediaTiming)(localEP->GetDefaultVideoSourceSynchronicity()+1);
         if (command.m_param.m_general.m_mediaTiming != 0)
           localEP->SetDefaultVideoSourceSynchronicity((OpalLocalEndPoint::Synchronicity)(command.m_param.m_general.m_videoSourceTiming-1));
       }
+#endif // OPAL_VIDEO
     }
   }
 

@@ -388,6 +388,7 @@ class OpalLocalEndPoint : public OpalEndPoint
       */
     void SetDefaultAudioSynchronicity(Synchronicity sync) { m_defaultAudioSynchronicity = sync; }
 
+#if OPAL_VIDEO
     /**Get default synchronous mode for video sources.
       */
     Synchronicity GetDefaultVideoSourceSynchronicity() const { return m_defaultVideoSourceSynchronicity; }
@@ -395,6 +396,7 @@ class OpalLocalEndPoint : public OpalEndPoint
     /**Set default synchronous mode for video sources.
       */
     void SetDefaultVideoSourceSynchronicity(Synchronicity sync) { m_defaultVideoSourceSynchronicity = sync; }
+#endif // OPAL_VIDEO
 
     /**Indicate OnAlerting() is be deferred or immediate.
       */
@@ -445,7 +447,9 @@ class OpalLocalEndPoint : public OpalEndPoint
     CallbackMap m_useCallback;
 
     Synchronicity m_defaultAudioSynchronicity;
+#if OPAL_VIDEO
     Synchronicity m_defaultVideoSourceSynchronicity;
+#endif // OPAL_VIDEO
 
 #if OPAL_HAS_H281
     PNotifier m_farEndCameraCapabilityChangedNotifier;
