@@ -817,8 +817,8 @@ void MyPlayer::OnPaused()
 void MyPlayer::OnResume(wxCommandEvent &)
 {
   m_playThreadCtrl = CtlRunning;
-  m_pause->Disable();
-  m_resume->Enable();
+  m_pause->Enable();
+  m_resume->Disable();
 }
 
 
@@ -1035,11 +1035,12 @@ void MyPlayer::OnAnalysisUpdate(wxString info, bool async)
     m_analysisList->SetItem(pos, i, parser.GetNextToken());
 
   if (async) {
-    if (pos == 0) {
+    if (pos%1000 == 0) {
       for (int i = 0; i < m_analysisList->GetColumnCount(); ++i)
         m_analysisList->SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
     }
-    m_analysisList->EnsureVisible(pos);
+    if (pos%10 == 0)
+      m_analysisList->EnsureVisible(pos);
   }
 }
 
