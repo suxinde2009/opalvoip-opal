@@ -51,7 +51,7 @@ class OpalSilenceDetector::MyData : public PObject
   int      m_levelThreshold;
   bool     m_wasActive;
   bool     m_initialiseTimestamps;
-  bool     m_wrapCheckTimestamp;
+  unsigned m_wrapCheckTimestamp;
   unsigned m_nextDeadbandTimestamp;
   unsigned m_nextAdaptionTimestamp;
   unsigned m_signalDeadband;
@@ -190,7 +190,7 @@ public:
   }
 
 
-  void Detect(const BYTE * audioPtr, PINDEX audioLen, unsigned timestamp, int audioLevel)
+  void Detect(unsigned timestamp, int audioLevel)
   {
     // Make sure the transitional result values are moved to steady state
     switch (m_lastResult) {
@@ -438,7 +438,7 @@ OpalSilenceDetector::Result OpalSilenceDetector::Detect(const BYTE * audioPtr,
       return VoiceActive; // Something wrong
   }
 
-  m_data->Detect(audioPtr, audioLen, timestamp, audioLevel);
+  m_data->Detect(timestamp, audioLevel);
   return GetResult(currentThreshold, averageLevel);
 }
 
