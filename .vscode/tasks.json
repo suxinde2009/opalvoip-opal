@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Make OPAL",
+            "label": "Make OPAL (all)",
             "type": "process",
             "command": "make",
             "options": {
@@ -17,6 +17,46 @@
                 "--directory=${workspaceFolder}",
                 "MULTIPLATFORM=yes",
                 "all"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Make OPAL (debug)",
+            "type": "process",
+            "command": "make",
+            "options": {
+                "env": {
+                    "PTLIBDIR": "${workspaceFolder}/../ptlib",
+                    "OPALDIR": "${workspaceFolder}"
+                }
+            },
+            "args": [
+                "--directory=${workspaceFolder}",
+                "MULTIPLATFORM=yes",
+                "debugdepend",
+                "debug"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Make OPAL (release)",
+            "type": "process",
+            "command": "make",
+            "options": {
+                "env": {
+                    "PTLIBDIR": "${workspaceFolder}/../ptlib",
+                    "OPALDIR": "${workspaceFolder}"
+                }
+            },
+            "args": [
+                "--directory=${workspaceFolder}",
+                "MULTIPLATFORM=yes",
+                "optdepend",
+                "opt"
             ],
             "problemMatcher": [
                 "$gcc"
