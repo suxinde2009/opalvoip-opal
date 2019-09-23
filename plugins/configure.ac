@@ -9,7 +9,6 @@ AC_INIT([OPAL-Plugins], m4_esyscmd([sed -n \
                             -e "s/ *#define *BUILD_TYPE *BetaCode/beta/p" \
                             -e "s/ *#define *BUILD_TYPE *ReleaseCode/./p" \
                             -e "s/ *#define *PATCH_VERSION *\\(.*\\)/\\1/p" \
-                            -e "s/ *#define *OEM_VERSION *\\(.*\\)/\\1/p" \
                             ../version.h | tr -d '\n']))
 
 AC_PREREQ([2.66])

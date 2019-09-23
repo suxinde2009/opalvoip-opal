@@ -216,7 +216,9 @@ PBoolean OpalTranscoder::ConvertFrames(const RTP_DataFrame & input, RTP_DataFram
   RTP_DataFrame::PayloadTypes pt = input.GetPayloadType();
 
   // Check for if we can handle comfort noise, if not just return empty payload packet
-  if (!AcceptComfortNoise() && (pt == RTP_DataFrame::CN || pt == RTP_DataFrame::Cisco_CN)) {
+  if (pt == RTP_DataFrame::CN) {
+    if (AcceptComfortNoise())
+      return Convert(input, outframe);
     PTRACE(5, "Removing comfort noise frame with payload type " << pt);
     return true;
   }
