@@ -207,7 +207,7 @@ bool OpalSharkApp::OnInit()
   bool ok = main->Initialise(cmdLine.Found(wxT("minimised")));
   if (ok) {
     for (size_t i = 0; i < cmdLine.GetParamCount(); ++i)
-      main->Load(cmdLine.GetParam(i));
+      main->CallAfter<MyManager, wxString>(&MyManager::Load, cmdLine.GetParam(i));
   }
 
   wxEndBusyCursor();
@@ -510,9 +510,9 @@ void MyManager::OnMenuFullScreen(wxCommandEvent& commandEvent)
 }
 
 
-void MyManager::Load(const PwxString & fname)
+void MyManager::Load(wxString fname)
 {
-  new MyPlayer(this, fname);
+  new MyPlayer(this, PFilePath(PwxString(fname)));
 }
 
 
@@ -615,11 +615,16 @@ void MyPlayer::OnClose(wxCommandEvent &)
   Close(true);
 }
 
+
 void MyPlayer::Discover()
 {
-  if (!m_pcapFile.DiscoverRTP(m_discoveredRTP, PCREATE_NOTIFIER(DiscoverProgress)))
-    return;
+  if (m_pcapFile.DiscoverRTP(m_discoveredRTP, PCREATE_NOTIFIER(DiscoverProgress)))
+    CallAfter<MyPlayer>(&MyPlayer::OnDiscoverComplete);
+}
 
+
+void MyPlayer::OnDiscoverComplete()
+{
   {
     OpalPCAPFile::DiscoveredRTPInfo * info = new OpalPCAPFile::DiscoveredRTPInfo;
     info->m_src.SetAddress(PIPSocket::GetDefaultIpAny(), 5000);

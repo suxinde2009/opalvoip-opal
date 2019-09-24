@@ -122,6 +122,7 @@ class MyPlayer : public wxMDIChildFrame
     void OnAnalysisUpdate(wxString, bool);
 
     void Discover();
+    void OnDiscoverComplete();
     PDECLARE_NOTIFIER2(OpalPCAPFile, MyPlayer, DiscoverProgress, OpalPCAPFile::Progress &);
 
     enum Controls
@@ -189,7 +190,7 @@ class MyManager : public wxMDIParentFrame, public OpalManager
     ~MyManager();
 
     bool Initialise(bool startMinimised);
-    void Load(const PwxString & fname);
+    void Load(wxString fname);
 
     const MyOptions GetOptions() const { return m_options; }
 
