@@ -133,7 +133,7 @@
 						<flag>wxRIGHT|wxTOP</flag>
 						<border>20</border>
 						<object class="wxGrid" name="Mappings">
-							<style>wxSIMPLE_BORDER</style>
+							<style>wxBORDER_SIMPLE</style>
 							<size>250,100</size>
 						</object>
 					</object>
@@ -152,6 +152,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -161,6 +163,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -170,6 +174,8 @@
 						<object class="wxButton" name="wxID_APPLY">
 							<label>Apply</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>
@@ -209,33 +215,9 @@
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<option>1</option>
-								<flag>wxEXPAND</flag>
+								<flag>wxEXPAND | wxALL</flag>
 								<border>5</border>
-								<object class="wxSplitterWindow" name="BottomSplitter">
-									<style>wxSP_3DSASH</style>
-									<sashpos>100</sashpos>
-									<gravity>0</gravity>
-									<minsize>0</minsize>
-									<orientation>vertical</orientation>
-									<object class="wxPanel" name="m_panel5">
-										<style>wxTAB_TRAVERSAL</style>
-										<object class="wxBoxSizer">
-											<orient>wxVERTICAL</orient>
-											<object class="sizeritem">
-												<option>1</option>
-												<flag>wxALL|wxEXPAND</flag>
-												<border>5</border>
-												<object class="wxListCtrl" name="Analysis">
-													<style>wxLC_REPORT</style>
-												</object>
-											</object>
-										</object>
-									</object>
-									<object class="wxScrolledWindow" name="VideoOutput" subclass="VideoOutputWindow">
-										<style>wxHSCROLL|wxVSCROLL</style>
-										<scrollrate>5,5</scrollrate>
-									</object>
-								</object>
+								<object class="wxNotebook" name="StreamAnalysis" />
 							</object>
 						</object>
 					</object>
@@ -255,30 +237,42 @@
 						<enabled>0</enabled>
 						<label>Play</label>
 						<default>0</default>
+						<markup>0</markup>
+						<bitmap />
 					</object>
 					<object class="wxButton" name="Stop">
 						<enabled>0</enabled>
 						<label>Stop</label>
 						<default>0</default>
+						<markup>0</markup>
+						<bitmap />
 					</object>
 					<object class="wxButton" name="Pause">
 						<enabled>0</enabled>
 						<label>Pause</label>
 						<default>0</default>
+						<markup>0</markup>
+						<bitmap />
 					</object>
 					<object class="wxButton" name="Resume">
 						<enabled>0</enabled>
 						<label>Resume</label>
 						<default>0</default>
+						<markup>0</markup>
+						<bitmap />
 					</object>
 					<object class="wxButton" name="Step">
 						<enabled>0</enabled>
 						<label>Step</label>
 						<default>0</default>
+						<markup>0</markup>
+						<bitmap />
 					</object>
 					<object class="wxButton" name="Analyse">
 						<label>Analyse</label>
 						<default>0</default>
+						<markup>0</markup>
+						<bitmap />
 					</object>
 					<object class="wxStaticText" name="m_staticText4">
 						<style>wxALIGN_RIGHT</style>

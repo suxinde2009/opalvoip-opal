@@ -2,18 +2,18 @@
     <?define ProductName = "OpalShark" ?>
     <?define ProductDescription = "Media Player for RTP in PCAP files" ?>
     <?define ProductBaseFilename = "OpalShark" ?>
-    <?define ProductVersion = "1.1.0" ?>
+    <?define ProductVersion = "1.2.0" ?>
     <?define ProductManufacturer = "Vox Lucida Pty. Ltd." ?>
     <?define ProductGUID = "48bff92f-98f9-45fb-a233-db3e2c496d4a" ?>
 
     <?if $(var.Architecture) = "x86" ?>
+        <?define LuaDir = "..\..\..\external\Lua-win64" ?>
         <?define SSLDir = "$(env.ProgramW6432)\OpenSSL-Win32\bin" ?>
         <?define FFMPEGDir = "..\..\..\external\ffmpeg-win32-dev\bin" ?>
-        <?define SpanDspDir = "..\..\..\external\spandsp-0.0.6\src\Release" ?>
     <?else?>
+        <?define LuaDir = "..\..\..\external\Lua-win64" ?>
         <?define SSLDir = "$(env.ProgramW6432)\OpenSSL-Win64\bin" ?>
         <?define FFMPEGDir = "..\..\..\external\ffmpeg-win64-dev\bin" ?>
-        <?define SpanDspDir = "..\..\..\external\spandsp-0.0.6\src\x64\Release" ?>
     <?endif?>
 
     <?define AVFORMATVer = "58" ?>
