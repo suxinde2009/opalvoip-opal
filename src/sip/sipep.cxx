@@ -361,32 +361,32 @@ OpalTransportPtr SIPEndPoint::GetTransport(const SIPTransactionOwner & transacto
       PTRACE(4, "Re-opening transport " << *transport);
       transport->ResetIdle();
     }
+  }
 
-    // Link just created or was closed/lost
-    if (!transport->Connect()) {
-      PTRACE(1, "Could not connect to " << remoteAddress << " - " << transport->GetErrorText());
-      switch (transport->GetErrorCode()) {
-        case PChannel::Timeout :
-          reason = SIP_PDU::Local_Timeout;
-          break;
-        case PChannel::AccessDenied :
-          reason = SIP_PDU::Local_NotAuthenticated;
-          break;
-        default :
-          reason = SIP_PDU::Local_TransportError;
-      }
+  // Link just created or was closed/lost
+  if (!transport->Connect()) {
+    PTRACE(1, "Could not connect to " << remoteAddress << " - " << transport->GetErrorText());
+    switch (transport->GetErrorCode()) {
+      case PChannel::Timeout :
+        reason = SIP_PDU::Local_Timeout;
+        break;
+      case PChannel::AccessDenied :
+        reason = SIP_PDU::Local_NotAuthenticated;
+        break;
+      default :
+        reason = SIP_PDU::Local_TransportError;
     }
-    else if (!transport->IsAuthenticated(transactor.GetRequestURI().GetHostName()))
-      reason = SIP_PDU::Local_NotAuthenticated;
-    else {
-      if (transport->IsReliable())
-        transport->AttachThread(new PThreadObj1Arg<SIPEndPoint, OpalTransportPtr>
-                (*this, transport, &SIPEndPoint::TransportThreadMain, false, "SIP Transport", PThread::HighestPriority));
-      else
-        transport->SetPromiscuous(OpalTransport::AcceptFromAny);
+  }
+  else if (!transport->IsAuthenticated(transactor.GetRequestURI().GetHostName()))
+    reason = SIP_PDU::Local_NotAuthenticated;
+  else {
+    if (transport->IsReliable())
+      transport->AttachThread(new PThreadObj1Arg<SIPEndPoint, OpalTransportPtr>
+              (*this, transport, &SIPEndPoint::TransportThreadMain, false, "SIP Transport", PThread::HighestPriority));
+    else
+      transport->SetPromiscuous(OpalTransport::AcceptFromAny);
 
-      return transport;
-    }
+    return transport;
   }
 
   // Outside of m_transportsTableMutex to avoid deadlock in CloseWait
