@@ -713,7 +713,7 @@ OpalRTPSession::SendReceiveStatus OpalRTPSession::SyncSource::OnSendData(RTP_Dat
   }
 
   int level = frame.GetMetaData().m_audioLevel;
-  if (level != INT_MAX) {
+  if (level != INT_MAX && m_session.m_audioLevelHdrExtId <= RTP_DataFrame::MaxHeaderExtensionIdTwoByte) {
     BYTE data = (BYTE)(std::min(std::max(-level, 0), 127) | (frame.GetMetaData().m_vad ? 0x80 : 0));
     frame.SetHeaderExtension(m_session.m_audioLevelHdrExtId, 1, &data, RTP_DataFrame::RFC5285_Auto);
   }
