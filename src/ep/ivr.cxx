@@ -266,7 +266,19 @@ PBoolean OpalIVRConnection::StartVXML()
   m_vxmlSession.SetVar("session.connection.remote.uri", remoteURL);
   m_vxmlSession.SetVar("session.connection.remote.ip", remoteURL.GetHostName());
   m_vxmlSession.SetVar("session.connection.remote.port", remoteURL.GetPort());
-  m_vxmlSession.SetVar("session.time", PTime().AsString());
+
+  PSafePtr<OpalConnection> network = GetOtherPartyConnection();
+  if (network != NULL) {
+    PString redirect = network->GetRedirectingParty();
+    m_vxmlSession.SetVar("session.connection.redirect.uri", redirect);
+
+    if (!OpalIsE164(redirect)) {
+      redirect = PURL(redirect).GetUserName();
+      if (!OpalIsE164(redirect))
+        redirect.MakeEmpty();
+    }
+    m_vxmlSession.SetVar("session.connection.redirect.ani", redirect);
+  }
 
   return m_vxmlSession.Load(m_vxmlScript) || StartScript();
 }
