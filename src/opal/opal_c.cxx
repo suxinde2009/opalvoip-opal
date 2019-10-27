@@ -1332,6 +1332,7 @@ void OpalManager_C::SetOutgoingCallInfo(OpalMessageType type, OpalCall & call)
   SET_MESSAGE_STRING(message, m_param.m_callSetUp.m_partyA, call.GetPartyA());
   SET_MESSAGE_STRING(message, m_param.m_callSetUp.m_partyB, call.GetPartyB());
   SET_MESSAGE_STRING(message, m_param.m_callSetUp.m_callToken, call.GetToken());
+  SET_MESSAGE_STRING(message, m_param.m_callSetUp.m_protocolCallId, network->GetIdentifier());
 
   if (m_apiVersion >= 32)
     message.SetMIME(message->m_param.m_callSetUp.m_extraCount,
@@ -2322,12 +2323,6 @@ void OpalManager_C::HandleSetUpCall(const OpalMessage & command, OpalMessageBuff
     SET_MESSAGE_STRING(response, m_param.m_callSetUp.m_partyA, partyA);
     SET_MESSAGE_STRING(response, m_param.m_callSetUp.m_partyB, command.m_param.m_callSetUp.m_partyB);
     SET_MESSAGE_STRING(response, m_param.m_callSetUp.m_callToken, token);
-    PSafePtr<OpalCall> call = FindCallWithLock(token);
-    if (call != NULL) {
-      PSafePtr<OpalConnection> other = call->GetConnection(1);
-      if (other != NULL)
-        SET_MESSAGE_STRING(response, m_param.m_callSetUp.m_protocolCallId, other->GetIdentifier());
-    }
   }
   else
     response.SetError("Call set up failed.");
