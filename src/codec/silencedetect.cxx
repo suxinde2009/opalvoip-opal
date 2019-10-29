@@ -267,9 +267,12 @@ public:
          move too quickly, but we do want it to move faster down than up, so
          move to halfway to maximum value of the quiet period. As a rule the
          lower the threshold the better as it would improve response time to
-         the start of a talk burst.
+         the start of a talk burst. We also do not get to close to a lower
+         bound, increasing the threshold by 10% on the long term average. This
+         is becuase when very quiet, (-100 and below) it is very susceptable
+         to noise and large changes can occur even when really silent.
        */
-      int newThreshold = (m_levelThreshold + m_longTerm.m_average)/2 + 1;
+      int newThreshold = (m_levelThreshold + m_longTerm.m_average)/2 - m_longTerm.m_average/10;
       if (m_levelThreshold > newThreshold) {
         PTRACE(4, "Threshold decreased:"
                   " old=" << m_levelThreshold << ","
