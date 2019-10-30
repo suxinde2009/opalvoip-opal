@@ -438,6 +438,7 @@ OpalRTPSession::SyncSource::SyncSource(OpalRTPSession & session, RTP_SyncSourceI
 #if PTRACING
   , m_absSendTimeLoglevel(6)
 #endif
+  , m_mismatchThresholdVAD(25)
   , m_mismatchedSilentVAD(0)
   , m_mismatchedActiveVAD(0)
 #if PTRACING
@@ -931,27 +932,28 @@ OpalRTPSession::SendReceiveStatus OpalRTPSession::SyncSource::OnReceiveData(RTP_
     if ((exthdr = frame.GetHeaderExtension(RTP_DataFrame::RFC5285_Auto, m_session.m_audioLevelHdrExtId, hdrlen)) != NULL) {
       RTP_DataFrame::MetaData & md = frame.GetWritableMetaData();
       md.m_audioLevel = -(int)(*exthdr&0x7f);
+      md.m_vad = RTP_DataFrame::UnknownVAD;
 
-      if (!m_session.m_vadHdrExtEnabled)
-        md.m_vad = RTP_DataFrame::UnknownVAD;
-      else {
+      if (m_session.m_vadHdrExtEnabled) {
         if ((*exthdr&0x80) != 0) {
-          md.m_vad = RTP_DataFrame::ActiveVAD;
+          if (m_packets > m_mismatchThresholdVAD)
+            md.m_vad = RTP_DataFrame::ActiveVAD;
           if (md.m_audioLevel > -127)
             m_mismatchedActiveVAD = 0;
           else
             ++m_mismatchedActiveVAD;
         }
         else {
-          md.m_vad = RTP_DataFrame::InactiveVAD;
-          if (md.m_audioLevel <= -40)
+          if (m_packets > m_mismatchThresholdVAD)
+            md.m_vad = RTP_DataFrame::InactiveVAD;
+          if (md.m_audioLevel < -63)
             m_mismatchedSilentVAD = 0;
           else
             ++m_mismatchedSilentVAD;
         }
         // We check for if VAD is marked "detected" but we have digital silence, or
         // the opposite, no VAD is detected but there is a reasonable amount of noise
-        if (m_mismatchedSilentVAD > 100 || m_mismatchedActiveVAD > 100) {
+        if (m_mismatchedSilentVAD >= m_mismatchThresholdVAD || m_mismatchedActiveVAD >= m_mismatchThresholdVAD) {
           PTRACE(3, &m_session, *this << "The VAD indication in audio level RTP header extension cannot be trusted, disabling");
           m_session.m_vadHdrExtEnabled = false;
         }

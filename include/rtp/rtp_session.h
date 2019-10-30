@@ -822,6 +822,7 @@ class OpalRTPSession : public OpalMediaSession
 #endif
 
       // Handling Audio-Level header extension
+      unsigned m_mismatchThresholdVAD;
       unsigned m_mismatchedSilentVAD;
       unsigned m_mismatchedActiveVAD;
 #if PTRACING
