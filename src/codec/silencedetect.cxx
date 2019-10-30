@@ -51,6 +51,7 @@ class OpalSilenceDetector::MyData : public PObject
   int      m_levelThreshold;
   bool     m_wasActive;
   bool     m_initialiseTimestamps;
+  bool     m_initialiseThreshold;
   unsigned m_wrapCheckTimestamp;
   unsigned m_nextDeadbandTimestamp;
   unsigned m_nextAdaptionTimestamp;
@@ -131,6 +132,7 @@ public:
     , m_levelThreshold(MinAudioLevel)
     , m_wasActive(false)
     , m_initialiseTimestamps(true)
+    , m_initialiseThreshold(true)
     , m_wrapCheckTimestamp(0)
     , m_nextDeadbandTimestamp(0)
     , m_nextAdaptionTimestamp(0)
@@ -184,7 +186,7 @@ public:
 
   void Reset()
   {
-    m_initialiseTimestamps = true;
+    m_initialiseThreshold = m_initialiseTimestamps = true;
     m_shortTerm.Reset();
     m_longTerm.Reset();
   }
@@ -220,6 +222,14 @@ public:
 
     m_shortTerm.Process(timestamp, audioLevel);
 
+    /* While we are in the initialisation phase, we set the threshold to just
+       below the lowest short term average we have had, so it is always active
+       until we get a long term average to use. */
+    if (  m_initialiseThreshold &&
+          m_owner.m_params.m_mode == AdaptiveSilenceDetection &&
+          m_levelThreshold >= m_shortTerm.m_average)
+      m_levelThreshold = m_shortTerm.m_average - 1;
+
     // Have we changed?
     bool lastResultActive = m_lastResult > VoiceInactive;
     bool nowActive = m_shortTerm.m_average > m_levelThreshold;
@@ -235,7 +245,6 @@ public:
                 " threshold=" << m_levelThreshold << "dBov");
     }
 
-
     if (m_owner.m_params.m_mode == FixedSilenceDetection)
       return;
 
@@ -247,7 +256,17 @@ public:
 
     m_nextAdaptionTimestamp = timestamp + m_adaptivePeriod;
 
-    if (m_longTerm.m_average > m_levelThreshold) {
+    if (m_initialiseThreshold) {
+      m_initialiseThreshold = false;
+
+      /* We initialise the threshold to the long term average. Unless the
+         speaker never takes a breath, or we are detecteing music, then the
+         average should be below the peaks of active speech. We then fine
+         tune the threshold adjustment over time. */
+      m_levelThreshold = m_longTerm.m_average;
+      PTRACE(4, "Threshold initialised to " << m_levelThreshold);
+    }
+    else if (m_longTerm.m_average > m_levelThreshold) {
       /* If every frame was noisy, move threshold up. Don't want to move too
          fast so only go a quarter of the way to minimum signal value over the
          period. This avoids oscillations, and time will continue to make the
