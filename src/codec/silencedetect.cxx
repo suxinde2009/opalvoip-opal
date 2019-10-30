@@ -308,7 +308,8 @@ void OpalSilenceDetector::AdaptiveReset()
 {
   PWaitAndSignal mutex(m_inUse);
   PTRACE_CONTEXT_ID_TO(*m_data);
-  m_data->Reset();
+  if (m_params.m_mode == AdaptiveSilenceDetection)
+    m_data->Reset();
 }
 
 

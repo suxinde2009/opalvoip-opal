@@ -145,6 +145,11 @@ class OpalSilenceDetector : public PObject
       */
     unsigned GetClockRate() const { return m_params.m_sampleRate; }
 
+    /**Reset the adaptive filter
+     */
+    void AdaptiveReset();
+
+    /// Codes for detection result.
     P_DECLARE_STREAMABLE_ENUM(Result,
       VoiceDeactivated, // Note, order is important
       VoiceInactive,
@@ -222,10 +227,6 @@ class OpalSilenceDetector : public PObject
     };
 
   private:
-    /**Reset the adaptive filter
-     */
-    void AdaptiveReset();
-
     OpalSilenceDetector(const OpalSilenceDetector &) { }
     void operator=(const OpalSilenceDetector &) { }
 
