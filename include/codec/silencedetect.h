@@ -158,39 +158,40 @@ class OpalSilenceDetector : public PObject
     );
     enum { IsSilent = VoiceInactive }; // For backward compatibility (mostly)
 
+    struct ResultInfo {
+        /// The current result of the detector.
+        Result m_result;
+
+        /// The current threshold value being used.
+        int m_currentThreshold;
+
+        /** The short term energy value as dBov (-127 to 0) which is used in
+            comparison to the threshold value for audio active/inactive. */
+        int m_shortTermAverage;
+
+        /** The long term energy value as dBov (-127 to 0) which is used to
+            adaptively adjust the threshold value. */
+        int m_longTermAverage;
+    };
+
     /**Get silence detection status
       */
     Result GetResult(
-      /** The energy value as dBov (-127 to 0) which is used as the threshold
-          value for audio signal. */
-      int * currentThreshold = NULL,
-
-      /// The average energy as dBov (-127 to 0) for last audio frame.
-      int * averageLevel = NULL
+      ResultInfo * info = NULL ///< Result information
     ) const;
 
     /**Detemine (in context) if audio stream is currently silent.
       */
     Result Detect(
-      const BYTE * audioPtr,    /// Pointer to PCM-16 audio data
-      PINDEX audioLen,          /// length in bytes of PCM-16 audio data
-      unsigned timestamp,       /// Timestamp in RTP units
-      int audioLevel,           /// Level (dBov) of audio data, INT_MAX is unknown
-      /** The energy value as dBov (-127 to 0) which is used as the threshold
-          value for audio signal. */
-      int * currentThreshold = NULL,
-
-      /// The average energy as dBov (-127 to 0) for last audio frame.
-      int * averageLevel = NULL
+      const BYTE * audioPtr,   ///< Pointer to PCM-16 audio data
+      PINDEX audioLen,         ///< length in bytes of PCM-16 audio data
+      unsigned timestamp,      ///< Timestamp in RTP units
+      int audioLevel,          ///< Level (dBov) of audio data, INT_MAX is unknown
+      ResultInfo * info = NULL ///< Result information
     );
     Result Detect(
-      const RTP_DataFrame & rtp,  /// RTP packet to detect
-      /** The energy value as dBov (-127 to 0) which is used as the threshold
-          value for audio signal. */
-      int * currentThreshold = NULL,
-
-      /// The average energy as dBov (-127 to 0) for last audio frame.
-      int * averageLevel = NULL
+      const RTP_DataFrame & rtp,  ///< RTP packet to detect
+      ResultInfo * info = NULL    ///< Result information
     );
 
     /**Get the average signal level in the stream.

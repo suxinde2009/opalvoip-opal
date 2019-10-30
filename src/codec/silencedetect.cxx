@@ -45,6 +45,8 @@
 
 class OpalSilenceDetector::MyData : public PObject
 {
+  friend class OpalSilenceDetector;
+
   OpalSilenceDetector & m_owner;
 
   Result   m_lastResult;
@@ -143,11 +145,6 @@ public:
   }
 
 
-  inline Result GetResult() const { return m_lastResult; }
-  inline int GetThreshold() const { return m_levelThreshold; }
-  inline int GetAverageLevel() const { return m_shortTerm.m_average; }
-
-
   void ChangedParameters()
   {
     m_signalDeadband = m_owner.m_params.m_signalDeadband*m_owner.m_params.m_sampleRate/1000;
@@ -186,9 +183,11 @@ public:
 
   void Reset()
   {
+    m_lastResult = VoiceInactive;
     m_initialiseThreshold = m_initialiseTimestamps = true;
     m_shortTerm.Reset();
     m_longTerm.Reset();
+    PTRACE(3, "Reset of adaptive data");
   }
 
 
@@ -222,13 +221,10 @@ public:
 
     m_shortTerm.Process(timestamp, audioLevel);
 
-    /* While we are in the initialisation phase, we set the threshold to just
-       below the lowest short term average we have had, so it is always active
-       until we get a long term average to use. */
-    if (  m_initialiseThreshold &&
-          m_owner.m_params.m_mode == AdaptiveSilenceDetection &&
-          m_levelThreshold >= m_shortTerm.m_average)
-      m_levelThreshold = m_shortTerm.m_average - 1;
+    /* While we are in the initialisation phase, we set the threshold to the
+       long term average we have so far. */
+    if (m_initialiseThreshold && m_owner.m_params.m_mode == AdaptiveSilenceDetection)
+      m_levelThreshold = m_longTerm.m_average;
 
     // Have we changed?
     bool lastResultActive = m_lastResult > VoiceInactive;
@@ -358,7 +354,7 @@ void OpalSilenceDetector::GetParameters(Params & params) const
 {
   PWaitAndSignal mutex(m_inUse);
   params = m_params;
-  params.m_threshold = m_data->GetThreshold();
+  params.m_threshold = m_data->m_levelThreshold;
 }
 
 
@@ -399,17 +395,18 @@ void OpalSilenceDetector::Params::FromString(const PString & str)
 }
 
 
-OpalSilenceDetector::Result OpalSilenceDetector::GetResult(int * currentThreshold, int * averageLevel) const
+OpalSilenceDetector::Result OpalSilenceDetector::GetResult(ResultInfo * info) const
 {
   PWaitAndSignal mutex(m_inUse);
 
-  if (currentThreshold != NULL)
-    *currentThreshold = m_data->GetThreshold();
+  if (info != NULL) {
+    info->m_result = m_data->m_lastResult;
+    info->m_currentThreshold = m_data->m_levelThreshold;
+    info->m_shortTermAverage = m_data->m_shortTerm.m_average;
+    info->m_longTermAverage = m_data->m_longTerm.m_average;
+  }
 
-  if (averageLevel != NULL)
-    *averageLevel = m_data->GetAverageLevel();
-
-  return m_data->GetResult();
+  return m_data->m_lastResult;
 }
 
 
@@ -429,16 +426,13 @@ void OpalSilenceDetector::ReceivedPacket(RTP_DataFrame & frame, P_INT_PTR)
 }
 
 
-OpalSilenceDetector::Result OpalSilenceDetector::Detect(const RTP_DataFrame & rtp,
-                                                        int * currentThreshold,
-                                                        int * averageLevel)
+OpalSilenceDetector::Result OpalSilenceDetector::Detect(const RTP_DataFrame & rtp, ResultInfo * info)
 {
   return Detect(rtp.GetPayloadPtr(),
                 rtp.GetPayloadSize(),
                 rtp.GetTimestamp(),
                 rtp.GetMetaData().m_audioLevel,
-                currentThreshold,
-                averageLevel);
+                info);
 }
 
 
@@ -446,8 +440,7 @@ OpalSilenceDetector::Result OpalSilenceDetector::Detect(const BYTE * audioPtr,
                                                         PINDEX audioLen,
                                                         unsigned timestamp,
                                                         int audioLevel,
-                                                        int * currentThreshold,
-                                                        int * averageLevel)
+                                                        ResultInfo * info)
 {
   PWaitAndSignal mutex(m_inUse);
 
@@ -462,7 +455,7 @@ OpalSilenceDetector::Result OpalSilenceDetector::Detect(const BYTE * audioPtr,
   }
 
   m_data->Detect(timestamp, audioLevel);
-  return GetResult(currentThreshold, averageLevel);
+  return GetResult(info);
 }
 
 
