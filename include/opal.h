@@ -1190,7 +1190,9 @@ typedef struct OpalParamSetUpCall {
 
                                    For other indications this field is NULL. */
 
-  const char * m_protocolCallId;  /**< ID assigned by the underlying protocol for the call. 
+  const char * m_protocolCallId;  /**< ID assigned by the underlying protocol for the call. This
+                                       is returned in the OpalIndIncomingCall, OpalIndAlerting
+                                       and OpalIndEstablished messages.
                                        Only available in version 18 and above */
   OpalParamProtocol m_overrides;  /**< Overrides for the default parameters for the protocol.
                                        For example, m_userName and m_displayName can be
