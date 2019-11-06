@@ -677,8 +677,8 @@ void MyPlayer::OnDiscoverComplete()
   m_rtpList->AutoSizeColumns();
   m_rtpList->SetColSize(ColFormat, m_rtpList->GetColSize(ColFormat)+40);
 
-  m_playToPacket->SetRange(1, m_packetCount);
-  m_playToPacket->SetValue(m_packetCount);
+  m_playToPacket->SetRange(1, m_packetCount+1);
+  m_playToPacket->SetValue(m_packetCount+1);
 
   delete m_discoverProgress;
   m_discoverProgress = NULL;
