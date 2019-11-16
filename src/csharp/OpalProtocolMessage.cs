@@ -90,6 +90,27 @@ public class OpalProtocolMessage : global::System.IDisposable {
     } 
   }
 
+  public uint extraCount {
+    set {
+      OPALPINVOKE.OpalProtocolMessage_extraCount_set(swigCPtr, value);
+    } 
+    get {
+      uint ret = OPALPINVOKE.OpalProtocolMessage_extraCount_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public OpalMIME extras {
+    set {
+      OPALPINVOKE.OpalProtocolMessage_extras_set(swigCPtr, OpalMIME.getCPtr(value));
+    } 
+    get {
+      global::System.IntPtr cPtr = OPALPINVOKE.OpalProtocolMessage_extras_get(swigCPtr);
+      OpalMIME ret = (cPtr == global::System.IntPtr.Zero) ? null : new OpalMIME(cPtr, false);
+      return ret;
+    } 
+  }
+
   public OpalProtocolMessage() : this(OPALPINVOKE.new_OpalProtocolMessage(), true) {
   }
 

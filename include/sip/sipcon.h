@@ -619,8 +619,8 @@ class SIPConnection : public OpalSDPConnection, public SIPTransactionOwner
     /**Call back for received an INFO message with a package.
       */
     virtual bool OnReceivedInfoPackage(
-      const PString & package,
-      const PString & body
+      const PString & package,        ///< Info Package header value
+      const PMultiPartList & content  ///< Content data (PDU body)
     );
   //@}
 
@@ -822,6 +822,8 @@ class SIPConnection : public OpalSDPConnection, public SIPTransactionOwner
     P_REMOVE_VIRTUAL_VOID(OnReceivedTrying(SIP_PDU &));
     P_REMOVE_VIRTUAL_VOID(OnMessageReceived(const SIPURL & /*from*/, const SIP_PDU & /*pdu*/));
     P_REMOVE_VIRTUAL_VOID(OnMessageReceived(const SIP_PDU & /*pdu*/));
+    P_REMOVE_VIRTUAL(bool,OnReceivedInfoPackage(const PString&,const PString&),false);
+
 
   friend class SIPTransaction;
   friend class SIP_RTP_Session;

@@ -276,22 +276,32 @@ class SIPEndPoint_C : public SIPEndPoint
       bool reSubscribing,           ///< If subscribing then indication was refeshing subscription
       SIP_PDU::StatusCodes reason   ///< Status of subscription
     );
+    virtual bool OnReINVITE(
+      SIPConnection & connection,
+      bool fromRemote,
+      const PString & remoteSDP
+    );
     virtual void OnDialogInfoReceived(
       const SIPDialogNotification & info  ///< Information on dialog state change
     );
     virtual bool OnReceivedInfoPackage(
       SIPConnection & connection,
       const PString & package,
-      const PString & body
+      const PMultiPartList & content
     );
 
-    void SetMessageIdentifiers(const PString & str) { m_messageIdentifiers = str.Lines(); }
+    void SetProtocolMessageIdentifiers(const PString & str);
+    bool SendIndProtocolMessage(
+      SIPConnection & connection,
+      const PString & identifier,
+      const PMultiPartList & parts
+    );
 
   private:
     OpalManager_C & m_manager;
-    PStringSet      m_messageIdentifiers;
+    PRegularExpression m_allowedMessageIdentifiers;
 };
-#endif
+#endif // OPAL_SIP
 
 
 class OpalManager_C : public OpalManager
@@ -333,7 +343,9 @@ class OpalManager_C : public OpalManager
     void SendIncomingCallInfo(const OpalConnection & connection);
     void SetOutgoingCallInfo(OpalMessageType type, OpalCall & call);
 
-  protected:
+    unsigned const m_apiVersion;
+
+protected:
     void HandleSetGeneral       (const OpalMessage & message, OpalMessageBuffer & response);
     void HandleSetProtocol      (const OpalMessage & message, OpalMessageBuffer & response);
     void HandleRegistration     (const OpalMessage & message, OpalMessageBuffer & response);
@@ -358,7 +370,6 @@ class OpalManager_C : public OpalManager
 
     bool FindCall(const char * token, OpalMessageBuffer & response, PSafePtr<OpalCall> & call);
 
-    unsigned                  m_apiVersion;
     bool                      m_manualAlerting;
     PSyncQueue<OpalMessage *> m_messageQueue;
     OpalMessageAvailableFunction m_messageAvailableCallback;
@@ -828,7 +839,7 @@ bool OpalGstEndPoint_C::OnIncomingCall(OpalLocalConnection & connection)
   return true;
 }
 
-#endif
+#endif // OPAL_GSTREAMER
 
 
 ///////////////////////////////////////
@@ -874,7 +885,7 @@ void OpalIVREndPoint_C::OnEndDialog(OpalIVRConnection & connection)
   m_manager.PostMessage(message);
 }
 
-#endif
+#endif // OPAL_IVR
 
 
 ///////////////////////////////////////
@@ -962,6 +973,22 @@ static PString GetParticipantName(const SIPDialogNotification::Participant & par
 }
 
 
+bool SIPEndPoint_C::OnReINVITE(SIPConnection & connection, bool fromRemote, const PString & remoteSDP)
+{
+  if (!SIPEndPoint::OnReINVITE(connection, fromRemote, remoteSDP))
+    return false;
+
+  PMultiPartList parts;
+  if (connection.GetExtraCallInfo().IsEmpty())
+    parts.AddPart(remoteSDP, OpalSDPEndPoint::ContentType());
+  else
+    parts = connection.GetExtraCallInfo();
+  SendIndProtocolMessage(connection, fromRemote ? "REMOTE-INVITE" : "LOCAL-INVITE", parts);
+
+  return true;
+}
+
+
 void SIPEndPoint_C::OnDialogInfoReceived(const SIPDialogNotification & info)
 {
   SIPEndPoint::OnDialogInfoReceived(info);
@@ -989,29 +1016,74 @@ void SIPEndPoint_C::OnDialogInfoReceived(const SIPDialogNotification & info)
 }
 
 
-bool SIPEndPoint_C::OnReceivedInfoPackage(SIPConnection & connection, const PString & package, const PString & body)
+bool SIPEndPoint_C::OnReceivedInfoPackage(SIPConnection & connection, const PString & package, const PMultiPartList & content)
 {
-  if (!m_messageIdentifiers.Contains(package))
-    return SIPEndPoint::OnReceivedInfoPackage(connection, package, body);
+  bool handled = SendIndProtocolMessage(connection, "INFO\t" + package, content);
+  return SIPEndPoint::OnReceivedInfoPackage(connection, package, content) || handled;
+}
+
+
+bool SIPEndPoint_C::SendIndProtocolMessage(SIPConnection & connection,
+                                           const PString & identifier,
+                                           const PMultiPartList & parts)
+{
+  PINDEX dummy;
+  if (!m_allowedMessageIdentifiers.Execute(identifier, dummy))
+    return false;
 
   OpalMessageBuffer message(OpalIndProtocolMessage);
   SET_MESSAGE_STRING(message, m_param.m_protocolMessage.m_protocol, connection.GetPrefixName());
   SET_MESSAGE_STRING(message, m_param.m_protocolMessage.m_callToken, connection.GetCall().GetToken());
-  SET_MESSAGE_STRING(message, m_param.m_protocolMessage.m_identifier, package);
-  SET_MESSAGE_DATA(message, m_param.m_protocolMessage.m_payload, body.GetPointer(), body.GetLength());
-  message->m_param.m_protocolMessage.m_size = body.GetLength();
+  SET_MESSAGE_STRING(message, m_param.m_protocolMessage.m_identifier, identifier);
 
-  PTRACE(4, "OnReceivedInfoPackage: "
-            "package=\"" << message->m_param.m_protocolMessage.m_protocol << "\" "
+  if (!parts.IsEmpty()) {
+    PString payload = parts.front().m_textBody;
+    SET_MESSAGE_DATA(message, m_param.m_protocolMessage.m_payload, payload.GetPointer(), payload.GetLength());
+    message->m_param.m_protocolMessage.m_size = payload.GetLength();
+
+    if (m_manager.m_apiVersion >= 40)
+      message.SetMIME(message->m_param.m_protocolMessage.m_extraCount, message->m_param.m_protocolMessage.m_extras, parts);
+  }
+
+  PTRACE(4, "SendIndProtocolMessage: "
+            "identifier=\"" << message->m_param.m_protocolMessage.m_identifier << "\" "
             "call-token=" << message->m_param.m_protocolMessage.m_callToken << " "
-            "payload-size=" << message->m_param.m_protocolMessage.m_size);
+            "payload-size=" << message->m_param.m_protocolMessage.m_size << " "
+            "extras-size=" << message->m_param.m_protocolMessage.m_extras);
   m_manager.PostMessage(message);
 
   return true;
 }
 
 
-#endif
+void SIPEndPoint_C::SetProtocolMessageIdentifiers(const PString & str)
+{
+  PStringStream fullExpression;
+  PStringSet expressions = str.Lines();
+  switch (expressions.GetSize()) {
+    case 0:
+      break;
+    case 1:
+      fullExpression = m_manager.m_apiVersion < 40 ? PRegularExpression::EscapeString(str) : str;
+      break;
+    default:
+      for (PStringSet::iterator it = expressions.begin(); it != expressions.end(); ++it) {
+        PString expression = m_manager.m_apiVersion < 40 ? PRegularExpression::EscapeString(*it) : *it;
+        if (m_allowedMessageIdentifiers.Compile(expression, PRegularExpression::Extended)) {
+          if (!fullExpression.IsEmpty())
+            fullExpression << '|';
+          fullExpression << '(' << expression << ')';
+        }
+        else {
+          PTRACE(2, "Illegal message identifier regex " << it->ToLiteral());
+        }
+      }
+  }
+  m_allowedMessageIdentifiers.Compile(fullExpression, PRegularExpression::Extended|PRegularExpression::IgnoreCase);
+  PTRACE(3, "Set allowed protocol message identifiers to regex " << m_allowedMessageIdentifiers.GetPattern().ToLiteral());
+}
+
+#endif //OPAL_SIP
 
 ///////////////////////////////////////
 
@@ -2053,7 +2125,7 @@ void OpalManager_C::HandleSetProtocol(const OpalMessage & command, OpalMessageBu
   if (!IsNullString(command.m_param.m_protocol.m_protocolMessageIdentifiers)) {
     SIPEndPoint_C * sipEP = dynamic_cast<SIPEndPoint_C *>(ep);
     if (sipEP != NULL)
-      sipEP->SetMessageIdentifiers(command.m_param.m_protocol.m_protocolMessageIdentifiers);
+      sipEP->SetProtocolMessageIdentifiers(command.m_param.m_protocol.m_protocolMessageIdentifiers);
   }
 #endif
 }
@@ -2195,7 +2267,7 @@ void OpalManager_C::HandleRegistration(const OpalMessage & command, OpalMessageB
         subParams.m_password = command.m_param.m_registrationInfo.m_password;
         subParams.m_realm = command.m_param.m_registrationInfo.m_adminEntity;
 #if P_64BIT
-        subParams.m_expire = m_apiVersion = command.m_param.m_registrationInfo.m_timeToLive;
+        subParams.m_expire = command.m_param.m_registrationInfo.m_timeToLive;
 #else
         subParams.m_expire = m_apiVersion >= 13 ? command.m_param.m_registrationInfo.m_timeToLive
                                                : *(unsigned*)&command.m_param.m_registrationInfo.m_eventPackage; // Backward compatibility
@@ -2676,9 +2748,9 @@ void OpalManager_C::HandleStartRecording(const OpalMessage & command, OpalMessag
   }
 
   if (!call->StartRecording(command.m_param.m_recording.m_file, options))
-#else
+#else // OPAL_HAS_MIXER
   if (!IsNullString(command.m_param.m_recording.m_file))
-#endif
+#endif // OPAL_HAS_MIXER
     response.SetError("Could not start recording for call.");
 }
 

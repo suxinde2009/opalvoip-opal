@@ -419,6 +419,10 @@ public class OPALJNI {
   public final static native long OpalProtocolMessage_payload_get(long jarg1, OpalProtocolMessage jarg1_);
   public final static native void OpalProtocolMessage_size_set(long jarg1, OpalProtocolMessage jarg1_, long jarg2);
   public final static native long OpalProtocolMessage_size_get(long jarg1, OpalProtocolMessage jarg1_);
+  public final static native void OpalProtocolMessage_extraCount_set(long jarg1, OpalProtocolMessage jarg1_, long jarg2);
+  public final static native long OpalProtocolMessage_extraCount_get(long jarg1, OpalProtocolMessage jarg1_);
+  public final static native void OpalProtocolMessage_extras_set(long jarg1, OpalProtocolMessage jarg1_, long jarg2, OpalMIME jarg2_);
+  public final static native long OpalProtocolMessage_extras_get(long jarg1, OpalProtocolMessage jarg1_);
   public final static native long new_OpalProtocolMessage();
   public final static native void delete_OpalProtocolMessage(long jarg1);
   public final static native void OpalStatusCallCleared_callToken_set(long jarg1, OpalStatusCallCleared jarg1_, String jarg2);

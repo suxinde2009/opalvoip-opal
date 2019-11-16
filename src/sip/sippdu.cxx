@@ -2615,10 +2615,16 @@ bool SIP_PDU::IsContentSDP(bool emptyOK) const
 
 bool SIP_PDU::DecodeSDP(SIPConnection & connection, PMultiPartList & parts)
 {
+  PString sdpText;
+  return DecodeSDP(connection, sdpText, parts);
+}
+
+
+bool SIP_PDU::DecodeSDP(SIPConnection & connection, PString & sdpText, PMultiPartList & parts)
+{
   if (m_SDP != NULL)
     return true;
 
-  PString sdpText;
   if (!m_mime.GetSDP(m_entityBody, sdpText, parts))
     return false;
 

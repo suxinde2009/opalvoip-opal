@@ -672,6 +672,16 @@ class SIPEndPoint : public OpalSDPEndPoint
     );
 
 
+    /**Call back for received a dialog re-INVITE message.
+       @returns false if re-INVITE should be rejected., not only applies if
+                fromRemote is true
+    */
+    virtual bool OnReINVITE(
+      SIPConnection & connection, ///< Connection re-INVITE has occurred on
+      bool fromRemote,            ///< This is a reponse to our re-INVITE
+      const PString & remoteSDP   ///< SDP remote system sent.
+    );
+
     /**Callback called when dialog NOTIFY message is received
      */
     virtual void OnDialogInfoReceived(
@@ -691,11 +701,12 @@ class SIPEndPoint : public OpalSDPEndPoint
 
 
     /**Call back for received an INFO message with a package.
+       @returns true if message was handled and a 200 OK chould be returned.
       */
     virtual bool OnReceivedInfoPackage(
-      SIPConnection & connection,
-      const PString & package,
-      const PString & body
+      SIPConnection & connection,     ///< Connection which received the INFO message
+      const PString & package,        ///< Info Package header value
+      const PMultiPartList & content  ///< Content data (PDU body)
     );
 
 
@@ -1123,6 +1134,7 @@ class SIPEndPoint : public OpalSDPEndPoint
     P_REMOVE_VIRTUAL(PBoolean, OnReceivedSUBSCRIBE(OpalTransport &, SIP_PDU &, SIPDialogContext *), false);
     P_REMOVE_VIRTUAL(bool, OnReceivedMESSAGE(OpalTransport &, SIP_PDU &), false);
     P_REMOVE_VIRTUAL(bool, OnReceivedOPTIONS(OpalTransport &, SIP_PDU &), false);
+    P_REMOVE_VIRTUAL(bool, OnReceivedInfoPackage(SIPConnection &, const PString &, const PString &), false);
 };
 
 
