@@ -306,7 +306,7 @@ SWIGEXPORT int SWIGSTDCALL CSharp_OPAL_C_API_VERSION_get() {
   int jresult ;
   int result;
   
-  result = (int)(39);
+  result = (int)(40);
   jresult = result; 
   return jresult;
 }
@@ -5388,6 +5388,50 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_OpalProtocolMessage_size_get(void * j
   arg1 = (OpalProtocolMessage *)jarg1; 
   result = (unsigned int) ((arg1)->m_size);
   jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_OpalProtocolMessage_extraCount_set(void * jarg1, unsigned int jarg2) {
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  unsigned int arg2 ;
+  
+  arg1 = (OpalProtocolMessage *)jarg1; 
+  arg2 = (unsigned int)jarg2; 
+  if (arg1) (arg1)->m_extraCount = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_OpalProtocolMessage_extraCount_get(void * jarg1) {
+  unsigned int jresult ;
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  unsigned int result;
+  
+  arg1 = (OpalProtocolMessage *)jarg1; 
+  result = (unsigned int) ((arg1)->m_extraCount);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_OpalProtocolMessage_extras_set(void * jarg1, void * jarg2) {
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  OpalMIME *arg2 = (OpalMIME *) 0 ;
+  
+  arg1 = (OpalProtocolMessage *)jarg1; 
+  arg2 = (OpalMIME *)jarg2; 
+  if (arg1) (arg1)->m_extras = (OpalMIME const *)arg2;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_OpalProtocolMessage_extras_get(void * jarg1) {
+  void * jresult ;
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  OpalMIME *result = 0 ;
+  
+  arg1 = (OpalProtocolMessage *)jarg1; 
+  result = (OpalMIME *) ((arg1)->m_extras);
+  jresult = (void *)result; 
   return jresult;
 }
 

@@ -2055,6 +2055,12 @@ void SIPEndPoint::OnPresenceInfoReceived(const PString & /*entity*/,
 #endif // OPAL_SIP_PRESENCE
 
 
+bool SIPEndPoint::OnReINVITE(SIPConnection &, bool, const PString &)
+{
+  return true;
+}
+
+
 void SIPEndPoint::OnDialogInfoReceived(const SIPDialogNotification & PTRACE_PARAM(info))
 {
   PTRACE(3, "Received dialog info for \"" << info.m_entity << "\" id=\"" << info.m_callId << '"');
@@ -2075,7 +2081,7 @@ void SIPEndPoint::OnRegInfoReceived(const SIPRegNotification & PTRACE_PARAM(info
 
 bool SIPEndPoint::OnReceivedInfoPackage(SIPConnection & /*connection*/,
                                         const PString & /*package*/,
-                                        const PString & /*body*/)
+                                        const PMultiPartList & /*content*/)
 {
   return false;
 }

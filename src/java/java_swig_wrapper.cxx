@@ -326,7 +326,7 @@ SWIGEXPORT jint JNICALL Java_org_opalvoip_opal_OPALJNI_OPAL_1C_1API_1VERSION_1ge
   
   (void)jenv;
   (void)jcls;
-  result = (int)(39);
+  result = (int)(40);
   jresult = (jint)result; 
   return jresult;
 }
@@ -7042,6 +7042,63 @@ SWIGEXPORT jlong JNICALL Java_org_opalvoip_opal_OPALJNI_OpalProtocolMessage_1siz
   arg1 = *(OpalProtocolMessage **)&jarg1; 
   result = (unsigned int) ((arg1)->m_size);
   jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_org_opalvoip_opal_OPALJNI_OpalProtocolMessage_1extraCount_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  unsigned int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OpalProtocolMessage **)&jarg1; 
+  arg2 = (unsigned int)jarg2; 
+  if (arg1) (arg1)->m_extraCount = arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_org_opalvoip_opal_OPALJNI_OpalProtocolMessage_1extraCount_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  unsigned int result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OpalProtocolMessage **)&jarg1; 
+  result = (unsigned int) ((arg1)->m_extraCount);
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_org_opalvoip_opal_OPALJNI_OpalProtocolMessage_1extras_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  OpalMIME *arg2 = (OpalMIME *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(OpalProtocolMessage **)&jarg1; 
+  arg2 = *(OpalMIME **)&jarg2; 
+  if (arg1) (arg1)->m_extras = (OpalMIME const *)arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_org_opalvoip_opal_OPALJNI_OpalProtocolMessage_1extras_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  OpalProtocolMessage *arg1 = (OpalProtocolMessage *) 0 ;
+  OpalMIME *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OpalProtocolMessage **)&jarg1; 
+  result = (OpalMIME *) ((arg1)->m_extras);
+  *(OpalMIME **)&jresult = result; 
   return jresult;
 }
 

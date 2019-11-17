@@ -710,6 +710,7 @@ class SIP_PDU : public PSafeObject
     SDPSessionDescription * GetSDP()         { return m_SDP; }
     void SetSDP(SDPSessionDescription * sdp);
     bool DecodeSDP(SIPConnection & connection, PMultiPartList & parts);
+    bool DecodeSDP(SIPConnection & connection, PString & sdpText, PMultiPartList & parts);
     bool IsContentSDP(bool emptyOK = false) const;
 
     const PString & GetExternalTransportAddress() const { return m_externalTransportAddress; }

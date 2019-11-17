@@ -76,7 +76,7 @@ typedef struct OpalHandleStruct * OpalHandle;
 typedef struct OpalMessage OpalMessage;
 
 /// Current API version
-#define OPAL_C_API_VERSION 39
+#define OPAL_C_API_VERSION 40
 
 
 ///////////////////////////////////////
@@ -931,9 +931,9 @@ typedef struct OpalParamProtocol {
                                            crypto suites supported by this protocol in the form:
                                               "name1=description1\nname2=description2\n" */
   unsigned m_maxSizeUDP;              /**< Maximum size of signalling UDP packet. */
-  const char * m_protocolMessageIdentifiers; /**< List of \n separated strings for protocol message identifers
-                                                  that OPAL will assume are successfully handled and a
-                                                  OpalIndProtocolMessage executed. */
+  const char * m_protocolMessageIdentifiers; /**< List of \n separated regular expressions (extended variant, and
+                                                  with ignore case enabled) for protocol message identifers, that
+                                                  OPAL will return a OpalIndProtocolMessage for. */
 } OpalParamProtocol;
 
 
@@ -1589,8 +1589,17 @@ typedef struct OpalStatusIVR {
 
 
 /**Indication of a protocol specific message.
-   In the case of SIP, this is an INFO message with a package type
-    indicated as the protocol message identifier.
+   Sent by OpalIndProtocolMessage message.
+
+   In the case of a SIP INFO message, the protocol message identifier
+   (m_identifier) is the string "INFO\t" followed by the "Info-Package"
+   header for that message.
+
+   In the case if a SIP re-INVITE, the identifier will be "INVITE" and the
+   payload will be the SDP received, if any.
+
+   In all cases, if multi-part mime was received, that information is placed
+   into the "extras" fields, similar to OpalParamSetUpCall and OpalStatusIncomingCall.
   */
 typedef struct OpalProtocolMessage {
   const char * m_protocol;   ///< Protocol this message is from, e.g. "sip".
@@ -1598,6 +1607,11 @@ typedef struct OpalProtocolMessage {
   const char * m_identifier; ///< Protocol specific indentifier for what this message is about.
   const void * m_payload;    ///< Extra protocol and identifier specific data.
   unsigned     m_size;       ///< Size of the above data.
+  unsigned     m_extraCount; /**<Count of extra information items in m_extras. This fields contains any
+                             extra information that is available about the outgoing call. It will
+                             typically be protocol specific. For example, for SIP, this is the
+                             multi-part MIME data that may be in the re-INVITE. */
+  const OpalMIME * m_extras; /**<Data for each extra piece of extra information. */
 } OpalProtocolMessage;
 
 

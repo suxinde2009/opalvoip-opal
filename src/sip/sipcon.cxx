@@ -1558,7 +1558,8 @@ bool SIPConnection::OnReceivedResponseToINVITE(SIPTransaction & transaction, SIP
   // If we are in a dialog, then m_dialog needs to be updated in the 2xx/1xx
   // response for a target refresh request
   m_dialog.Update(response);
-  response.DecodeSDP(*this, m_multiPartMIME);
+  PString sdpText;
+  response.DecodeSDP(*this, sdpText, m_multiPartMIME);
 
   const SIPMIMEInfo & responseMIME = response.GetMIME();
 
@@ -1591,8 +1592,10 @@ bool SIPConnection::OnReceivedResponseToINVITE(SIPTransaction & transaction, SIP
   // Update internal variables on remote part names/number/address
   UpdateRemoteAddresses();
 
-  if (reInvite)
+  if (reInvite) {
+    m_sipEndpoint.OnReINVITE(*this, false, sdpText);
     return statusCode >= 200;
+  }
 
   bool collapseForks;
   if (statusCode < 200)
@@ -2288,7 +2291,6 @@ void SIPConnection::OnReceivedINVITE(SIP_PDU & request)
 
   // We received a Re-INVITE for a current connection
   if (isReinvite) {
-    m_lastReceivedINVITE->DecodeSDP(*this, m_multiPartMIME);
     OnReceivedReINVITE(request);
     return;
   }
@@ -2466,8 +2468,11 @@ void SIPConnection::OnReceivedReINVITE(SIP_PDU & request)
   m_needReINVITE = true;
   m_handlingINVITE = true;
 
+  PString sdpText;
+  m_lastReceivedINVITE->DecodeSDP(*this, sdpText, m_multiPartMIME);
+
   // send the 200 OK response
-  if (!OnSendAnswer(SIP_PDU::Successful_OK, false))
+  if (!m_sipEndpoint.OnReINVITE(*this, true, sdpText) || !OnSendAnswer(SIP_PDU::Successful_OK, false))
     SendInviteResponse(SIP_PDU::Failure_NotAcceptableHere);
 
   SIPURL newRemotePartyID(request.GetMIME(), RemotePartyID);
@@ -3442,8 +3447,20 @@ void SIPConnection::OnReceivedINFO(SIP_PDU & request)
 #endif
   else {
     PString package = mimeInfo("Info-Package");
-    if (!package.IsEmpty() && OnReceivedInfoPackage(package, request.GetEntityBody()))
-      status = SIP_PDU::Successful_OK;
+    if (!package.IsEmpty()) {
+      PString content = request.GetEntityBody();
+      PMultiPartList parts;
+      if (contentType.NumCompare("multipart/") == PObject::EqualTo) {
+        if (!mimeInfo.DecodeMultiPartList(parts, content)) {
+          PTRACE(3, "Invalid multipart MIME.");
+          parts.RemoveAll();
+        }
+      }
+      if (parts.IsEmpty())
+        parts.AddPart(content, contentType);
+      if (OnReceivedInfoPackage(package, parts))
+        status = SIP_PDU::Successful_OK;
+    }
   }
 
   request.SendResponse(status);
@@ -3461,9 +3478,9 @@ void SIPConnection::OnReceivedINFO(SIP_PDU & request)
 }
 
 
-bool SIPConnection::OnReceivedInfoPackage(const PString & package, const PString & body)
+bool SIPConnection::OnReceivedInfoPackage(const PString & package, const PMultiPartList & content)
 {
-  return m_sipEndpoint.OnReceivedInfoPackage(*this, package, body);
+  return m_sipEndpoint.OnReceivedInfoPackage(*this, package, content);
 }
 
 

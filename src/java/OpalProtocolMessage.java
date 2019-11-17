@@ -76,6 +76,23 @@ public class OpalProtocolMessage {
     return OPALJNI.OpalProtocolMessage_size_get(swigCPtr, this);
   }
 
+  public void setExtraCount(long value) {
+    OPALJNI.OpalProtocolMessage_extraCount_set(swigCPtr, this, value);
+  }
+
+  public long getExtraCount() {
+    return OPALJNI.OpalProtocolMessage_extraCount_get(swigCPtr, this);
+  }
+
+  public void setExtras(OpalMIME value) {
+    OPALJNI.OpalProtocolMessage_extras_set(swigCPtr, this, OpalMIME.getCPtr(value), value);
+  }
+
+  public OpalMIME getExtras() {
+    long cPtr = OPALJNI.OpalProtocolMessage_extras_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new OpalMIME(cPtr, false);
+  }
+
   public OpalProtocolMessage() {
     this(OPALJNI.new_OpalProtocolMessage(), true);
   }

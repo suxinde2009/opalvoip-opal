@@ -1408,6 +1408,18 @@ class OPALPINVOKE {
   [global::System.Runtime.InteropServices.DllImport("OPAL", EntryPoint="CSharp_OpalProtocolMessage_size_get")]
   public static extern uint OpalProtocolMessage_size_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("OPAL", EntryPoint="CSharp_OpalProtocolMessage_extraCount_set")]
+  public static extern void OpalProtocolMessage_extraCount_set(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("OPAL", EntryPoint="CSharp_OpalProtocolMessage_extraCount_get")]
+  public static extern uint OpalProtocolMessage_extraCount_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("OPAL", EntryPoint="CSharp_OpalProtocolMessage_extras_set")]
+  public static extern void OpalProtocolMessage_extras_set(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("OPAL", EntryPoint="CSharp_OpalProtocolMessage_extras_get")]
+  public static extern global::System.IntPtr OpalProtocolMessage_extras_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("OPAL", EntryPoint="CSharp_new_OpalProtocolMessage")]
   public static extern global::System.IntPtr new_OpalProtocolMessage();
 
