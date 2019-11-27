@@ -815,7 +815,7 @@ class OpalRTPSession : public OpalMediaSession
       bool               m_synthesizeAbsTime;
 
       // Handling Abs-Send-Time header extension
-      uint64_t m_absSendTimeHighBits;
+      uint64_t m_absSendTimeNTP;
       uint32_t m_absSendTimeLowBits;
 #if PTRACING
       unsigned m_absSendTimeLoglevel;

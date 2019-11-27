@@ -703,18 +703,26 @@ class RTP_DataFrame : public PBYTEArray
         InactiveVAD,
         ActiveVAD
     };
+
+    /** Extra information about the RTP data packet.
+        Note that m_absoluteTime and m_transmitTime are not synchronised with
+        the local machine RTC, but the remote systems.
+    */
     struct MetaData
     {
         MetaData();
 
-        // Note the first two times here are not synchronised with the local CPU clock, but the remote systems.
-        PTime    m_absoluteTime; // Wall clock time media was sampled, as calculated via RTCP and timestamp
-        PTime    m_transmitTime; // Wall clock time packet was transmitted (calculated from header extensions)
-        PTime    m_receivedTime; // Wall clock time packet physically read from socket
-        unsigned m_discontinuity;
-        PString  m_lipSyncId;
-        int      m_audioLevel;   // Audio level for this packet in dBov (-127..0) as per RFC6464, INT_MAX means not used
-        VAD      m_vad;          // Indicate Voice Activity Detect has detected voice.
+        PTime    m_absoluteTime;  /**< Remote wall clock time media was sampled,
+                                       as calculated via RTCP and timestamp, invalid time if
+                                       RTCP RR not yet received */
+        PTime    m_transmitTime;  /**< Remote wall clock time packet was transmitted,
+                                       calculated from header extensions, invalid time if
+                                       extension not present, or RTCP RR not yet received */
+        PTime    m_receivedTime;  //< Local wall clock time packet was physically read from socket
+        unsigned m_discontinuity; //< Number of packets lost since the last one
+        PString  m_lipSyncId;     //< Identifier for pairing audio and video packets.
+        int      m_audioLevel;    //< Audio level for this packet in dBov (-127..0) as per RFC6464, INT_MAX means not used
+        VAD      m_vad;           //< Indicate Voice Activity Detect has detected voice.
     };
 
     /**Get meta data for RTP packet.

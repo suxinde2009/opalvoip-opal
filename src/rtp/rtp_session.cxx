@@ -433,8 +433,8 @@ OpalRTPSession::SyncSource::SyncSource(OpalRTPSession & session, RTP_SyncSourceI
   , m_reportTimestamp(0)
   , m_reportAbsoluteTime(0)
   , m_synthesizeAbsTime(true)
-  , m_absSendTimeHighBits(0)
-  , m_absSendTimeLowBits(0)
+  , m_absSendTimeNTP(0)
+  , m_absSendTimeLowBits(UINT_MAX)
 #if PTRACING
   , m_absSendTimeLoglevel(6)
 #endif
@@ -896,87 +896,92 @@ OpalRTPSession::SendReceiveStatus OpalRTPSession::SyncSource::OnReceiveData(RTP_
     status = OnReceiveRedundantFrame(frame);
 #endif
 
-  if (rxType != e_RxFromRTX) {
-    PINDEX hdrlen;
-    BYTE * exthdr = frame.GetHeaderExtension(RTP_DataFrame::RFC5285_OneByte, m_session.m_absSendTimeHdrExtId, hdrlen);
-    if (exthdr != NULL) {
-      // 24 bits in middle of NTP time, as per http://webrtc.org/experiments/rtp-hdrext/abs-send-time/
-      uint32_t ts = (exthdr[0] << 16) | (exthdr[1] << 8) | exthdr[2];
-
-      if (m_absSendTimeHighBits == 0) {
-        m_absSendTimeHighBits = now.GetNTP() & (~0ULL << 38);
-        m_absSendTimeLowBits = ts;
-      }
-
-      uint64_t highBits = m_absSendTimeHighBits;
-      int32_t delta = (ts - m_absSendTimeLowBits) & 0xffffff;
-      if (delta > 0x800000)
-        highBits -= 1LL << 38; // Got a ts from the previous cycle
-      else {
-        if (ts < m_absSendTimeLowBits) {
-          highBits += 1LL << 38; // We wrapped, increment the cycle
-          m_absSendTimeHighBits = highBits;
-        }
-        m_absSendTimeLowBits = ts;
-      }
-
-      frame.SetTransmitTimeNTP(highBits | ((uint64_t)ts << 14));
-      PTRACE(m_absSendTimeLoglevel, &m_session, *this <<
-             "set transmit time from RTP:"
-             " sn=" << frame.GetSequenceNumber() << ","
-             " hdr=0x" << std::hex << setfill('0') << setw(6) << ts << ","
-             " delta=0x" << setw(6) << delta << setfill(' ') << std::dec << ","
-             " time=" << frame.GetMetaData().m_transmitTime.AsString(PTime::TodayFormat, PTrace::GetTimeZone()));
-    }
-
-    if ((exthdr = frame.GetHeaderExtension(RTP_DataFrame::RFC5285_Auto, m_session.m_audioLevelHdrExtId, hdrlen)) != NULL) {
-      RTP_DataFrame::MetaData & md = frame.GetWritableMetaData();
-      md.m_audioLevel = -(int)(*exthdr&0x7f);
-      md.m_vad = RTP_DataFrame::UnknownVAD;
-
-      if (m_session.m_vadHdrExtEnabled) {
-        if ((*exthdr&0x80) != 0) {
-          if (m_packets > m_mismatchThresholdVAD)
-            md.m_vad = RTP_DataFrame::ActiveVAD;
-          if (md.m_audioLevel > -127)
-            m_mismatchedActiveVAD = 0;
-          else
-            ++m_mismatchedActiveVAD;
-        }
-        else {
-          if (m_packets > m_mismatchThresholdVAD)
-            md.m_vad = RTP_DataFrame::InactiveVAD;
-          if (md.m_audioLevel < -63)
-            m_mismatchedSilentVAD = 0;
-          else
-            ++m_mismatchedSilentVAD;
-        }
-        // We check for if VAD is marked "detected" but we have digital silence, or
-        // the opposite, no VAD is detected but there is a reasonable amount of noise
-        if (m_mismatchedSilentVAD >= m_mismatchThresholdVAD || m_mismatchedActiveVAD >= m_mismatchThresholdVAD) {
-          PTRACE(3, &m_session, *this << "The VAD indication in audio level RTP header extension cannot be trusted, disabling");
-          m_session.m_vadHdrExtEnabled = false;
-        }
-      }
-
-      PTRACE(m_audioLevelLoglevel, &m_session, *this <<
-             "received audio level from RTP:"
-             " sn=" << frame.GetSequenceNumber() << ","
-             " level=" << md.m_audioLevel << ","
-             " vad=" << boolalpha << md.m_vad << ","
-             " raw=0x" << std::hex << setfill('0') << (unsigned)*exthdr);
-    }
-
+  // IF this is a real incoming packet, calculate statistics for it.
+  if (rxType != e_RxFromRTX)
     CalculateStatistics(frame, now);
-  }
 
   // Final user handling of the read frame
   if (status != e_ProcessPacket)
     return status;
 
-  // We are receiving retransmissions in this SSRC
+  // We are receiving retransmissions in this SSRC, so don't do things like
+  // extracting header extension data, as that will be handled when
+  // OnReceiveRetransmit() execute this functiona gain on the primary SSRC
   if (IsRtx())
     return OnReceiveRetransmit(frame, now);
+
+  // Set the base time for transmit to the remotes NTP time
+  if (m_absSendTimeNTP == 0 && m_ntpPassThrough != 0) {
+    m_absSendTimeNTP = m_ntpPassThrough;
+    PTRACE(m_absSendTimeLoglevel, &m_session, *this << "set transmit time base to "
+           << PTime().SetNTP(m_absSendTimeNTP).AsString(PTime::TodayFormat, PTrace::GetTimeZone()));
+  }
+
+  BYTE * exthdr;
+  PINDEX hdrlen;
+  if (m_absSendTimeNTP != 0 && (exthdr = frame.GetHeaderExtension(RTP_DataFrame::RFC5285_OneByte, m_session.m_absSendTimeHdrExtId, hdrlen)) != NULL) {
+    // 24 bits in middle of NTP time, as per http://webrtc.org/experiments/rtp-hdrext/abs-send-time/
+    uint32_t lowBits = (exthdr[0] << 24) | (exthdr[1] << 16) | (exthdr[2] << 8);
+
+    if (m_absSendTimeLowBits == UINT_MAX) {
+      m_absSendTimeLowBits = lowBits;
+      frame.SetTransmitTimeNTP(m_absSendTimeNTP);
+    }
+    else {
+      int32_t delta = lowBits - m_absSendTimeLowBits;
+      int64_t ntp = m_absSendTimeNTP + ((int64_t)delta << 6);
+      if (delta > 0) {
+        m_absSendTimeLowBits = lowBits;
+        m_absSendTimeNTP = ntp;
+      }
+      frame.SetTransmitTimeNTP(ntp);
+      PTRACE(m_absSendTimeLoglevel, &m_session, *this <<
+              "set transmit time from RTP:"
+              " sn=" << frame.GetSequenceNumber() << ","
+              " ts=" << frame.GetTimestamp() << ","
+              " hdr=0x" << std::hex << setfill('0') << setw(8) << lowBits << setfill(' ') << std::dec << ","
+              " delta=" << delta << ","
+              " time=" << frame.GetMetaData().m_transmitTime.AsString(PTime::TodayFormat, PTrace::GetTimeZone()));
+    }
+  }
+
+  if ((exthdr = frame.GetHeaderExtension(RTP_DataFrame::RFC5285_Auto, m_session.m_audioLevelHdrExtId, hdrlen)) != NULL) {
+    RTP_DataFrame::MetaData & md = frame.GetWritableMetaData();
+    md.m_audioLevel = -(int)(*exthdr&0x7f);
+    md.m_vad = RTP_DataFrame::UnknownVAD;
+
+    if (m_session.m_vadHdrExtEnabled) {
+      if ((*exthdr&0x80) != 0) {
+        if (m_packets > m_mismatchThresholdVAD)
+          md.m_vad = RTP_DataFrame::ActiveVAD;
+        if (md.m_audioLevel > -127)
+          m_mismatchedActiveVAD = 0;
+        else
+          ++m_mismatchedActiveVAD;
+      }
+      else {
+        if (m_packets > m_mismatchThresholdVAD)
+          md.m_vad = RTP_DataFrame::InactiveVAD;
+        if (md.m_audioLevel < -63)
+          m_mismatchedSilentVAD = 0;
+        else
+          ++m_mismatchedSilentVAD;
+      }
+      // We check for if VAD is marked "detected" but we have digital silence, or
+      // the opposite, no VAD is detected but there is a reasonable amount of noise
+      if (m_mismatchedSilentVAD >= m_mismatchThresholdVAD || m_mismatchedActiveVAD >= m_mismatchThresholdVAD) {
+        PTRACE(3, &m_session, *this << "The VAD indication in audio level RTP header extension cannot be trusted, disabling");
+        m_session.m_vadHdrExtEnabled = false;
+      }
+    }
+
+    PTRACE(m_audioLevelLoglevel, &m_session, *this <<
+            "received audio level from RTP:"
+            " sn=" << frame.GetSequenceNumber() << ","
+            " level=" << md.m_audioLevel << ","
+            " vad=" << boolalpha << md.m_vad << ","
+            " raw=0x" << std::hex << setfill('0') << (unsigned)*exthdr);
+  }
 
   Data data(frame);
   for (NotifierMap::iterator it = m_notifiers.begin(); it != m_notifiers.end(); ++it) {

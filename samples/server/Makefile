@@ -41,6 +41,7 @@ INIFILE=$(ETCDIR)/opalsrv.ini
 
 install: $(TARGET) | $(BINDIR) $(ETCDIR)
 	install $(TARGET) $(BINDIR)
+	install $(TARGET).debug $(BINDIR)
 	install start.sh stop.sh $(BINDIR)
 	install webrtc_test.html $(BINDIR)
 	install main_menu.vxml $(ETCDIR)
