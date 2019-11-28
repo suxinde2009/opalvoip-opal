@@ -727,6 +727,26 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
   }
 #endif // P_NAT
 
+#if OPAL_IVR
+  rsrc->Add(new PHTTPDividerField());
+  PSYSTEMLOG(Info, "Configuring IVR");
+  {
+    OpalIVREndPoint * ivrEP = FindEndPointAs<OpalIVREndPoint>(OPAL_PREFIX_IVR);
+    // Set IVR protocol handler
+    ivrEP->SetDefaultVXML(rsrc->AddStringField(VXMLKey, 0, ivrEP->GetDefaultVXML(),
+                                               "Interactive Voice Response VXML script, may be a URL or the actual VXML", 10, 80));
+    ivrEP->SetCacheDir(rsrc->AddStringField(IVRCacheKey, 0, ivrEP->GetCacheDir(),
+                                            "Interactive Voice Response directory to cache Text To Speech phrases", 1, 50));
+    ivrEP->SetRecordDirectory(rsrc->AddStringField(IVRRecordDirKey, 0, ivrEP->GetRecordDirectory(),
+                                                   "Interactive Voice Response directory to save recorded messages", 1, 50));
+#if P_VXML_VIDEO
+    m_signLanguageAnalyserDLL = rsrc->AddStringField(SignLanguageAnalyserDLLKey, 0, m_signLanguageAnalyserDLL,
+                                                     "Interactive Voice Response Sign Language Library", 1, 50);
+    PVXMLSession::SetSignLanguageAnalyser(m_signLanguageAnalyserDLL);
+#endif
+  }
+#endif
+
 #if OPAL_H323
   rsrc->Add(new PHTTPDividerField());
   PSYSTEMLOG(Info, "Configuring H.323");
@@ -782,27 +802,6 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
   m_enableCAPI = rsrc->AddBooleanField(EnableCAPIKey, m_enableCAPI, "Enable CAPI ISDN controller(s), if available");
   if (m_enableCAPI && FindEndPointAs<OpalCapiEndPoint>(OPAL_PREFIX_CAPI)->OpenControllers() == 0) {
     PSYSTEMLOG(Error, "No CAPI controllers!");
-  }
-#endif
-
-
-#if OPAL_IVR
-  rsrc->Add(new PHTTPDividerField());
-  PSYSTEMLOG(Info, "Configuring IVR");
-  {
-    OpalIVREndPoint * ivrEP = FindEndPointAs<OpalIVREndPoint>(OPAL_PREFIX_IVR);
-    // Set IVR protocol handler
-    ivrEP->SetDefaultVXML(rsrc->AddStringField(VXMLKey, 0, ivrEP->GetDefaultVXML(),
-          "Interactive Voice Response VXML script, may be a URL or the actual VXML", 10, 80));
-    ivrEP->SetCacheDir(rsrc->AddStringField(IVRCacheKey, 0, ivrEP->GetCacheDir(),
-          "Interactive Voice Response directory to cache Text To Speech phrases", 1, 50));
-    ivrEP->SetRecordDirectory(rsrc->AddStringField(IVRRecordDirKey, 0, ivrEP->GetRecordDirectory(),
-          "Interactive Voice Response directory to save recorded messages", 1, 50));
-#if P_VXML_VIDEO
-    m_signLanguageAnalyserDLL = rsrc->AddStringField(SignLanguageAnalyserDLLKey, 0, m_signLanguageAnalyserDLL,
-          "Interactive Voice Response Sign Language Library", 1, 50);
-    PVXMLSession::SetSignLanguageAnalyser(m_signLanguageAnalyserDLL);
-#endif
   }
 #endif
 
