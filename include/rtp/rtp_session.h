@@ -158,6 +158,15 @@ class OpalRTPSession : public OpalMediaSession
       RTP_SyncSourceId rtxSSRC           ///< SSRC of re-transmitted data, 0 indicates allocate new one
     );
 
+    /**Set the "rtx" SSRC to use for the given SSRC.
+       @return rtxSSRC or a newly allocated SSRC used for "rtx" packets. Zero on error.
+      */
+    void FinaliseSyncSourceRtx(
+      RTP_DataFrame::PayloadTypes primaryPT, ///< Payload type of primary sync source
+      RTP_DataFrame::PayloadTypes rtxPT,     ///< Payload type of retransmiitted packet
+      OpalRTPSession::Direction dir          ///< Media direction
+    );
+
 
     enum SendReceiveStatus {
       e_IgnorePacket = -1,
