@@ -324,7 +324,7 @@ static PINDEX GetListenerCount(PHTTPRequest & resource, const char * prefix)
     return 2;
 
   OpalEndPoint * ep = status->m_manager.FindEndPoint(prefix);
-  if (ep == NULL)
+  if (ep == NULL || ep->GetListeners().IsEmpty())
     return 2;
 
   return ep->GetListeners().GetSize() + 1;
