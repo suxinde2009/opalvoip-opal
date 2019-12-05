@@ -1479,23 +1479,9 @@ void OpalSDPConnection::FinaliseRtx(const OpalMediaStreamPtr & stream, SDPMediaD
     return;
   }
 
-  PTRACE(4, "Finalising RTX as " << rtxPT << " for primary " << primaryPT << " on stream " << *stream);
-
-  OpalRTPSession::Direction dir = stream->IsSource() ? OpalRTPSession::e_Receiver : OpalRTPSession::e_Sender;
-
   // Adjust the session SSRCs
-  RTP_SyncSourceArray ssrcs = rtpSession->GetSyncSources(dir);
-  for (RTP_SyncSourceArray::iterator it = ssrcs.begin(); it != ssrcs.end(); ++it) {
-    RTP_SyncSourceId primarySSRC = *it;
-    RTP_SyncSourceId rtxSSRC = rtpSession->GetRtxSyncSource(primarySSRC, dir, true);
-    if (dir == OpalRTPSession::e_Sender)
-      rtpSession->EnableSyncSourceRtx(primarySSRC, rtxPT, rtxSSRC); // If no rtxSSRC (==0), create one
-    else if (rtxSSRC != 0)
-      rtpSession->EnableSyncSourceRtx(primarySSRC, primaryPT, rtxSSRC);
-    else {
-      PTRACE(3, "Primary receiver SSRC=" << RTP_TRACE_SRC(primarySSRC) << " has no RTX SSRC, invalid SDP");
-    }
-  }
+  PTRACE(4, "Finalising RTX as " << rtxPT << " for primary " << primaryPT << " on stream " << *stream);
+  rtpSession->FinaliseSyncSourceRtx(primaryPT, rtxPT, stream->IsSource() ? OpalRTPSession::e_Receiver : OpalRTPSession::e_Sender);
 }
 
 

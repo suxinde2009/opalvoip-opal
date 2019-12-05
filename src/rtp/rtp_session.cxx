@@ -407,6 +407,26 @@ RTP_SyncSourceId OpalRTPSession::EnableSyncSourceRtx(RTP_SyncSourceId primarySSR
 }
 
 
+void OpalRTPSession::FinaliseSyncSourceRtx(RTP_DataFrame::PayloadTypes primaryPT,
+                                           RTP_DataFrame::PayloadTypes rtxPT,
+                                           OpalRTPSession::Direction dir)
+{
+  RTP_SyncSourceArray ssrcs = GetSyncSources(dir);
+  for (RTP_SyncSourceArray::iterator it = ssrcs.begin(); it != ssrcs.end(); ++it) {
+    SyncSource * primary;
+    if (GetSyncSource(*it, dir, primary) && !primary->IsRtx()) {
+      if (dir == OpalRTPSession::e_Sender)
+        EnableSyncSourceRtx(primary->m_sourceIdentifier, rtxPT, primary->m_rtxSSRC); // If no rtxSSRC (==0), create one
+      else if (primary->m_rtxSSRC != 0)
+        EnableSyncSourceRtx(primary->m_sourceIdentifier, primaryPT, primary->m_rtxSSRC);
+      else {
+        PTRACE(3, *primary << "primary has no RTX SSRC");
+      }
+    }
+  }
+}
+
+
 OpalRTPSession::SyncSource::SyncSource(OpalRTPSession & session, RTP_SyncSourceId id, Direction dir, const char * cname)
   : m_session(session)
   , m_direction(dir)
@@ -3258,6 +3278,8 @@ void OpalRTPSession::SetSinglePortTx(bool singlePortTx)
 #endif
 
   OpalTransportAddress remoteDataAddress = transport->GetRemoteAddress(e_Data);
+  if (remoteDataAddress.IsEmpty())
+    return; // Not got it yet
   if (singlePortTx)
     transport->SetRemoteAddress(remoteDataAddress, e_Control);
   else {
