@@ -343,7 +343,7 @@ static PString GetListenerStatus(PHTTPRequest & resource, const PString htmlBloc
       for (OpalListenerList::const_iterator it = listeners.begin(); it != listeners.end(); ++it) {
         PString insert = htmlBlock;
         PServiceHTML::SpliceMacro(insert, "status Address", it->GetLocalAddress());
-        PServiceHTML::SpliceMacro(insert, "status Status", it->IsOpen() ? "Active" : "Offline");
+        PServiceHTML::SpliceMacro(insert, "status Status", it->IsOpen() ? "Active" : "Failed");
         substitution += insert;
       }
     }
