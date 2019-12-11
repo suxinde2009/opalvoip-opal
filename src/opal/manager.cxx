@@ -1468,7 +1468,16 @@ bool OpalManager::OnMediaFailed(OpalConnection & connection, unsigned, PChannel:
 {
   if (connection.AllMediaFailed()) {
     PTRACE(2, "All media failed, releasing " << connection);
-    connection.Release(error == PChannel::Timeout ? OpalConnection::EndedByMediaFailed : OpalConnection::EndedByMediaTransportFail);
+    switch (error) {
+      case PChannel::Timeout :
+        connection.Release(OpalConnection::EndedByMediaFailed);
+        break;
+      case PChannel::Unavailable :
+        connection.Release(OpalConnection::EndedByMediaTransportFail);
+        break;
+      default :
+        connection.Release(OpalConnection::CallEndReason(OpalConnection::EndedByCustomCode, (unsigned)error));
+    }
   }
   return true;
 }
