@@ -378,10 +378,10 @@ H225_CryptoH323Token * H235AuthSimpleMD5::CreateCryptoToken(bool digits)
 
   // Use SetValueRaw to make sure trailing NULL is included
   clearToken.IncludeOptionalField(H235_ClearToken::e_generalID);
-  clearToken.m_generalID.SetValueRaw(localId.AsUCS2());
+  clearToken.m_generalID.SetValueRaw(localId.AsWide());
 
   clearToken.IncludeOptionalField(H235_ClearToken::e_password);
-  clearToken.m_password.SetValueRaw(password.AsUCS2());
+  clearToken.m_password.SetValueRaw(password.AsWide());
 
   clearToken.IncludeOptionalField(H235_ClearToken::e_timeStamp);
   clearToken.m_timeStamp = (int)PTime().GetTimeInSeconds();
@@ -431,10 +431,10 @@ H235Authenticator::ValidationResult H235AuthSimpleMD5::ValidateCryptoToken(
   clearToken.m_tokenOID = "0.0";
 
   clearToken.IncludeOptionalField(H235_ClearToken::e_generalID);
-  clearToken.m_generalID.SetValueRaw(alias.AsUCS2()); // Use SetValueRaw to make sure trailing NULL is included
+  clearToken.m_generalID.SetValueRaw(alias.AsWide()); // Use SetValueRaw to make sure trailing NULL is included
 
   clearToken.IncludeOptionalField(H235_ClearToken::e_password);
-  clearToken.m_password.SetValueRaw(password.AsUCS2());
+  clearToken.m_password.SetValueRaw(password.AsWide());
 
   clearToken.IncludeOptionalField(H235_ClearToken::e_timeStamp);
   clearToken.m_timeStamp = cryptoEPPwdHash.m_timeStamp;
@@ -539,7 +539,7 @@ H235_ClearToken * H235AuthCAT::CreateClearToken()
   clearToken->m_tokenOID = OID_CAT;
 
   clearToken->IncludeOptionalField(H235_ClearToken::e_generalID);
-  clearToken->m_generalID.SetValueRaw(localId.AsUCS2()); // Use SetValueRaw to make sure trailing NULL is included
+  clearToken->m_generalID.SetValueRaw(localId.AsWide()); // Use SetValueRaw to make sure trailing NULL is included
 
   clearToken->IncludeOptionalField(H235_ClearToken::e_timeStamp);
   clearToken->m_timeStamp = (int)PTime().GetTimeInSeconds();
