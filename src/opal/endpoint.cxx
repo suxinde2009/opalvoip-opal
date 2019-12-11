@@ -248,17 +248,16 @@ bool OpalEndPoint::StartListener(OpalListener * listener)
   if (udpListener != NULL)
     udpListener->SetBufferSize(m_maxSizeUDP);
 
+  m_listeners.Append(listener);
+
   // as the listener is not open, this will have the effect of immediately
   // stopping the listener thread. This is good - it means that the 
   // listener Close function will appear to have stopped the thread
-  if (!listener->Open(PCREATE_NOTIFIER(NewIncomingConnection))) {
-    PTRACE(1, "Could not start listener: " << *listener);
-    delete listener;
-    return false;
-  }
+  if (!listener->Open(PCREATE_NOTIFIER(NewIncomingConnection)))
+    return true;
 
-  m_listeners.Append(listener);
-  return true;
+  PTRACE(1, "Could not start listener: " << *listener);
+  return false;
 }
 
 
