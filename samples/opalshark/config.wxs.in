@@ -9,11 +9,9 @@
     <?if $(var.Architecture) = "x86" ?>
         <?define SSLDir = "$(env.ProgramW6432)\OpenSSL-Win32\bin" ?>
         <?define FFMPEGDir = "..\..\..\external\ffmpeg-win32-dev\bin" ?>
-        <?define SpanDspDir = "..\..\..\external\spandsp-0.0.6\src\Release" ?>
     <?else?>
         <?define SSLDir = "$(env.ProgramW6432)\OpenSSL-Win64\bin" ?>
         <?define FFMPEGDir = "..\..\..\external\ffmpeg-win64-dev\bin" ?>
-        <?define SpanDspDir = "..\..\..\external\spandsp-0.0.6\src\x64\Release" ?>
     <?endif?>
 
     <?define AVFORMATVer = "58" ?>
