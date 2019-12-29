@@ -65,7 +65,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Play RTP", "..\samples\play
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio - Opus", "audio\Opus\OpusCodec_2019.vcxproj", "{8FD8CFC0-086C-4B92-9F17-F28FB71869DD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opus", "audio\Opus\opus\win32\VS2017\opus.vcxproj", "{219EC965-228A-1824-174D-96449D05F88A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opus", "audio\Opus\opus\win32\VS2019\opus.vcxproj", "{219EC965-228A-1824-174D-96449D05F88A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio - iSAC", "audio\iSAC\isaccodec_2019.vcxproj", "{851A8648-5021-4FC3-ACED-40D2802D9C5E}"
 EndProject

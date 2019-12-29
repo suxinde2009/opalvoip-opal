@@ -142,6 +142,7 @@
       <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <IgnoreSpecificDefaultLibraries>libcmt</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Message>Copying codec and debug information to plug in directory</Message>
@@ -198,13 +199,14 @@
       <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <IgnoreSpecificDefaultLibraries>libcmt</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="OpusCodec.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="opus\win32\VS2017\opus.vcxproj">
+    <ProjectReference Include="opus\win32\VS2019\opus.vcxproj">
       <Project>{219ec965-228a-1824-174d-96449d05f88a}</Project>
     </ProjectReference>
   </ItemGroup>
