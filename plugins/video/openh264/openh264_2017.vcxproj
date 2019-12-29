@@ -156,6 +156,14 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0c09</Culture>
     </ResourceCompile>
+    <PreBuildEvent>
+      <Command>if exist "$(OutDir)openh264_$(PlatformTarget).dll" exit 0
+cscript /nologo "$(ProjectDir)..\..\..\make\downloader.vbs" GetUnzip http://ciscobinary.openh264.org/openh264-2.0.0-win$(PlatformArchitecture).dll.bz2 "$(OutDir)"
+ren $(OutDir)openh264-2.0.0-win$(PlatformArchitecture).dll openh264_$(PlatformTarget).dll</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Download Cisco OpenH264 DLL</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -241,6 +249,14 @@ cscript /nologo "$(ProjectDir)..\..\..\make\downloader.vbs" GetUnzip http://cisc
 if errorlevel 1 exit 1
 ren openh264-1.8.0-win64.dll openh264_x64.dll</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if exist "$(OutDir)openh264_$(PlatformTarget).dll" exit 0
+cscript /nologo "$(ProjectDir)..\..\..\make\downloader.vbs" GetUnzip http://ciscobinary.openh264.org/openh264-2.0.0-win$(PlatformArchitecture).dll.bz2 "$(OutDir)"
+ren $(OutDir)openh264-2.0.0-win$(PlatformArchitecture).dll openh264_$(PlatformTarget).dll</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Download Cisco OpenH264 DLL</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\encframe.cxx" />
