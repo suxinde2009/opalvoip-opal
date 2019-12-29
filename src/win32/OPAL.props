@@ -3,6 +3,12 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <OpalGitRootDir>$(ProjectDir)..\..</OpalGitRootDir>
+    <FFMPEGDIR>$(ProjectDir)..\..\..\external\ffmpeg-win64-dev</FFMPEGDIR>
+    <WXDIR>$(ProjectDir)..\..\..\external\wxWidgets</WXDIR>
+    <WXVER>31</WXVER>
+    <PTLIBDIR>$(ProjectDir)..\..\..\PTLib</PTLIBDIR>
+    <LocalDebuggerEnvironment>PATH=$(PATH);$(ProjectDir)..\..\Lib;$(PTLIBDIR)\Lib;$(FFMPEGDIR)\bin;$(WXDIR)\lib\vc141_x64_dll
+PTLIBPLUGINDIR=$(ProjectDir)..\..\bin\plugins\x64\Debug</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -10,6 +16,25 @@
     <BuildMacro Include="OpalGitRootDir">
       <Value>$(OpalGitRootDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="FFMPEGDIR">
+      <Value>$(FFMPEGDIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="WXDIR">
+      <Value>$(WXDIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="WXVER">
+      <Value>$(WXVER)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="PTLibDir">
+      <Value>$(PTLibDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LocalDebuggerEnvironment">
+      <Value>$(LocalDebuggerEnvironment)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
