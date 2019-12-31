@@ -549,7 +549,28 @@ MyPlayer::MyPlayer(MyManager * manager, const PFilePath & filepath)
 {
   wxXmlResource::Get()->LoadPanel(this, wxT("PlayerPanel"));
 
-  FindWindowByNameAs(m_rtpList,      this, wxT("RTPList"));
+  FindWindowByNameAs(m_rtpList, this, wxT("RTPList"));
+  m_rtpList->CreateGrid(1, NumCols);
+  for (int col = ColSrcIP; col < NumCols; ++col) {
+    static wxChar const * const headings[] = {
+      wxT("Src IP"),
+      wxT("Src Port"),
+      wxT("Dst IP"),
+      wxT("Dst Port"),
+      wxT("SSRC"),
+      wxT("Type"),
+      wxT("Format"),
+      wxT("Play")
+    };
+    m_rtpList->SetColLabelValue(col, headings[col]);
+  }
+  m_rtpList->SetColLabelSize(wxGRID_AUTOSIZE);
+  m_rtpList->AutoSizeColLabelSize(0);
+  m_rtpList->SetRowLabelAlignment(wxALIGN_LEFT, wxALIGN_TOP);
+  m_rtpList->SetColFormatBool(ColPlay);
+  m_rtpList->HideRowLabels();
+  m_rtpList->AutoSizeColumns();
+
   FindWindowByNameAs(m_streamTabs,   this, wxT("StreamAnalysis"));
   FindWindowByNameAs(m_play,         this, wxT("Play"));
   FindWindowByNameAs(m_stop,         this, wxT("Stop"));
@@ -629,26 +650,7 @@ void MyPlayer::OnDiscoverComplete()
     m_discoveredRTP.Append(info);
   }
 
-  m_rtpList->CreateGrid(m_discoveredRTP.size(), NumCols);
-
-  for (int col = ColSrcIP; col < NumCols; ++col) {
-    static wxChar const * const headings[] = {
-      wxT("Src IP"),
-      wxT("Src Port"),
-      wxT("Dst IP"),
-      wxT("Dst Port"),
-      wxT("SSRC"),
-      wxT("Type"),
-      wxT("Format"),
-      wxT("Play")
-    };
-    m_rtpList->SetColLabelValue(col, headings[col]);
-  }
-  m_rtpList->SetColLabelSize(wxGRID_AUTOSIZE);
-  m_rtpList->AutoSizeColLabelSize(0);
-  m_rtpList->SetRowLabelAlignment(wxALIGN_LEFT, wxALIGN_TOP);
-  m_rtpList->SetColFormatBool(ColPlay);
-  m_rtpList->HideRowLabels();
+  m_rtpList->AppendRows(m_discoveredRTP.size()-1, false);
 
   wxArrayString formatNames = GetAllMediaFormatNames();
 
