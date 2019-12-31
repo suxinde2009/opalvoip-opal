@@ -22,7 +22,7 @@
 
     <?define WxDir = "$(env.WXDIR)" ?>
     <?define WxVer = "$(env.WXVER)1" ?>
-    <?define WxCustom = "yes" ?>
+    <?define WxCustom = "no" ?>
 
     <?define PTLibDir = "..\..\..\ptlib" ?>
     <?define OPALDir = "..\.." ?>
