@@ -7,7 +7,7 @@
     <WXDIR>$(ProjectDir)..\..\..\external\wxWidgets</WXDIR>
     <WXVER>31</WXVER>
     <PTLIBDIR>$(ProjectDir)..\..\..\PTLib</PTLIBDIR>
-    <LocalDebuggerEnvironment>PATH=$(PATH);$(ProjectDir)..\..\Lib;$(PTLIBDIR)\Lib;$(FFMPEGDIR)\bin;$(WXDIR)\lib\vc141_x64_dll
+    <LocalDebuggerEnvironment>PATH=$(PATH);$(ProjectDir)..\..\Lib;$(PTLIBDIR)\Lib;$(FFMPEGDIR)\bin;$(WXDIR)\lib\vc$(PlatformToolsetVersion)_$(Platform)_dll
 PTLIBPLUGINDIR=$(ProjectDir)..\..\bin\plugins\x64\Debug</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup />
