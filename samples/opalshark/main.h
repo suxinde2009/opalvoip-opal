@@ -166,13 +166,17 @@ class MyPlayer : public wxMDIChildFrame
     void OnPaused();
     void OnPlayEnded();
 
+    bool CanExport() const;
+    void StartExport(const PFilePath & mediaFile);
+    void Export(OpalPCAPFile * pcapFile, OpalRecordManager * recorder);
+    void OnExportComplete();
 
   private:
     MyManager        & m_manager;
     PFilePath          m_pcapFilePath;
+    wxProgressDialog * m_progressDialog;
+    PThread          * m_backgroundThread;
 
-    PThread                   * m_discoverThread;
-    wxProgressDialog          * m_discoverProgress;
     OpalPCAPFile::DiscoveredRTP m_discoveredRTP;
     unsigned                    m_packetCount;
 
@@ -224,15 +228,18 @@ class MyManager : public wxMDIParentFrame, public OpalManager
     const MyOptions GetOptions() const { return m_options; }
 
   private:
+    void OnMenuOpen(wxMenuEvent &);
+
     void OnClose(wxCloseEvent &);
     void OnMenuQuit(wxCommandEvent &);
     void OnMenuAbout(wxCommandEvent &);
     void OnMenuOptions(wxCommandEvent &);
     void OnMenuOpenPCAP(wxCommandEvent &);
     void OnMenuCloseAll(wxCommandEvent &);
-    void OnMenuFullScreen(wxCommandEvent &);
+    void OnMenuExport(wxCommandEvent &);
 
     MyOptions m_options;
+    PwxString m_lastExportFile;
 
   wxDECLARE_EVENT_TABLE();
 };

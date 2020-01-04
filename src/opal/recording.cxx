@@ -63,6 +63,76 @@ bool OpalRecordManager::Open(const PFilePath & fn, const Options & options)
 }
 
 
+bool OpalRecordManager::OpenFile(const PFilePath & fn)
+{
+  m_filename = fn;
+  m_audioPushTime.SetTimestamp(0);
+#if OPAL_VIDEO
+  m_videoPushTime.SetTimestamp(0);
+#endif
+  return !fn.IsEmpty();
+}
+
+
+bool OpalRecordManager::OpenStream(const PString & strmId, const OpalMediaFormat & format)
+{
+  return m_streamFormats.insert(make_pair(strmId, format)).second;
+}
+
+
+OpalMediaFormat OpalRecordManager::GetStreamFormat(const PString & strmId) const
+{
+  StreamFormatMap::const_iterator it = m_streamFormats.find(strmId);
+  return it != m_streamFormats.end() ? it->second : OpalMediaFormat();
+}
+
+
+bool OpalRecordManager::WriteStream(const PString & strmId, const RTP_DataFrame & rtp)
+{
+  StreamFormatMap::const_iterator it = m_streamFormats.find(strmId);
+  if (it == m_streamFormats.end())
+    return false;
+  if (it->second.GetMediaType() == OpalMediaType::Audio())
+    return WriteAudio(strmId, rtp);
+#if OPAL_VIDEO
+  if (it->second.GetMediaType() == OpalMediaType::Video())
+    return WriteVideo(strmId, rtp);
+#endif
+  return false;
+}
+
+
+bool OpalRecordManager::CloseStream(const PString & strmId)
+{
+  PTRACE(4, "Closed stream " << strmId);
+  return m_streamFormats.erase(strmId) > 0;
+}
+
+
+bool OpalRecordManager::OnPushMedia(const PTime & when)
+{
+  if (!m_audioPushTime.IsValid() || when - m_audioPushTime > m_maxJumpTime)
+    m_audioPushTime = when;
+  while (when > m_audioPushTime) {
+    if (!OnPushAudio())
+      return false;
+    m_audioPushTime += GetPushAudioPeriodMS();
+  }
+
+#if OPAL_VIDEO
+  if (!m_videoPushTime.IsValid() || when - m_videoPushTime > m_maxJumpTime)
+    m_videoPushTime = when;
+  while (when > m_videoPushTime) {
+    if (!OnPushVideo())
+      return false;
+    m_videoPushTime += GetPushVideoPeriodMS();
+  }
+#endif
+
+  return true;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 
 /** This class manages the recording of OPAL calls to files supported by PMediaFile.
@@ -163,6 +233,9 @@ bool OpalMediaFileRecordManager::OpenFile(const PFilePath & fn)
 {
   PWaitAndSignal mutex(m_mutex);
 
+  if (!OpalRecordManager::OpenFile(fn))
+    return false;
+
   if (m_file != NULL) {
     PTRACE(2, "Cannot open mixer after it has started.");
     return false;
@@ -259,6 +332,9 @@ bool OpalMediaFileRecordManager::Close()
 bool OpalMediaFileRecordManager::OpenStream(const PString & strmId, const OpalMediaFormat & format)
 {
   PWaitAndSignal mutex(m_mutex);
+
+  if (!OpalRecordManager::OpenStream(strmId, format))
+    return false;
 
   OpalMediaType mediaType = format.GetMediaType();
 
@@ -370,8 +446,7 @@ bool OpalMediaFileRecordManager::CloseStream(const PString & streamId)
     videoMixer->RemoveStream(streamId);
 #endif
 
-  PTRACE(4, "Closed stream " << streamId);
-  return true;
+  return OpalRecordManager::CloseStream(streamId);
 }
 
 

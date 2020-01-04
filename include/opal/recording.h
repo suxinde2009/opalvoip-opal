@@ -161,13 +161,32 @@ class OpalRecordManager : public PObject
     virtual bool OpenStream(
       const PString & strmId,         ///< Identifier for media stream.
       const OpalMediaFormat & format  ///< Media format for new stream
-    ) = 0;
+    );
+
+    /**Get the input media format used for the specified stream.
+      */
+    virtual OpalMediaFormat GetStreamFormat(
+      const PString & strmId     ///< Identifier for media stream.
+    ) const;
+
+    /**Write audio to the recording file.
+    */
+    virtual bool WriteStream(
+      const PString & strmId,     ///< Identifier for media stream.
+      const RTP_DataFrame & rtp   ///< RTP data containing PCM-16 data
+    );
 
     /**Close the media stream based on the identifier provided.
       */
     virtual bool CloseStream(
       const PString & strmId  ///< Identifier for media stream.
-    ) = 0;
+    );
+
+    /** Push media through the mixers.
+    */
+    virtual bool OnPushMedia(
+      const PTime & when   ///< Current time to achieve correct output rates.
+    );
 
     /** Push audio through the mixer.
       */
@@ -207,9 +226,28 @@ class OpalRecordManager : public PObject
     }
 
   protected:
-    virtual bool OpenFile(const PFilePath & fn) = 0;
+    /// Constructor, protected for derived classes only
+    OpalRecordManager()
+      : m_audioPushTime(0)
+#if OPAL_VIDEO
+      , m_videoPushTime(0)
+#endif
+      , m_maxJumpTime(0, 10) // Seconds
+    { }
 
-    Options m_options;
+    virtual bool OpenFile(const PFilePath & fn);
+
+    Options   m_options;
+    PFilePath m_filename;
+
+    typedef std::map<PString, OpalMediaFormat> StreamFormatMap;
+    StreamFormatMap m_streamFormats;
+
+    PTime m_audioPushTime;
+#if OPAL_VIDEO
+    PTime m_videoPushTime;
+#endif
+    PTimeInterval m_maxJumpTime;
 };
 
 #endif // OPAL_HAS_MIXER
