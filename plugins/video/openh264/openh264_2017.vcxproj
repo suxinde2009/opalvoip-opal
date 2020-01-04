@@ -248,7 +248,7 @@ ren $(OutDir)openh264-2.0.0-win$(PlatformArchitecture).dll openh264_$(PlatformTa
       <Message>Copying codec and debug information to plug in directory</Message>
       <Command>if not exist "$(ProgramW6432)\PTLib Plug Ins" exit 0
 xcopy /y/f "$(TargetDir)$(TargetName).*d*" "$(ProgramW6432)\PTLib Plug Ins"
-xcopy /y/f "$OutDir)openh264_x64.dll" "$(ProgramW6432)\PTLib Plug Ins"</Command>
+xcopy /y/f "$(OutDir)openh264_x64.dll" "$(ProgramW6432)\PTLib Plug Ins"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Message>Download Cisco OpenH264 DLL</Message>
