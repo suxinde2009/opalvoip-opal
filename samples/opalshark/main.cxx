@@ -431,7 +431,7 @@ OptionsDialog::OptionsDialog(MyManager *manager, const MyOptions & options)
 
   FindWindowByNameAs(m_mappings, this, wxT("Mappings"));
   m_mappings->CreateGrid(m_options.m_mappings.size()+1, 2);
-  m_mappings->SetColLabelValue(0, wxT("Type"));
+  m_mappings->SetColLabelValue(0, wxT("Payload Type"));
   m_mappings->SetColLabelValue(1, wxT("Media Format"));
   m_mappings->SetColLabelSize(wxGRID_AUTOSIZE);
   m_mappings->AutoSizeColLabelSize(0);
