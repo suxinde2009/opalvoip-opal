@@ -2,12 +2,18 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <OpalGitRootDir>$(ProjectDir)..\..</OpalGitRootDir>
-    <FFMPEGDIR>$(ProjectDir)..\..\..\external\ffmpeg-win64-dev</FFMPEGDIR>
-    <WXDIR>$(ProjectDir)..\..\..\external\wxWidgets</WXDIR>
-    <WXVER>31</WXVER>
-    <PTLIBDIR>$(ProjectDir)..\..\..\PTLib</PTLIBDIR>
-    <LocalDebuggerEnvironment>PATH=$(PATH);$(ProjectDir)..\..\Lib;$(PTLIBDIR)\Lib;$(FFMPEGDIR)\bin;$(WXDIR)\lib\vc$(PlatformToolsetVersion)_$(Platform)_dll
+    <OpalGitRootDir Condition="'$(OpalGitRootDir)' == ''">$(ProjectDir)..\..</OpalGitRootDir>
+    <FFMPEG32DIR Condition="'$(FFMPEG32DIR)' == ''">$(ProjectDir)..\..\..\external\ffmpeg-win32-dev</FFMPEG32DIR>
+    <FFMPEG64DIR Condition="'$(FFMPEG64DIR)' == ''">$(ProjectDir)..\..\..\external\ffmpeg-win64-dev</FFMPEG64DIR>
+    <LUA32DIR Condition="'$(LUA32DIR)' == ''">$(ProjectDir)..\..\..\external\Lua-win32</LUA32DIR>
+    <LUA64DIR Condition="'$(LUA64DIR)' == ''">$(ProjectDir)..\..\..\external\Lua-win64</LUA64DIR>
+    <OPENSSL32DIR Condition="'$(OPENSSL32DIR)' == ''">$(ProgramFiles)\OpenSSL-Win32</OPENSSL32DIR>
+    <OPENSSL64DIR Condition="'$(OPENSSL64DIR)' == ''">$(ProgramFiles)\OpenSSL-Win64\</OPENSSL64DIR>
+    <PTLIBDIR Condition="'$(PTLIBDIR)' == ''">$(ProjectDir)..\..\..\PTLib</PTLIBDIR>
+    <VPXDIR Condition="'$(VPXDIR)' == ''">$(ProjectDir)..\..\..\external\vpx-vp8</VPXDIR>
+    <WXDIR Condition="'$(WXDIR)' == ''">$(ProjectDir)..\..\..\external\wxWidgets</WXDIR>
+    <WXVER Condition="'$(WXVER)' == ''">31</WXVER>
+    <LocalDebuggerEnvironment>PATH=$(PATH);$(ProjectDir)..\..\Lib;$(FFMPEG64DIR)\bin;$(LUA64DIR);$(OPENSSL64DIR)\bin;$(WXDIR)\lib\vc$(PlatformToolsetVersion)_$(Platform)_dll;$(PTLIBDIR)\Lib
 PTLIBPLUGINDIR=$(ProjectDir)..\..\bin\plugins\x64\Debug</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup />
@@ -17,8 +23,32 @@ PTLIBPLUGINDIR=$(ProjectDir)..\..\bin\plugins\x64\Debug</LocalDebuggerEnvironmen
       <Value>$(OpalGitRootDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
-    <BuildMacro Include="FFMPEGDIR">
-      <Value>$(FFMPEGDIR)</Value>
+    <BuildMacro Include="FFMPEG32DIR">
+      <Value>$(FFMPEG32DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="FFMPEG64DIR">
+      <Value>$(FFMPEG64DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LUA32DIR">
+      <Value>$(LUA32DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LUA64DIR">
+      <Value>$(LUA64DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENSSL32DIR">
+      <Value>$(OPENSSL32DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENSSL64DIR">
+      <Value>$(OPENSSL64DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="VPXDIR">
+      <Value>$(VPXDIR)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
     <BuildMacro Include="WXDIR">
@@ -29,8 +59,8 @@ PTLIBPLUGINDIR=$(ProjectDir)..\..\bin\plugins\x64\Debug</LocalDebuggerEnvironmen
       <Value>$(WXVER)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
-    <BuildMacro Include="PTLibDir">
-      <Value>$(PTLibDir)</Value>
+    <BuildMacro Include="PTLIBDIR">
+      <Value>$(PTLIBDIR)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
     <BuildMacro Include="LocalDebuggerEnvironment">
