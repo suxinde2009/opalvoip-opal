@@ -1,8 +1,8 @@
 <Include>
-    <?define ProductName = "OpalShark" ?>
+    <?define ProductName = "OPAL Shark" ?>
     <?define ProductDescription = "Media Player for RTP in PCAP files" ?>
     <?define ProductBaseFilename = "OpalShark" ?>
-    <?define ProductVersion = "1.2.0" ?>
+    <?define ProductVersion = "1.3.1" ?>
     <?define ProductManufacturer = "Vox Lucida Pty. Ltd." ?>
     <?define ProductGUID = "48bff92f-98f9-45fb-a233-db3e2c496d4a" ?>
 
@@ -23,9 +23,9 @@
     <?define SWSCALEVer = "5" ?>
 
     <?define WxDir = "$(env.WXDIR)" ?>
-    <?define WxVer = "$(env.WXVER)1" ?>
+    <?define WxVer = "$(env.WXVER)3" ?>
     <?define WxCustom = "no" ?>
 
-    <?define PTLibDir = "..\..\..\ptlib" ?>
-    <?define OPALDir = "..\.." ?>
+    <?define PTLibDir = "$(var.ProjectDir)..\..\..\ptlib" ?>
+    <?define OPALDir = "$(var.ProjectDir)..\.." ?>
 </Include>

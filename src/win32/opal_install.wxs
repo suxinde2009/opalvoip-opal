@@ -25,11 +25,12 @@
         <?endif?>
     <?else?>
         <?if $(var.Architecture) = "x86" ?>
-            <?define WxPlatform  = "$(var.MSVCRT_VER)" ?>
+            <?define WxPlatform  = "14x" ?>
+            <?define WxDllDir = "$(var.WxDir)\lib\vc$(var.MSVCRT_VER)_dll" ?>
         <?else?>
-            <?define WxPlatform  = "$(var.MSVCRT_VER)_$(var.Architecture)" ?>
+            <?define WxPlatform  = "14x_$(var.Architecture)" ?>
+            <?define WxDllDir = "$(var.WxDir)\lib\vc$(var.MSVCRT_VER)_$(var.Architecture)_dll" ?>
         <?endif?>
-        <?define WxDllDir = "$(var.WxDir)\lib\vc$(var.WxPlatform)_dll" ?>
     <?endif?>
 <?endif?>
 
@@ -90,6 +91,14 @@
                                    Guid='*'>
                             <File Id='$(var.ProductBaseFilename).exe'
                                   Source='$(var.OPALDir)\bin\$(var.ProductName)\$(var.Platform)\Release\$(var.ProductBaseFilename).exe'
+                                  KeyPath='yes'>
+                            </File>
+                        </Component>
+                        <Component Id='MainExecutableSymbols'
+                                   Win64="$(var.IsWin64)"
+                                   Guid='*'>
+                            <File Id='$(var.ProductBaseFilename).pdb'
+                                  Source='$(var.OPALDir)\bin\$(var.ProductName)\$(var.Platform)\Release\$(var.ProductBaseFilename).pdb'
                                   KeyPath='yes'>
                             </File>
                         </Component>
@@ -289,12 +298,28 @@
                                   Source='$(var.OPALDir)\lib\$(var.OPALName).DLL'
                                   KeyPath='yes' />
                         </Component>
+                        <Component Id='OPALSymbols'
+                                   Win64="$(var.IsWin64)"
+                                   Guid='*'>
+                            <File Id='OPAL_PDB'
+                                  Name='$(var.OPALName).PDB'
+                                  Source='$(var.OPALDir)\lib\$(var.OPALName).PDB'
+                                  KeyPath='yes' />
+                        </Component>
                         <Component Id='PTLib'
                                    Win64="$(var.IsWin64)"
                                    Guid='*'>
                             <File Id='PTLib_DLL'
                                   Name='$(var.PTLibName).DLL'
                                   Source='$(var.PTLibDir)\lib\$(var.PTLibName).DLL'
+                                  KeyPath='yes' />
+                        </Component>
+                        <Component Id='PTLibSymbols'
+                                   Win64="$(var.IsWin64)"
+                                   Guid='*'>
+                            <File Id='PTLib_PDB'
+                                  Name='$(var.PTLibName).PDB'
+                                  Source='$(var.PTLibDir)\lib\$(var.PTLibName).PDB'
                                   KeyPath='yes' />
                         </Component>
                         <?ifdef ImageMagickDir ?>
@@ -527,6 +552,7 @@
                  ConfigurableDirectory='INSTALLDIR'
                  Level='1'>
             <ComponentRef Id='MainExecutable' />
+            <ComponentRef Id='MainExecutableSymbols' />
             <ComponentRef Id='ApplicationProgramMenuShortcut' />
         </Feature>
         
@@ -572,6 +598,7 @@
                  Display="hidden"
                  Level='1'>
             <ComponentRef Id='OPAL' />
+            <ComponentRef Id='OPALSymbols' />
             <ComponentRef Id='OpenSSL1' />
             <ComponentRef Id='OpenSSL2' />
         </Feature>
@@ -582,6 +609,7 @@
                  Display="hidden"
                  Level='1'>
             <ComponentRef Id='PTLib' />
+            <ComponentRef Id='PTLibSymbols' />
             <?ifdef ImageMagickDir ?>
                 <ComponentRef Id='ImageMagickWand' />
                 <ComponentRef Id='ImageMagickCore' />

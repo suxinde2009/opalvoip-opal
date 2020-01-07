@@ -29,9 +29,9 @@
 #define _OpalShark_VERSION_H
 
 #define MAJOR_VERSION 1
-#define MINOR_VERSION 2
+#define MINOR_VERSION 3
 #define BUILD_TYPE    AlphaCode
-#define PATCH_VERSION 0
+#define PATCH_VERSION 1
 #define OEM_VERSION   0
 
 #define GIT_COMMIT ""
