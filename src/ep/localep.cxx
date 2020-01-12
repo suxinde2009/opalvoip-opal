@@ -722,7 +722,7 @@ PBoolean OpalLocalMediaStream::ReadData(BYTE * data, PINDEX size, PINDEX & lengt
 
   if (m_marker || !m_timeOnMarkers) {
     if (OpalMediaStream::m_frameSize > 0)
-      m_timestamp += (OpalMediaStream::m_frameTime*length + OpalMediaStream::m_frameSize - 1) / OpalMediaStream::m_frameSize;
+      m_timestamp += OpalMediaStream::m_frameTime * (length + OpalMediaStream::m_frameSize - 1) / OpalMediaStream::m_frameSize;
     else
       m_timestamp += OpalMediaStream::m_frameTime;
   }
