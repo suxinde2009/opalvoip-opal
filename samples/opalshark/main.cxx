@@ -610,7 +610,7 @@ MyPlayer::MyPlayer(MyManager * manager, const PFilePath & filepath)
 
 MyPlayer::~MyPlayer()
 {
-  delete m_progressDialog;
+  m_progressDialog->Destroy();
   m_progressDialog = NULL;
   PThread::WaitAndDelete(m_backgroundThread);
 
@@ -685,7 +685,7 @@ void MyPlayer::OnDiscoverComplete()
   m_playToPacket->SetRange(1, m_packetCount+1);
   m_playToPacket->SetValue(m_packetCount+1);
 
-  delete m_progressDialog;
+  m_progressDialog->Destroy();
   m_progressDialog = NULL;
 }
 
@@ -1312,13 +1312,16 @@ void MyPlayer::StartExport(const PFilePath & mediaFile)
 
 void MyPlayer::OnExportComplete()
 {
-  delete m_progressDialog;
+  PTRACE(4, "Export completed");
+  m_progressDialog->Destroy();
   m_progressDialog = NULL;
 }
 
 
 void MyPlayer::Export(OpalPCAPFile * pcapFile, OpalRecordManager * recorder)
 {
+  PTRACE(3, "Starting export to " << pcapFile->GetName());
+
   std::map<OpalPCAPFile::DiscoveredRTPKey, OpalPCAPFile::DecodeContext> decodeContext;
   OpalPCAPFile::PayloadMap payloadMap;
 
@@ -1337,6 +1340,7 @@ void MyPlayer::Export(OpalPCAPFile * pcapFile, OpalRecordManager * recorder)
     if (recorder->OpenStream(PSTRSTRM(key), raw)) {
       decodeContext.insert(make_pair(selectedInfo, OpalPCAPFile::DecodeContext()));
       payloadMap[selectedInfo.m_payloadType] = selectedInfo.m_mediaFormat;
+      PTRACE(4, "Added stream " << key << " with " << selectedInfo << " to " << pcapFile->GetName());
     }
   }
 
@@ -1365,6 +1369,7 @@ void MyPlayer::Export(OpalPCAPFile * pcapFile, OpalRecordManager * recorder)
     }
   }
 
+  PTRACE(3, "Ending export to " << pcapFile->GetName());
   delete pcapFile;
   delete recorder;
   CallAfter(&MyPlayer::OnExportComplete);
