@@ -500,8 +500,11 @@ bool OpalMediaFileRecordManager::OnMixedAudio(const RTP_DataFrame & frame)
 {
   PWaitAndSignal mutex(m_mutex);
 
-  if (!IsOpen() && m_audioTrack < m_file->GetTrackCount())
+  if (!IsOpen())
     return false;
+
+  if (m_audioTrack >= m_file->GetTrackCount())
+    return true; // No audio to mix is not an error
 
   PINDEX written;
   if (!m_file->WriteAudio(m_audioTrack, frame.GetPayloadPtr(), frame.GetPayloadSize(), written))
@@ -545,8 +548,11 @@ bool OpalMediaFileRecordManager::OnMixedVideo(const RTP_DataFrame & frame)
 {
   PWaitAndSignal mutex(m_mutex);
 
-  if (!IsOpen() && m_videoTrack < m_file->GetTrackCount())
+  if (!IsOpen())
     return false;
+
+  if (m_videoTrack >= m_file->GetTrackCount())
+    return true; // No video to mix is not an error
 
   PluginCodec_Video_FrameHeader * header = (PluginCodec_Video_FrameHeader *)frame.GetPayloadPtr();
   if (header->x != 0 || header->y != 0 || header->width != m_options.m_videoWidth || header->height != m_options.m_videoHeight) {
