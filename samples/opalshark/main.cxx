@@ -544,7 +544,6 @@ MyPlayer::MyPlayer(MyManager * manager, const PFilePath & filepath)
   : wxMDIChildFrame(manager, wxID_ANY, PwxString(filepath.GetTitle()))
   , m_manager(*manager)
   , m_pcapFilePath(filepath)
-  , m_progressDialog(NULL)
   , m_backgroundThread(NULL)
   , m_packetCount(0)
   , m_playThreadCtrl(CtlIdle)
@@ -592,11 +591,11 @@ MyPlayer::MyPlayer(MyManager * manager, const PFilePath & filepath)
   OpalPCAPFile * pcapFile = new OpalPCAPFile();
   if (pcapFile->Open(m_pcapFilePath, PFile::ReadOnly)) {
     pcapFile->SetPayloadMap(m_manager.GetOptions().m_mappings);
-    m_progressDialog = new wxProgressDialog(OpalSharkString,
-                                            PwxString(PSTRSTRM("Loading \"" << m_pcapFilePath << '"')),
-                                            1000,
-                                            this,
-                                            wxPD_CAN_ABORT|wxPD_AUTO_HIDE);
+    m_progressDialog.reset(new wxProgressDialog(OpalSharkString,
+                                                PwxString(PSTRSTRM("Loading \"" << m_pcapFilePath << '"')),
+                                                1000,
+                                                this,
+                                                wxPD_CAN_ABORT|wxPD_AUTO_HIDE));
     m_backgroundThread = new PThreadObj1Arg<MyPlayer, OpalPCAPFile *>(*this, pcapFile, &MyPlayer::Discover, false, "Discover");
     Show(true);
   }
@@ -610,8 +609,6 @@ MyPlayer::MyPlayer(MyManager * manager, const PFilePath & filepath)
 
 MyPlayer::~MyPlayer()
 {
-  m_progressDialog->Destroy();
-  m_progressDialog = NULL;
   PThread::WaitAndDelete(m_backgroundThread);
 
   m_playThreadCtrl = CtlStop;
@@ -636,14 +633,19 @@ void MyPlayer::OnClose(wxCommandEvent &)
 
 void MyPlayer::Discover(OpalPCAPFile * pcapFile)
 {
-  if (pcapFile->DiscoverRTP(m_discoveredRTP, PCREATE_NOTIFIER(DiscoverProgress)))
-    CallAfter(&MyPlayer::OnDiscoverComplete);
+  pcapFile->DiscoverRTP(m_discoveredRTP, PCREATE_NOTIFIER(DiscoverProgress));
+  CallAfter(&MyPlayer::OnDiscoverComplete);
   delete pcapFile;
 }
 
 
 void MyPlayer::OnDiscoverComplete()
 {
+  if (m_progressDialog->WasCancelled()) {
+    m_progressDialog.reset();
+    return;
+  }
+
   {
     OpalPCAPFile::DiscoveredRTPInfo * info = new OpalPCAPFile::DiscoveredRTPInfo;
     info->m_src.SetAddress(PIPSocket::GetDefaultIpAny(), 5000);
@@ -685,20 +687,15 @@ void MyPlayer::OnDiscoverComplete()
   m_playToPacket->SetRange(1, m_packetCount+1);
   m_playToPacket->SetValue(m_packetCount+1);
 
-  m_progressDialog->Destroy();
-  m_progressDialog = NULL;
+  m_progressDialog.reset();
 }
 
 
 void  MyPlayer::DiscoverProgress(OpalPCAPFile &, OpalPCAPFile::Progress & progress)
 {
-  if (m_progressDialog == NULL)
-    progress.m_abort = true;
-  else {
-    progress.m_abort = m_progressDialog->WasCancelled();
-    m_progressDialog->Update(progress.m_filePosition*1000LL/progress.m_fileLength);
-    m_packetCount = progress.m_packets;
-  }
+  progress.m_abort = m_progressDialog->WasCancelled();
+  m_progressDialog->Update(progress.m_filePosition*1000LL/progress.m_fileLength);
+  m_packetCount = progress.m_packets;
 }
 
 
@@ -1296,11 +1293,11 @@ void MyPlayer::StartExport(const PFilePath & mediaFile)
 
   OpalPCAPFile * pcapFile = new OpalPCAPFile();
   if (pcapFile->Open(m_pcapFilePath, PFile::ReadOnly)) {
-    m_progressDialog = new wxProgressDialog(OpalSharkString,
-                                            PwxString(PSTRSTRM("Exporting \"" << m_pcapFilePath << "\" to \"" << mediaFile << '"')),
-                                            1000,
-                                            this,
-                                            wxPD_CAN_ABORT|wxPD_AUTO_HIDE);
+    m_progressDialog.reset(new wxProgressDialog(OpalSharkString,
+                                                PwxString(PSTRSTRM("Exporting \"" << m_pcapFilePath << "\" to \"" << mediaFile << '"')),
+                                                1000,
+                                                this,
+                                                wxPD_CAN_ABORT|wxPD_AUTO_HIDE));
     m_backgroundThread = new PThreadObj2Arg<MyPlayer, OpalPCAPFile *, OpalRecordManager *>(*this, pcapFile, recorder, &MyPlayer::Export, false, "Export");
   }
   else {
@@ -1313,8 +1310,7 @@ void MyPlayer::StartExport(const PFilePath & mediaFile)
 void MyPlayer::OnExportComplete()
 {
   PTRACE(4, "Export completed");
-  m_progressDialog->Destroy();
-  m_progressDialog = NULL;
+  m_progressDialog.reset();
 }
 
 

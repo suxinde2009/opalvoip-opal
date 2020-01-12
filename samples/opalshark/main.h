@@ -174,8 +174,8 @@ class MyPlayer : public wxMDIChildFrame
   private:
     MyManager        & m_manager;
     PFilePath          m_pcapFilePath;
-    wxProgressDialog * m_progressDialog;
     PThread          * m_backgroundThread;
+    auto_ptr<wxProgressDialog> m_progressDialog;
 
     OpalPCAPFile::DiscoveredRTP m_discoveredRTP;
     unsigned                    m_packetCount;
