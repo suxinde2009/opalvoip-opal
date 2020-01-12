@@ -1277,7 +1277,14 @@ void MyPlayer::StartExport(const PFilePath & mediaFile)
     return;
   }
 
+  unsigned audioCount = 0;
+  for (std::set<unsigned>::iterator selectedRow = m_selectedRows.begin(); selectedRow != m_selectedRows.end(); ++selectedRow) {
+    if (m_discoveredRTP[*selectedRow].m_mediaFormat.GetMediaType() == OpalMediaType::Audio())
+      ++audioCount;
+  }
+
   OpalRecordManager::Options options;
+  options.m_stereo = audioCount == 2;
   options.m_videoMixing = OpalRecordManager::eSideBySideLetterbox;
   options.m_pushThreads = false;
   PVideoFrameInfo::ParseSize("HD720", options.m_videoWidth, options.m_videoHeight);
