@@ -173,7 +173,7 @@ bool OpalDTLSMediaTransport::DTLSChannel::Read(void * buf, PINDEX size)
     {
       PTRACE(2, "Received close_notify from remote.");
       Shutdown(ShutdownReadAndWrite); // Does SSL_shutdown, sending a close_notify back
-      GetBaseReadChannel()->Close();  // Then close (most likely) socket
+      CloseBaseReadChannel();  // Then close (most likely) socket
       return false;
     }
 
