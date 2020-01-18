@@ -804,7 +804,7 @@ PBoolean OpalPluginFramedAudioTranscoder::ConvertFrame(const BYTE * input,
   return stat;
 }
 
-PBoolean OpalPluginFramedAudioTranscoder::ConvertSilentFrame(BYTE * buffer)
+PBoolean OpalPluginFramedAudioTranscoder::ConvertSilentFrame(BYTE * buffer, PINDEX & created)
 { 
   if (codecDef == NULL || context == NULL)
     return false;
@@ -813,13 +813,16 @@ PBoolean OpalPluginFramedAudioTranscoder::ConvertSilentFrame(BYTE * buffer)
 
   if (isEncoder) {
     // for an encoder, we encode silence but set the flag so it can do something special if need be
-    length = codecDef->parm.audio.bytesPerFrame;
+    length = maxOutputDataSize;
     if ((codecDef->flags & PluginCodec_EncodeSilence) == 0) {
       void * silence = alloca(inputBytesPerFrame);
       memset(silence, 0, inputBytesPerFrame);
       unsigned silenceLen = inputBytesPerFrame;
       unsigned flags = 0;
-      return Transcode(silence, &silenceLen, buffer, &length, &flags);
+      if (!Transcode(silence, &silenceLen, buffer, &length, &flags))
+        return false;
+      created = length;
+      return true;
     }
   }
   else {
@@ -834,7 +837,10 @@ PBoolean OpalPluginFramedAudioTranscoder::ConvertSilentFrame(BYTE * buffer)
 
   unsigned zero = 0;
   unsigned flags = PluginCodec_CoderSilenceFrame;
-  return Transcode("", &zero, buffer, &length, &flags);
+  if (!Transcode("", &zero, buffer, &length, &flags))
+    return false;
+  created = length;
+  return true;
 }
 
 

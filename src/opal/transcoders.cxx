@@ -524,13 +524,25 @@ bool OpalFramedTranscoder::UpdateMediaFormats(const OpalMediaFormat & input, con
 }
 
 
+static unsigned CalculateFrameSize(const OpalMediaFormat & mediaFormat)
+{
+  unsigned frameSize = mediaFormat.GetFrameSize();
+  if (frameSize > 0)
+    return frameSize;
+
+  // Calculate maximum frame size from amximum bitrate
+  unsigned bitrate = mediaFormat.GetMaxBandwidth();
+  return ((bitrate+7)/8)*mediaFormat.GetFrameTime()/mediaFormat.GetClockRate();
+}
+
+
 void OpalFramedTranscoder::CalculateSizes()
 {
   unsigned framesPerPacket = outputMediaFormat.GetOptionInteger(OpalAudioFormat::TxFramesPerPacketOption(),
                               inputMediaFormat.GetOptionInteger(OpalAudioFormat::TxFramesPerPacketOption(), 1));
   // Use num channels from raw side, the network side is sometimes not actually what is used, e.g. Opus.
-  unsigned inFrameSize = inputMediaFormat.GetFrameSize();
-  unsigned outFrameSize = outputMediaFormat.GetFrameSize();
+  unsigned inFrameSize = CalculateFrameSize(inputMediaFormat);
+  unsigned outFrameSize = CalculateFrameSize(outputMediaFormat);
   unsigned inFrameTime = inputMediaFormat.GetFrameTime()*1000000/m_inClockRate;   // microseconds
   unsigned outFrameTime = outputMediaFormat.GetFrameTime()*1000000/m_outClockRate; // microseconds
   unsigned leastCommonMultiple = inFrameTime*outFrameTime/GreatestCommonDivisor(inFrameTime, outFrameTime);
@@ -620,9 +632,8 @@ PBoolean OpalFramedTranscoder::Convert(const RTP_DataFrame & input, RTP_DataFram
       }
     }
     else {
-      if (!ConvertSilentFrame(outputPtr))
+      if (!ConvertSilentFrame(outputPtr, outLen))
         return false;
-      outLen = outputBytesPerFrame;
     }
   }
   else {
@@ -670,9 +681,10 @@ PBoolean OpalFramedTranscoder::ConvertFrame(const BYTE * /*inputPtr*/, BYTE * /*
   return false;
 }
 
-PBoolean OpalFramedTranscoder::ConvertSilentFrame(BYTE *dst)
+PBoolean OpalFramedTranscoder::ConvertSilentFrame(BYTE *dst, PINDEX & created)
 {
   memset(dst, 0, outputBytesPerFrame);
+  created = outputBytesPerFrame;
   return true;
 }
 
