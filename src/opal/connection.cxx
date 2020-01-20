@@ -1233,6 +1233,21 @@ OpalMediaStreamPtr OpalConnection::GetMediaStream(const OpalMediaType & mediaTyp
 }
 
 
+#if OPAL_STATISTICS
+bool OpalConnection::GetStatistics(const OpalMediaType & mediaType, bool source, OpalMediaStatistics & statistics) const
+{
+  for (OpalMediaStreamPtr mediaStream(m_mediaStreams, PSafeReference); mediaStream != NULL; ++mediaStream) {
+    if (mediaStream->GetMediaFormat().IsMediaType(mediaType) && mediaStream->IsSource() == source) {
+      mediaStream->GetStatistics(statistics);
+      return true;
+    }
+  }
+
+  return false;
+}
+#endif // OPAL_STATISTICS
+
+
 bool OpalConnection::GetMediaTransportAddresses(OpalConnection & otherConnection,
                                                       unsigned   sessionId,
                                            const OpalMediaType & mediaType,

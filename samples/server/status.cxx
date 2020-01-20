@@ -572,9 +572,33 @@ void CallStatusPage::CreateContent(PHTML & html, const PStringToString &) const
        << "<!--#macrostart CallStatus-->"
          << PHTML::TableRow()
          << PHTML::TableData(PHTML::NoWrap)
-         << "<!--#status A-Party-->"
+           << "<!--#status A-Party-->"
+           << PHTML::TableStart(PHTML::Border1, PHTML::NoCellSpacing, "width=\"100%\"")
+           << PHTML::TableRow()
+             << PHTML::TableHeader()
+               << "Audio"
+             << PHTML::TableHeader()
+               << "Video"
+           << PHTML::TableRow()
+             << PHTML::TableData()
+               << "<!--#status A-audio-bytes-->"
+             << PHTML::TableData()
+               << "<!--#status A-video-bytes-->"
+           << PHTML::TableEnd()
          << PHTML::TableData(PHTML::NoWrap)
          << "<!--#status B-Party-->"
+           << PHTML::TableStart(PHTML::Border1, PHTML::NoCellSpacing, "width=\"100%\"")
+           << PHTML::TableRow()
+             << PHTML::TableHeader()
+               << "Audio"
+             << PHTML::TableHeader()
+               << "Video"
+           << PHTML::TableRow()
+             << PHTML::TableData()
+               << "<!--#status B-audio-bytes-->"
+             << PHTML::TableData()
+               << "<!--#status B-video-bytes-->"
+           << PHTML::TableEnd()
          << PHTML::TableData()
          << "<!--#status Duration-->"
          << PHTML::TableData()
@@ -627,6 +651,20 @@ static PString BuildPartyStatus(const PString & party, const PString & name, con
 }
 
 
+#if OPAL_STATISTICS
+static void SetMediaStats(PString & insert, OpalCall & call, const OpalMediaType & mediaType, bool fromAparty)
+{
+  static PConstString NA("N/A");
+  PString name = PSTRSTRM("status " << (fromAparty ? 'A' : 'B') << '-' << mediaType << "-bytes");
+  OpalMediaStatistics stats;
+  if (call.GetStatistics(mediaType, true, stats))
+    PServiceHTML::SpliceMacro(insert, name, PString(PString::ScaleSI, stats.m_totalBytes, 3));
+  else
+    PServiceHTML::SpliceMacro(insert, name, NA);
+}
+#endif // OPAL_STATISTICS
+
+
 PCREATE_SERVICE_MACRO_BLOCK(CallStatus,resource,P_EMPTY,htmlBlock)
 {
   CallStatusPage * status = dynamic_cast<CallStatusPage *>(resource.m_resource);
@@ -657,6 +695,15 @@ PCREATE_SERVICE_MACRO_BLOCK(CallStatus,resource,P_EMPTY,htmlBlock)
     else
       duration << '(' << call->GetStartTime().GetElapsed() << ')';
     PServiceHTML::SpliceMacro(insert, "status Duration", duration);
+
+#if OPAL_STATISTICS
+    SetMediaStats(insert, *call, OpalMediaType::Audio(), true);
+    SetMediaStats(insert, *call, OpalMediaType::Audio(), false);
+#if OPAL_VIDEO
+    SetMediaStats(insert, *call, OpalMediaType::Video(), true);
+    SetMediaStats(insert, *call, OpalMediaType::Video(), false);
+#endif // OPAL_VIDEO
+#endif // OPAL_STATISTICS
 
     // Then put it into the page, moving insertion point along after it.
     substitution += insert;
