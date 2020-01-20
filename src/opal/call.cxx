@@ -793,6 +793,15 @@ void OpalCall::CloseMediaStreams()
 }
 
 
+#if OPAL_STATISTICS
+bool OpalCall::GetStatistics(const OpalMediaType & mediaType, bool fromAparty, OpalMediaStatistics & statistics)
+{
+  PSafePtr<OpalConnection> conn = GetConnection(fromAparty ? 0 : 1);
+  return conn != NULL && conn->GetStatistics(mediaType, true, statistics);
+}
+#endif // OPAL_STATISTICS
+
+
 void OpalCall::OnUserInputString(OpalConnection & connection, const PString & value)
 {
   PSafePtr<OpalConnection> otherConnection;

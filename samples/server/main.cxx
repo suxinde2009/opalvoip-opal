@@ -631,16 +631,15 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
           bool notSet = true;
           OpalMediaFormatList::const_iterator it;
           while ((it = all.FindFormat(wildcard, it)) != all.end()) {
-            if (const_cast<OpalMediaFormat &>(*it).SetOptionValue(option, value)) {
-              PSYSTEMLOG(Info, "Set media format \"" << *it << "\", option \"" << option << "\", to \"" << value << '"');
-              OpalMediaFormat::SetRegisteredMediaFormat(*it);
+            if (const_cast<OpalMediaFormat &>(*it).SetOptionValue(option, value) && OpalMediaFormat::SetRegisteredMediaFormat(*it)) {
+              PTRACE(3, "Set media format \"" << *it << "\" option \"" << option << "\" to \"" << value << '"');
               notSet = false;
             }
             else
-              PSYSTEMLOG(Warning, "Could not set media format \"" << *it << "\", option \"" << option << "\", to \"" << value << '"');
+              PTRACE(2, "Could not set media format \"" << *it << "\" option \"" << option << "\" to \"" << value << '"');
           }
           if (notSet) {
-            PSYSTEMLOG(Warning, "Could not set any media formats using wildcare \"" << wildcard << '"');
+            PTRACE(2, "Could not set any media formats using wildcard \"" << wildcard << '"');
             item[0].SetValue("false");
             optionsArray->SaveToConfig(cfg);
           }
@@ -977,6 +976,7 @@ void MyManager::OnStopMediaPatch(OpalConnection & connection, OpalMediaPatch & p
 }
 
 
+#if OPAL_HAS_MIXER
 void MyManager::StartRecordingCall(MyCall & call) const
 {
   if (!m_recordingEnabled)
@@ -985,6 +985,7 @@ void MyManager::StartRecordingCall(MyCall & call) const
   PFilePath filepath = m_recordingTemplate;
   call.StartRecording(filepath.GetDirectory(), filepath.GetTitle(), filepath.GetType(), m_recordingOptions);
 }
+#endif //OPAL_HAS_MIXER
 
 
 ///////////////////////////////////////////////////////////////////////////////

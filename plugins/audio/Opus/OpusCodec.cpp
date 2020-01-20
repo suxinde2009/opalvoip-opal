@@ -225,7 +225,7 @@ class OpusPluginMediaFormat : public PluginCodec_AudioFormat<MY_CODEC>
     OpusPluginMediaFormat(const char * formatName, const char * rawFormat, unsigned actualSampleRate, unsigned actualChannels)
       : PluginCodec_AudioFormat<MY_CODEC>(formatName, OpusEncodingName, MyDescription,
                                            960*actualChannels*actualSampleRate/OPUS_SAMPLE_RATE,
-                                           MAX_BIT_RATE*OPUS_FRAME_MS/1000/8, // 20ms and bits to bytes
+                                           0, // Do not indicate bytesPerFrame, as highly variable
                                            OPUS_SAMPLE_RATE, MyOptions)
       , m_actualSampleRate(actualSampleRate)
       , m_actualChannels(actualChannels)
@@ -233,7 +233,7 @@ class OpusPluginMediaFormat : public PluginCodec_AudioFormat<MY_CODEC>
       m_rawFormat = rawFormat;
       m_recommendedFramesPerPacket = 1; // 20ms
       m_maxFramesPerPacket = 120/OPUS_FRAME_MS; // 120ms
-      m_maxBandwidth = MAX_BIT_RATE;
+      m_maxBandwidth = MAX_BIT_RATE; // No bytesPerFrame, so set explicitly
       m_frameTime = 20000; // Rare occasion where frame time not derived from samplesPerFrame and sampleRate
       m_flags |= PluginCodec_SetChannels(2) | PluginCodec_RTPTypeShared | PluginCodec_EmptyPayload;
     }

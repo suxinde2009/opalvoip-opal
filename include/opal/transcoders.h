@@ -438,7 +438,8 @@ class OpalFramedTranscoder : public OpalTranscoder
       PINDEX & created      ///<  number of output bytes created
     );
     virtual PBoolean ConvertSilentFrame(
-      BYTE * output         ///<  Output data
+      BYTE * output,        ///<  Output data
+      PINDEX & created      ///<  number of output bytes created
     );
   //@}
 

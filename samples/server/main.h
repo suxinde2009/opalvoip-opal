@@ -603,7 +603,9 @@ class MyManager : public MyManagerParent
     bool NotEndCDR(const CDRList::const_iterator & it);
     bool FindCDR(const PString & guid, CallDetailRecord & cdr);
 
+#if OPAL_HAS_MIXER
     void StartRecordingCall(MyCall & call) const;
+#endif
 
   protected:
     PSystemLog m_systemLog;

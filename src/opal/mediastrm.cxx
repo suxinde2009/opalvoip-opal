@@ -648,7 +648,6 @@ OpalMediaStreamPacing::OpalMediaStreamPacing(const OpalMediaFormat & mediaFormat
   , m_delay(1000)
   , m_previousDelay(m_frameTime/m_timeUnits)
 {
-  PAssert(m_timeOnMarkers || m_frameSize > 0, PInvalidParameter);
   PTRACE(4, "Pacing " << mediaFormat << ", time=" << m_frameTime << " (" << (m_frameTime/m_timeUnits) << "ms), "
             "size=" << m_frameSize << ", time " << (m_timeOnMarkers ? "on markers" : "every packet"));
 }
@@ -658,13 +657,15 @@ void OpalMediaStreamPacing::Pace(bool generated, PINDEX bytes, bool & marker)
 {
   unsigned timeToWait = m_frameTime;
 
-  if (!m_timeOnMarkers)
-    timeToWait *= (bytes + m_frameSize - 1) / m_frameSize;
-  else {
+  if (m_timeOnMarkers) {
     if (generated)
       marker = true;
     else if (!marker)
       return;
+  }
+  else {
+    if (m_frameSize > 0)
+      timeToWait *= (bytes + m_frameSize - 1) / m_frameSize;
   }
 
   unsigned msToWait = timeToWait/m_timeUnits;

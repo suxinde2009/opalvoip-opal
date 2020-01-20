@@ -442,7 +442,16 @@ class OpalCall : public PSafeObject
     /**Close the media streams on the connections.
      */
     virtual void CloseMediaStreams();
-  //@}
+
+#if OPAL_STATISTICS
+    /// Get media statistics of the type, received from the specified party.
+    bool GetStatistics(
+      const OpalMediaType & mediaType,  ///< Media type to get statistics for
+      bool fromAparty,                  ///< Getting from A-party or B-party
+      OpalMediaStatistics & statistics  ///< Received statistics
+    );
+#endif // OPAL_STATISTICS
+    //@}
 
   /**@name User indications */
   //@{

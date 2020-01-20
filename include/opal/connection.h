@@ -1226,6 +1226,15 @@ class OpalConnection : public PSafeObject
       OpalMediaStreamPtr previous = NULL  ///< Previous stream to start search from
     ) const;
 
+#if OPAL_STATISTICS
+    /// Get media statistics of the type, and of the specifed direction.
+    bool GetStatistics(
+      const OpalMediaType & mediaType,    ///<  Media type to search for.
+      bool source,                        ///<  Indicates the direction of stream.
+      OpalMediaStatistics & statistics    ///< Received statistics
+    ) const;
+#endif // OPAL_STATISTICS
+
     /**Call back when opening a media stream.
        This function is called when a connection has created a new media
        stream according to the logic of its underlying protocol.

@@ -397,7 +397,7 @@ OpalMediaStream * OpalIVRConnection::CreateMediaStream(const OpalMediaFormat & m
   if (mediaFormat.GetMediaType() == OpalMediaType::Audio())
     return new OpalIVRMediaStream(*this, mediaFormat, sessionID, isSource, m_vxmlSession);
 
-#if P_VXML_VIDEO
+#if OPAL_VIDEO && P_VXML_VIDEO
   if (mediaFormat.GetMediaType() == OpalMediaType::Video()) {
     if (isSource)
       return new OpalVideoMediaStream(*this, mediaFormat, sessionID, &m_vxmlSession.GetVideoSender(), NULL, false, false);
