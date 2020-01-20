@@ -66,7 +66,7 @@ class OpalH281Client;
 class OpalConsoleEndPoint
 {
 protected:
-  OpalConsoleEndPoint(OpalManagerConsole & console) : m_console(console) { }
+  OpalConsoleEndPoint(OpalManagerConsole & console) : m_console(console), m_endpointDisabled(false) { }
 
   void AddRoutesFor(const OpalEndPoint * endpoint, const PString & defaultRoute);
 
@@ -83,8 +83,11 @@ public:
   virtual void AddCommands(PCLI & cli) = 0;
 #endif
 
+  void SetEndpointDisabled(bool disabled) { m_endpointDisabled = disabled; }
+
 protected:
   OpalManagerConsole & m_console;
+  bool m_endpointDisabled;
 };
 
 

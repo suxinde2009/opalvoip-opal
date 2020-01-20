@@ -402,6 +402,9 @@ bool MyManager::ConfigureCommon(OpalEndPoint * ep,
   else if (!ep->StartListeners(listeners)) {
     PSYSTEMLOG(Error, "Could not open any listeners for " << cfgPrefix);
   }
+  OpalConsoleEndPoint * cep = dynamic_cast<OpalConsoleEndPoint *>(ep);
+  if (cep != NULL)
+    cep->SetEndpointDisabled(disabled);
 
 #if OPAL_PTLIB_SSL
   PString securePrefix = normalPrefix + 's';

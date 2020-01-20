@@ -247,6 +247,13 @@ void OpalRTPConsoleEndPoint::GetArgumentSpec(ostream & strm) const
 
 bool OpalRTPConsoleEndPoint::Initialise(PArgList & args, ostream & output, bool verbose)
 {
+  if (m_endpointDisabled || args.HasOption("no-" + m_endpoint.GetPrefixName())) {
+    if (verbose)
+      output << m_endpoint.GetPrefixName() << " protocol disabled.\n";
+    m_endpointDisabled = true;
+    return true;
+  }
+
   PStringArray cryptoSuites = args.GetOptionString(m_endpoint.GetPrefixName() + "-crypto").Lines();
   if (!cryptoSuites.IsEmpty())
     m_endpoint.SetMediaCryptoSuites(cryptoSuites);
@@ -451,14 +458,10 @@ bool H323ConsoleEndPoint::Initialise(PArgList & args, bool verbose, const PStrin
   ostream & output = lockedOutput;
 
   // Set up H.323
-  if (args.HasOption("no-h323")) {
-    if (verbose)
-      output << "H.323 protocol disabled.\n";
-    return true;
-  }
-
   if (!OpalRTPConsoleEndPoint::Initialise(args, output, verbose))
     return false;
+  if (m_endpointDisabled)
+    return true;
 
   if (args.HasOption("no-fast"))
     DisableFastStart(true);
@@ -759,14 +762,10 @@ bool SIPConsoleEndPoint::Initialise(PArgList & args, bool verbose, const PString
   ostream & output = lockedOutput;
 
   // Set up SIP
-  if (args.HasOption("no-sip")) {
-    if (verbose)
-      output << "SIP protocol disabled.\n";
-    return true;
-  }
-
   if (!OpalRTPConsoleEndPoint::Initialise(args, output, verbose))
     return false;
+  if (m_endpointDisabled)
+    return true;
 
   if (args.HasOption("proxy")) {
     SetProxy(args.GetOptionString("proxy"), args.GetOptionString("user"), args.GetOptionString("password"));
