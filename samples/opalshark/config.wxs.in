@@ -2,7 +2,7 @@
     <?define ProductName = "OPAL Shark" ?>
     <?define ProductDescription = "Media Player for RTP in PCAP files" ?>
     <?define ProductBaseFilename = "OpalShark" ?>
-    <?define ProductVersion = "1.3.2" ?>
+    <?define ProductVersion = "1.3.4" ?>
     <?define ProductManufacturer = "Vox Lucida Pty. Ltd." ?>
     <?define ProductGUID = "48bff92f-98f9-45fb-a233-db3e2c496d4a" ?>
 
