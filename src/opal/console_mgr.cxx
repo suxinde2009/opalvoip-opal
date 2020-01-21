@@ -247,6 +247,13 @@ void OpalRTPConsoleEndPoint::GetArgumentSpec(ostream & strm) const
 
 bool OpalRTPConsoleEndPoint::Initialise(PArgList & args, ostream & output, bool verbose)
 {
+  if (m_endpointDisabled || args.HasOption("no-" + m_endpoint.GetPrefixName())) {
+    if (verbose)
+      output << m_endpoint.GetPrefixName() << " protocol disabled.\n";
+    m_endpointDisabled = true;
+    return true;
+  }
+
   PStringArray cryptoSuites = args.GetOptionString(m_endpoint.GetPrefixName() + "-crypto").Lines();
   if (!cryptoSuites.IsEmpty())
     m_endpoint.SetMediaCryptoSuites(cryptoSuites);
@@ -451,14 +458,10 @@ bool H323ConsoleEndPoint::Initialise(PArgList & args, bool verbose, const PStrin
   ostream & output = lockedOutput;
 
   // Set up H.323
-  if (args.HasOption("no-h323")) {
-    if (verbose)
-      output << "H.323 protocol disabled.\n";
-    return true;
-  }
-
   if (!OpalRTPConsoleEndPoint::Initialise(args, output, verbose))
     return false;
+  if (m_endpointDisabled)
+    return true;
 
   if (args.HasOption("no-fast"))
     DisableFastStart(true);
@@ -759,14 +762,10 @@ bool SIPConsoleEndPoint::Initialise(PArgList & args, bool verbose, const PString
   ostream & output = lockedOutput;
 
   // Set up SIP
-  if (args.HasOption("no-sip")) {
-    if (verbose)
-      output << "SIP protocol disabled.\n";
-    return true;
-  }
-
   if (!OpalRTPConsoleEndPoint::Initialise(args, output, verbose))
     return false;
+  if (m_endpointDisabled)
+    return true;
 
   if (args.HasOption("proxy")) {
     SetProxy(args.GetOptionString("proxy"), args.GetOptionString("user"), args.GetOptionString("password"));
@@ -2312,48 +2311,63 @@ bool OpalManagerConsole::Initialise(PArgList & args, bool verbose, const PString
 #if OPAL_VIDEO
   {
     unsigned prefWidth = 0, prefHeight = 0;
-    if (!PVideoFrameInfo::ParseSize(args.GetOptionString("video-size", "cif"), prefWidth, prefHeight)) {
-      output << "Invalid video size parameter." << endl;
-      return false;
+    if (args.HasOption("video-size")) {
+      if (!PVideoFrameInfo::ParseSize(args.GetOptionString("video-size"), prefWidth, prefHeight)) {
+        output << "Invalid video size parameter." << endl;
+        return false;
+      }
+      if (verbose)
+        output << "Preferred video size: " << PVideoFrameInfo::AsString(prefWidth, prefHeight) << '\n';
     }
-    if (verbose)
-      output << "Preferred video size: " << PVideoFrameInfo::AsString(prefWidth, prefHeight) << '\n';
 
     unsigned maxWidth = 0, maxHeight = 0;
-    if (!PVideoFrameInfo::ParseSize(args.GetOptionString("max-video-size", "HD1080"), maxWidth, maxHeight)) {
-      output << "Invalid maximum video size parameter." << endl;
-      return false;
+    if (args.HasOption("max-video-size")) {
+      if (!PVideoFrameInfo::ParseSize(args.GetOptionString("max-video-size"), maxWidth, maxHeight)) {
+        output << "Invalid maximum video size parameter." << endl;
+        return false;
+      }
+      if (verbose)
+        output << "Maximum video size: " << PVideoFrameInfo::AsString(maxWidth, maxHeight) << '\n';
     }
-    if (verbose)
-      output << "Maximum video size: " << PVideoFrameInfo::AsString(maxWidth, maxHeight) << '\n';
 
-    double rate = args.GetOptionString("video-rate", "30").AsReal();
-    if (rate < 1 || rate > 60) {
-      output << "Invalid video frame rate parameter." << endl;
-      return false;
+    double rate = 0;
+    if (args.HasOption("video-rate")) {
+      rate = args.GetOptionString("video-rate", "30").AsReal();
+      if (rate < 1 || rate > 60) {
+        output << "Invalid video frame rate parameter." << endl;
+        return false;
+      }
+      if (verbose)
+        output << "Video frame rate: " << rate << " fps\n";
     }
-    if (verbose)
-      output << "Video frame rate: " << rate << " fps\n";
 
-    unsigned frameTime = (unsigned)(OpalMediaFormat::VideoClockRate/rate);
-    OpalBandwidth bitrate(args.GetOptionString("video-bitrate", "1Mbps"));
-    if (bitrate < 10000) {
-      output << "Invalid video bit rate parameter." << endl;
-      return false;
+    OpalBandwidth bitrate;
+    if (args.HasOption("video-bitrate")) {
+      bitrate = args.GetOptionString("video-bitrate");
+      if (bitrate < 10000) {
+        output << "Invalid video bit rate parameter." << endl;
+        return false;
+      }
+      if (verbose)
+        output << "Video target bit rate: " << bitrate << '\n';
     }
-    if (verbose)
-      output << "Video target bit rate: " << bitrate << '\n';
 
     OpalMediaFormatList formats = OpalMediaFormat::GetAllRegisteredMediaFormats();
     for (OpalMediaFormatList::iterator it = formats.begin(); it != formats.end(); ++it) {
       if (it->GetMediaType() == OpalMediaType::Video()) {
         OpalMediaFormat format = *it;
-        format.SetOptionInteger(OpalVideoFormat::FrameWidthOption(), prefWidth);
-        format.SetOptionInteger(OpalVideoFormat::FrameHeightOption(), prefHeight);
-        format.SetOptionInteger(OpalVideoFormat::MaxRxFrameWidthOption(), maxWidth);
-        format.SetOptionInteger(OpalVideoFormat::MaxRxFrameHeightOption(), maxHeight);
-        format.SetOptionInteger(OpalVideoFormat::FrameTimeOption(), frameTime);
-        format.SetOptionInteger(OpalVideoFormat::TargetBitRateOption(), bitrate);
+        if (prefWidth > 0)
+          format.SetOptionInteger(OpalVideoFormat::FrameWidthOption(), prefWidth);
+        if (prefHeight > 0)
+          format.SetOptionInteger(OpalVideoFormat::FrameHeightOption(), prefHeight);
+        if (maxWidth > 0)
+          format.SetOptionInteger(OpalVideoFormat::MaxRxFrameWidthOption(), maxWidth);
+        if (maxHeight > 0)
+          format.SetOptionInteger(OpalVideoFormat::MaxRxFrameHeightOption(), maxHeight);
+        if (rate > 0)
+          format.SetOptionInteger(OpalVideoFormat::FrameTimeOption(), (unsigned)(OpalMediaFormat::VideoClockRate/rate));
+        if (bitrate > 0)
+          format.SetOptionInteger(OpalVideoFormat::TargetBitRateOption(), bitrate);
         OpalMediaFormat::SetRegisteredMediaFormat(format);
       }
     }

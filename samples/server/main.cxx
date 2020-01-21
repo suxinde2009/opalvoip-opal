@@ -227,7 +227,15 @@ PBoolean MyProcess::OnStart()
 
   if (m_manager == NULL)
     m_manager = new MyManager();
-  return m_manager->Initialise(GetArguments(), false) && PHTTPServiceProcess::OnStart();
+
+  if (!PHTTPServiceProcess::OnStart())
+    return false;
+
+  if (m_manager->Initialise(GetArguments(), false))
+    return true;
+
+  PSYSTEMLOG(Fatal, "Could not initialise from command line arguments");
+  return false;
 }
 
 
@@ -278,8 +286,10 @@ PBoolean MyProcess::Initialise(const char * initMsg)
 
   // Configure the core of the system
   PConfig cfg(params.m_section);
-  if (!m_manager->Configure(cfg, params.m_configPage))
+  if (!m_manager->Configure(cfg, params.m_configPage)) {
+    PSYSTEMLOG(Fatal, "Failed to configure system");
     return false;
+  }
 
   params.m_configPage->Add(new PHTTPDividerField());
 
@@ -398,6 +408,9 @@ bool MyManager::ConfigureCommon(OpalEndPoint * ep,
   else if (!ep->StartListeners(listeners)) {
     PSYSTEMLOG(Error, "Could not open any listeners for " << cfgPrefix);
   }
+  OpalConsoleEndPoint * cep = dynamic_cast<OpalConsoleEndPoint *>(ep);
+  if (cep != NULL)
+    cep->SetEndpointDisabled(disabled);
 
 #if OPAL_PTLIB_SSL
   PString securePrefix = normalPrefix + 's';
@@ -529,6 +542,9 @@ PBoolean MyManager::Configure(PConfig & cfg, PConfigPage * rsrc)
         m_cli->Start();
       }
     }
+#if PTRACING
+    m_outputStream = PTrace::GetStream();
+#endif
   }
 #endif //P_CLI && P_TELNET
 
