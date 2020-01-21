@@ -1199,7 +1199,7 @@ void MediaStream::PlayVideo()
 
       if (packetNumber >= m_player.m_pausePacket || m_player.m_playThreadCtrl == MyPlayer::CtlStep) {
         m_player.m_playThreadCtrl = MyPlayer::CtlPause;
-        CallAfter(&MyPlayer::OnPaused);
+        m_player.CallAfter(&MyPlayer::OnPaused);
       }
     }
 
