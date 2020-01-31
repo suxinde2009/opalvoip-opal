@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|Win32">
@@ -98,6 +98,9 @@
     <ProjectReference Include="..\..\plugins\audio\iLBC\ilbccodec_2019.vcxproj">
       <Project>{f1c13640-a056-4280-b1c6-6582e5890b89}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\plugins\audio\iSAC\isaccodec_2019.vcxproj">
+      <Project>{851a8648-5021-4fc3-aced-40d2802d9c5e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\audio\Opus\OpusCodec_2019.vcxproj">
       <Project>{8fd8cfc0-086c-4b92-9f17-f28fb71869dd}</Project>

@@ -98,9 +98,6 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\audio\iSAC\isaccodec_2017.vcxproj">
-      <Project>{852d2624-0006-1049-27c7-1f44674bd4dc}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\plugins\audio\iSAC\isaccodec_2017.vcxproj">
       <Project>{851a8648-5021-4fc3-aced-40d2802d9c5e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\audio\Opus\OpusCodec_2017.vcxproj">
