@@ -1,5 +1,5 @@
 <Include>
-    <?include version.wxs ?>
+    <?include $(var.ProjectDir)\version.wxs ?>
 
     <?define ProductName = "OpenPhone" ?>
     <?define ProductDescription = "VoIP client for OPAL" ?>
@@ -10,19 +10,18 @@
 
     <?if $(var.Architecture) = "x86" ?>
         <?define SSLDir = "$(env.ProgramW6432)\OpenSSL-Win32\bin" ?>
-        <?define LuaDir = "..\..\..\external\Lua-win32" ?>
-        <?define V8Dir = "..\..\..\external\v8\v8\out.gn\ia32.release" ?>
-        <?define JPEGDir = "C:\Tools\bin" ?>
+        <?define LuaDir = "$(env.LUA32DIR)" ?>
+        <?define V8Dir = "$(env.V8_DIR)\v8\out.gn\ia32.release" ?>
         <?define SaslDir = "C:\Tools\bin" ?>
         <?define LDAPDir = "C:\Tools\bin" ?>
-        <?define FFMPEGDir = "..\..\..\external\ffmpeg-win32-dev\bin" ?>
-        <?define SpanDspDir = "..\..\..\external\spandsp-0.0.6\src\Release" ?>
+        <?define FFMPEGDir = "$(env.FFMPEG32DIR)\bin" ?>
+        <?define SpanDspDir = "$(env.SPANDSPDIR)\src\Release" ?>
     <?else?>
         <?define SSLDir = "$(env.ProgramW6432)\OpenSSL-Win64\bin" ?>
-        <?define LuaDir = "..\..\..\external\Lua-win64" ?>
-        <?define V8Dir = "..\..\..\external\v8\v8\out.gn\x64.release" ?>
-        <?define FFMPEGDir = "..\..\..\external\ffmpeg-win64-dev\bin" ?>
-        <?define SpanDspDir = "..\..\..\external\spandsp-0.0.6\src\x64\Release" ?>
+        <?define LuaDir = "$(env.LUA64DIR)" ?>
+        <?define V8Dir = "$(env.V8_DIR)\v8\out.gn\x64.release" ?>
+        <?define FFMPEGDir = "$(env.FFMPEG64DIR)\bin" ?>
+        <?define SpanDspDir = "$(env.SPANDSPDIR)\src\x64\Release" ?>
     <?endif?>
 
     <?define AVFORMATVer = "58" ?>
@@ -32,10 +31,10 @@
     <?define SWSCALEVer = "5" ?>
 
     <?define WxDir = "$(env.WXDIR)" ?>
-    <?define WxVer = "$(env.WXVER)1" ?>
-    <?define WxCustom = "yes" ?>
+    <?define WxVer = "$(env.WXVER)3" ?>
+    <?define WxCustom = "no" ?>
 
-    <?define PTLibDir = "..\..\..\ptlib" ?>
-    <?define OPALDir = "..\.." ?>
+    <?define PTLibDir = "$(var.ProjectDir)..\..\..\ptlib" ?>
+    <?define OPALDir = "$(var.ProjectDir)..\.." ?>
 
 </Include>

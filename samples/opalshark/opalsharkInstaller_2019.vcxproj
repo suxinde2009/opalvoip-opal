@@ -100,9 +100,6 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\audio\iSAC\isaccodec_2019.vcxproj">
-      <Project>{852d2624-0006-1049-27c7-1f44674bd4dc}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\plugins\audio\iSAC\isaccodec_2019.vcxproj">
       <Project>{851a8648-5021-4fc3-aced-40d2802d9c5e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\audio\Opus\OpusCodec_2019.vcxproj">
@@ -145,11 +142,6 @@
     <ProjectReference Include="..\..\plugins\video\VP8-WebM\vp8_webm_2019.vcxproj">
       <Project>{f663f1b8-24d5-4baa-8a3c-e76a5ac619d4}</Project>
     </ProjectReference>
-    <ProjectReference Include="opalshark_2019.vcxproj">
-      <Project>{56e04ff6-6aeb-4917-b8fc-6c0c1f5831f1}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\..\plugins\audio\Speex\Speex_2019.vcxproj">
       <Project>{02afb070-a9d5-4fb7-a041-311722c9f8d4}</Project>
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
@@ -161,8 +153,7 @@
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="opalshark_2019.vcxproj">
-      <Project>{56e04ff6-6aeb-4917-b8fc-6c0c1f5831f1}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Project>{37c1b6fc-14a8-4870-9ee0-ed3fa11b6e49}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
