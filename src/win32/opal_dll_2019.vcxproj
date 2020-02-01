@@ -156,10 +156,9 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>PTRACING=2;_DLL;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>$(IntDir)$(TargetName).def</ModuleDefinitionFile>
       <AdditionalDependencies>opalsd.lib;ptlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -179,10 +178,9 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>PTRACING=2;P_64BIT;_DLL;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>$(IntDir)$(TargetName).def</ModuleDefinitionFile>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -259,9 +257,10 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;PTRACING=0;NDEBUG;_USRDLL;OPALDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
@@ -285,9 +284,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>PTRACING=0;P_64BIT;_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
