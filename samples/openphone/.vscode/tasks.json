@@ -1,0 +1,54 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Make Debug OpenPhone",
+            "type": "process",
+            "command": "make",
+            "args": [
+                "--keep-going",
+                "--directory=${workspaceFolder}",
+                "MULTIPLATFORM=yes",
+                "debuglibs",
+                "debug"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Make Release OpenPhone",
+            "type": "process",
+            "command": "make",
+            "args": [
+                "--keep-going",
+                "--directory=${workspaceFolder}",
+                "MULTIPLATFORM=yes",
+                "optlibs",
+                "opt"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Clean OpenPhone",
+            "type": "process",
+            "command": "make",
+            "args": [
+                "--directory=${workspaceFolder}",
+                "MULTIPLATFORM=yes",
+                "clean"
+            ],
+            "problemMatcher": [
+                "$lessCompile"
+            ]
+        }
+    ]
+}
