@@ -7,13 +7,19 @@ if [ -z "$outfile" ]; then
 fi
 
 if [ -z "$PTLIBDIR" ]; then
-   echo "No PTLIBDIR set."
-   exit 1
+   if [ ! -d ptlib ]; then
+       echo "No PTLIBDIR set."
+       exit 1
+   fi
+   export PTLIBDIR=`pwd`/ptlib
 fi
 
 if [ -z "$OPALDIR" ]; then
-   echo "No OPALDIR set."
-   exit 1
+   if [ ! -d opal ]; then
+       echo "No OPALDIR set."
+       exit 1
+   fi
+   export OPALDIR=`pwd`/opal
 fi
 
 PTLIB_OPTS=`$PTLIBDIR/configure --help | \

@@ -111,12 +111,12 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\..\bin\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='No Trace|Win32'">$(ProjectDir)..\..\bin\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='No Trace|x64'">$(ProjectDir)..\..\bin\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='No Trace|Win32'">$(OutDir)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='No Trace|x64'">$(OutDir)</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)intermediate\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)intermediate\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)intermediate\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)intermediate\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='No Trace|Win32'">$(OutDir)intermediate\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='No Trace|x64'">$(OutDir)intermediate\</IntDir>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(WXDIR)\lib\vc$(PlatformToolsetVersion)_$(Platform)_dll\mswud;$(WXDIR)\lib\vc_$(Platform)_lib\mswud;$(WXDIR)\include;..\..\Lib\$(Platform)\include;..\..\include;..\..\..\ptlib\Lib\$(Platform)\include;..\..\..\ptlib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(WXDIR)\lib\vc$(PlatformToolsetVersion)_dll\mswu;$(WXDIR)\lib\vc_lib\mswu;$(WXDIR)\include;..\..\Lib\$(Platform)\include;..\..\include;..\..\..\ptlib\Lib\$(Platform)\include;..\..\..\ptlib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(WXDIR)\lib\vc$(PlatformToolsetVersion)_$(Platform)_dll\mswu;$(WXDIR)\lib\vc_$(Platform)_lib\mswu;$(WXDIR)\include;..\..\Lib\$(Platform)\include;..\..\include;..\..\..\ptlib\Lib\$(Platform)\include;..\..\..\ptlib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
@@ -172,7 +172,6 @@ exit 1
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <ResourceCompile>
@@ -182,7 +181,7 @@ exit 1
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies>opal.lib;ptlib.lib;wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -218,7 +217,6 @@ exit 1
       <PrecompiledHeader>
       </PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName)</PrecompiledHeaderOutputFile>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
@@ -229,7 +227,7 @@ exit 1
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies>opal64.lib;ptlib64.lib;wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -262,7 +260,6 @@ exit 1
       <PrecompiledHeader>
       </PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName)</PrecompiledHeaderOutputFile>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -275,8 +272,7 @@ exit 1
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies>opald.lib;ptlibd.lib;wxmsw$(WXVER)ud_xrc.lib;wxmsw$(WXVER)ud_html.lib;wxmsw$(WXVER)ud_adv.lib;wxmsw$(WXVER)ud_core.lib;wxbase$(WXVER)ud_xml.lib;wxbase$(WXVER)ud.lib;wxexpatd.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>wxmsw$(WXVER)ud_xrc.lib;wxmsw$(WXVER)ud_html.lib;wxmsw$(WXVER)ud_adv.lib;wxmsw$(WXVER)ud_core.lib;wxbase$(WXVER)ud_xml.lib;wxbase$(WXVER)ud.lib;wxexpatd.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -309,11 +305,10 @@ exit 1
       <PrecompiledHeader>
       </PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName)</PrecompiledHeaderOutputFile>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <ResourceCompile>
@@ -323,8 +318,7 @@ exit 1
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies>opal64d.lib;ptlib64d.lib;wxmsw$(WXVER)ud_xrc.lib;wxmsw$(WXVER)ud_html.lib;wxmsw$(WXVER)ud_adv.lib;wxmsw$(WXVER)ud_core.lib;wxbase$(WXVER)ud_xml.lib;wxbase$(WXVER)ud.lib;wxexpatd.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>wxmsw$(WXVER)ud_xrc.lib;wxmsw$(WXVER)ud_html.lib;wxmsw$(WXVER)ud_adv.lib;wxmsw$(WXVER)ud_core.lib;wxbase$(WXVER)ud_xml.lib;wxbase$(WXVER)ud.lib;wxexpatd.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -358,6 +352,7 @@ exit 1
       </PrecompiledHeader>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -366,12 +361,13 @@ exit 1
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies>opaln.lib;ptlibn.lib;wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='No Trace|x64'">
@@ -405,6 +401,7 @@ exit 1
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>Default</CompileAs>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -413,11 +410,12 @@ exit 1
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies>opal64n.lib;ptlib64n.lib;wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw$(WXVER)u_xrc.lib;wxmsw$(WXVER)u_html.lib;wxmsw$(WXVER)u_adv.lib;wxmsw$(WXVER)u_core.lib;wxbase$(WXVER)u_xml.lib;wxbase$(WXVER)u.lib;wxexpat.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wsock32.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

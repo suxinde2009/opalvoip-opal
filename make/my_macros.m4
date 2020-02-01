@@ -514,7 +514,7 @@ case "$target_os" in
 
    darwin* )
       target_os=Darwin
-      target_release=`xcodebuild -showsdks | sed -n 's/.*sdk macosx\(.*\)/\1/p' | sort | tail -n 1`
+      target_release=10.14
 
       CPPFLAGS="-mmacosx-version-min=$target_release $CPPFLAGS"
       LDFLAGS="-mmacosx-version-min=$target_release $LDFLAGS"

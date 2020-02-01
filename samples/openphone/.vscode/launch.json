@@ -1,0 +1,53 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "osx": {
+                "program": "${workspaceFolder}/obj_Darwin_x86_64_d/openphone",
+                "environment": [
+                    {
+                        "name":  "DYLD_LIBRARY_PATH",
+                        "value": "${workspaceFolder}/../../../ptlib/lib_Darwin_x86_64:${workspaceFolder}/../../lib_Darwin_x86_64"
+                    },
+                    {
+                        "name":  "PTLIBPLUGINDIR",
+                        "value": "${workspaceFolder}/../../lib_Darwin_x86_64/plugins"
+                    },
+                    {
+                        "name": "PTLIB_ASSERT_ACTION",
+                        "value": "Debug"
+                    }
+                ]
+            },
+            "linux": {
+                "program": "${workspaceFolder}/obj_linux_x86_64_d/openphone",
+                "environment": [
+                    {
+                        "name":  "DYLD_LIBRARY_PATH",
+                        "value": "${workspaceFolder}/../../../ptlib/lib_linux_x86_64:${workspaceFolder}/../../lib_linux_x86_64"
+                    },
+                    {
+                        "name":  "PTLIBPLUGINDIR",
+                        "value": "${workspaceFolder}/../../lib_linux_x86_64/plugins"
+                    },
+                    {
+                        "name": "PTLIB_ASSERT_ACTION",
+                        "value": "Debug"
+                    }
+                ]
+            },
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            ],
+            "MIMode": "lldb"
+        }
+    ]
+}
