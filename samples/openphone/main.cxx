@@ -1257,7 +1257,7 @@ bool MyManager::Initialise(bool startMinimised)
   config->SetPath(VideoGroup);
   PVideoDevice::OpenArgs videoArgs = GetVideoInputDevice();
   if (config->Read(VideoGrabDeviceKey, &str))
-    videoArgs.deviceName = str.p_str();
+    videoArgs.deviceName = MediaDeviceNameFromScreen(str);
   if (config->Read(VideoGrabFormatKey, &value1))
     videoArgs.videoFormat = PVideoDevice::VideoFormatFromInt(value1);
   if (config->Read(VideoGrabSourceKey, &value1) && value1 >= -1)
@@ -1296,12 +1296,12 @@ bool MyManager::Initialise(bool startMinimised)
 
   videoArgs = pcssEP->GetVideoOnHoldDevice();
   if (config->Read(VideoOnHoldKey, &str))
-    videoArgs.deviceName = str.p_str();
+    videoArgs.deviceName = MediaDeviceNameFromScreen(str);
   pcssEP->SetVideoOnHoldDevice(videoArgs);
 
   videoArgs = pcssEP->GetVideoOnRingDevice();
   if (config->Read(VideoOnRingKey, &str))
-    videoArgs.deviceName = str.p_str();
+    videoArgs.deviceName = MediaDeviceNameFromScreen(str);
   pcssEP->SetVideoOnRingDevice(videoArgs);
 
   for (int preview = 0; preview < 2; ++preview) {
