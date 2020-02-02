@@ -306,6 +306,10 @@ ifeq ($(OPAL_SDP),yes)
              $(OPAL_SRCDIR)/sdp/sdphttpep.cxx \
              $(OPAL_SRCDIR)/sip/sdp.cxx \
              $(OPAL_SRCDIR)/sip/ice.cxx
+
+  ifeq ($(OPAL_T38_CAP), yes)
+    SOURCES += $(OPAL_SRCDIR)/t38/sipt38.cxx
+  endif
 endif # OPAL_SDP
 
 
@@ -318,10 +322,6 @@ ifeq ($(OPAL_SIP),yes)
              $(OPAL_SRCDIR)/sip/sippdu.cxx \
              $(OPAL_SRCDIR)/sip/handlers.cxx \
              $(OPAL_SRCDIR)/sip/sippres.cxx
-
-  ifeq ($(OPAL_T38_CAP), yes)
-    SOURCES += $(OPAL_SRCDIR)/t38/sipt38.cxx
-  endif
 endif
 
 
