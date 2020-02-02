@@ -37,7 +37,7 @@
 
 #define MAJOR_VERSION 3
 #define MINOR_VERSION 18
-#define BUILD_TYPE BetaCode
+#define BUILD_TYPE ReleaseCode
 #define PATCH_VERSION 2
 #define OEM_VERSION 0
 
