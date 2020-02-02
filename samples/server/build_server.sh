@@ -64,7 +64,7 @@ if $BOOTSTRAP; then
     	exit 1
     fi
 
-    if [ -z $SOURCEFORGE_USERNAME ]; then
+    if [ -n $SOURCEFORGE_USERNAME ]; then
         GIT_PATH=ssh://$SOURCEFORGE_USERNAME@git.code.sf.net/p/opalvoip
     else
         GIT_PATH=git://git.code.sf.net/p/opalvoip
