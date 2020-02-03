@@ -1678,16 +1678,18 @@ void MyManager::StartLID()
 
 void MyManager::SetNAT(const PwxString & method, bool active, const PwxString & server, int priority)
 {
-  if (!server.empty()) {
+  if (!active || server.empty())
+    SetNATServer(method, server, active, priority);
+  else {
     LogWindow << method << " server \"" << server << "\" being contacted ..." << endl;
     wxGetApp().ProcessPendingEvents();
     Update();
-  }
 
-  if (SetNATServer(method, server, active, priority))
-    LogWindow << *GetNatMethods().GetMethodByName(method) << endl;
-  else if (!server.empty())
-    LogWindow << method << " server at " << server << " offline." << endl;
+    if (SetNATServer(method, server, active, priority))
+      LogWindow << *GetNatMethods().GetMethodByName(method) << endl;
+    else
+      LogWindow << method << " server at " << server << " offline." << endl;
+  }
 }
 
 
