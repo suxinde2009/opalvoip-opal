@@ -1678,16 +1678,18 @@ void MyManager::StartLID()
 
 void MyManager::SetNAT(const PwxString & method, bool active, const PwxString & server, int priority)
 {
-  if (!server.empty()) {
+  if (!active || server.empty())
+    SetNATServer(method, server, active, priority);
+  else {
     LogWindow << method << " server \"" << server << "\" being contacted ..." << endl;
     wxGetApp().ProcessPendingEvents();
     Update();
-  }
 
-  if (SetNATServer(method, server, active, priority))
-    LogWindow << *GetNatMethods().GetMethodByName(method) << endl;
-  else if (!server.empty())
-    LogWindow << method << " server at " << server << " offline." << endl;
+    if (SetNATServer(method, server, active, priority))
+      LogWindow << *GetNatMethods().GetMethodByName(method) << endl;
+    else
+      LogWindow << method << " server at " << server << " offline." << endl;
+  }
 }
 
 
@@ -4599,6 +4601,8 @@ OptionsDialog::OptionsDialog(MyManager * manager)
   FindWindowByNameAs(m_InterfaceProtocol, this, wxT("InterfaceProtocol"));
   FindWindowByNameAs(m_InterfacePort, this, wxT("InterfacePort"));
   FindWindowByNameAs(m_InterfaceAddress, this, wxT("InterfaceAddress"))->Append(wxT("*"));
+
+  std::set<PwxString> addresses; // So list is sorted and unique
   PIPSocket::InterfaceTable ifaces;
   if (PIPSocket::GetInterfaceTable(ifaces)) {
     for (i = 0; i < ifaces.GetSize(); i++) {
@@ -4606,11 +4610,14 @@ OptionsDialog::OptionsDialog(MyManager * manager)
       PwxString addr = ip.AsString(true);
       PwxString name = wxT("%");
       name += PwxString(ifaces[i].GetName());
-      m_InterfaceAddress->Append(addr);
-      m_InterfaceAddress->Append(PwxString(PIPSocket::Address::GetAny(ip.GetVersion()).AsString(true)) + name);
-      m_InterfaceAddress->Append(addr + name);
+      addresses.insert(addr);
+      addresses.insert(name);
+      addresses.insert(addr + name);
     }
   }
+  for (std::set<PwxString>::iterator it = addresses.begin(); it != addresses.end(); ++it)
+    m_InterfaceAddress->Append(*it);
+
   FindWindowByNameAs(m_LocalInterfaces, this, wxT("LocalInterfaces"));
   for (i = 0; (size_t)i < m_manager.m_LocalInterfaces.size(); i++)
     m_LocalInterfaces->Append(PwxString(m_manager.m_LocalInterfaces[i]));

@@ -425,9 +425,9 @@ PBoolean OpalInternalTransport::GetIpAndPort(const OpalTransportAddress &,
 static PBoolean SplitAddress(const PString & addr, PString & host, PString & device, PString & service)
 {
   // skip transport identifier
-  PINDEX i = addr.Find('$');
-  if (i == P_MAX_INDEX) {
-    //PTRACE(1, "Address " << addr << " has no dollar");
+  PINDEX pos = addr.Find('$');
+  if (pos == P_MAX_INDEX) {
+    PTRACE(2, "Address \"" << addr << "\" has no dollar");
     return false;
   }
 
@@ -435,64 +435,38 @@ static PBoolean SplitAddress(const PString & addr, PString & host, PString & dev
   device.MakeEmpty();
   service.MakeEmpty();
 
-  PINDEX j = ++i;
-
-  // parse interface/host
-  bool isInterface = (addr[j] == '%') || (addr[j] == '[' && addr[j+1] == '%');
-
-  if (j == '\0') {
-    //PTRACE(1, "Address " << addr << " has empty host");
-    return false;
-  }
-  i = j;
-  bool bracketed = addr[j] == '[';
-  for (;;) {
-    if (addr[j] == '\0')
-      break;
-    if (!bracketed) {
-      if (addr[j] == ':')
-        break;
-    } else if (addr[j] == ']') {
-      ++j;
-      break;
-    }
-    j++;
-  }
-  if (i == j) {
-    //PTRACE(1, "Address " << addr << " has invalid host " << i);
-    return false;
-  }
-
-  if (!isInterface)
-    host = addr(i, j-1);
-  else {
-    if (addr[i] == '[' && addr[i+1] == '%') {
-      device = '%';
-      device += addr(i+2, j-2);
-    }
-    else
-      device = addr(i, j-1);
-  }
-  
-  // parse optional service
-  if (addr[j] == ':') {
-    i = ++j;
-    for (;;) {
-      if (addr[j] == '\0')
-        break;
-      j++;
-    }
-    // cannot have zero length service
-    if (i == j) {
-      //PTRACE(1, "Address " << addr << " has invalid service " << i << " " << j);
+  if (addr[++pos] == '[') {
+    PINDEX right = addr.Find(']', pos);
+    if (right == P_MAX_INDEX) {
+      PTRACE(2, "Address \"" << addr << "\" has no right bracket");
       return false;
     }
-    service = addr(i, j-1);
+    host = addr(pos, right);
+    pos = right + 1;
+  }
+  else {
+    PINDEX terminator = addr.FindOneOf(":%");
+    if (terminator == P_MAX_INDEX) {
+      host = addr.Mid(pos);
+      return true;
+    }
+    host = addr(pos, terminator-1);
+    pos = terminator;
   }
 
-  //PTRACE(1, "Split " << addr << " into host='" << host << "',dev='" << device << "',service='" << service << "'");
+  // parse optional service
+  if (addr[pos] == '%') {
+    PINDEX colon = addr.Find(':', pos);
+    device = addr(pos, colon-1);
+    pos = colon;
+  }
 
-  return true;
+  service = addr.Mid(pos+1).Trim();
+  if (!service.IsEmpty())
+    return true;
+
+  PTRACE(2, "Address \"" << addr << "\" has missing service");
+  return false;
 }
 
 
@@ -569,19 +543,20 @@ PBoolean OpalInternalIPTransport::GetIpAndPort(const OpalTransportAddress & addr
     }
   }
 
-  if (host[0] == '*')
-    ip = PIPSocket::GetDefaultIpAny();
-  else if (host == "0.0.0.0")
+  if (host == "0.0.0.0")
     ip = PIPSocket::Address::GetAny(4);
   else if (host == "::" || host == "[::]")
     ip = PIPSocket::Address::GetAny(6);
-  else if (device.IsEmpty()) {
+  else if (host.IsEmpty())
+    ip = PIPSocket::GetDefaultIpAny();
+  else {
     if (!PIPSocket::GetHostAddress(host, ip)) {
       PTRACE(1, "Could not find host \"" << host << '"');
       return false;
     }
   }
-  else {
+
+  if (!device.IsEmpty() && ip.IsAny()) {
     if (!ip.FromString(device)) {
       PTRACE(1, "Could not find device \"" << device << '"');
       return false;
