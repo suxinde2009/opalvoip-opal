@@ -3054,7 +3054,7 @@ void SIPConnection::OnReceivedOK(SIPTransaction & transaction, SIP_PDU & respons
   if (GetPhase() >= ConnectedPhase)
     OnReceivedAnswer(response, &transaction);  // Re-INVITE
   else {
-    // Don't use OnConnectedInternal() as need to process SDP between setting connected
+    // Don't use InternalOnConnected() as need to process SDP between setting connected
     // state locally and other half of call processing SetConnected()
     SetPhase(ConnectedPhase);
 

@@ -1318,8 +1318,8 @@ bool OpalUDPMediaTransport::Open(OpalMediaSession & session,
   if (!manager.IsLocalAddress(remoteIP)) {
     PNatMethod * natMethod = manager.GetNatMethods().GetMethod(bindingIP, this);
     if (natMethod != NULL) {
-      PTRACE(4, session << "NAT Method " << natMethod->GetMethodName() << " selected for call.");
-
+      static PTimeInterval const TimeToLive(0, 10);
+      natMethod->GetNatType(TimeToLive);
       switch (natMethod->GetRTPSupport()) {
         case PNatMethod::RTPIfSendMedia :
           /* This NAT variant will work if we send something out through the
@@ -1331,7 +1331,7 @@ bool OpalUDPMediaTransport::Open(OpalMediaSession & session,
           // Then do case for full cone support and create NAT sockets
 
         case PNatMethod::RTPSupported :
-          PTRACE(4, session << "attempting natMethod: " << natMethod->GetMethodName());
+          PTRACE(4, session << "attempting natMethod: " << natMethod->GetMethodName() << ' ' << natMethod->GetNatTypeName());
           if (subchannelCount == 2) {
             PUDPSocket * dataSocket = NULL;
             PUDPSocket * controlSocket = NULL;
@@ -1364,6 +1364,7 @@ bool OpalUDPMediaTransport::Open(OpalMediaSession & session,
              talk to the real RTP destination. All we can so is bind to the
              local interface the NAT is on and hope the NAT router is doing
              something sneaky like symmetric port forwarding. */
+          PTRACE(4, session << "cannot use natMethod: " << natMethod->GetMethodName() << ' ' << natMethod->GetNatTypeName());
           break;
       }
     }
