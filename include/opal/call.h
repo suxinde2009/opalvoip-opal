@@ -443,6 +443,24 @@ class OpalCall : public PSafeObject
      */
     virtual void CloseMediaStreams();
 
+    /**Call back for a media patch thread starting.
+    This function is called within the context of the thread associated
+    with the media patch.
+
+    The default behaviour does nothing
+    */
+    virtual void OnStartMediaPatch(
+      OpalConnection & connection,  ///< Connection patch is in
+      OpalMediaPatch & patch        ///< Media patch being started
+    );
+
+    /**Call back when media stream patch thread stops.
+    */
+    virtual void OnStopMediaPatch(
+      OpalConnection & connection,  ///< Connection patch is in
+      OpalMediaPatch & patch        ///< Media Patch being stopped
+    );
+
 #if OPAL_STATISTICS
     /// Get media statistics of the type, received from the specified party.
     bool GetStatistics(
@@ -450,6 +468,9 @@ class OpalCall : public PSafeObject
       bool fromAparty,                  ///< Getting from A-party or B-party
       OpalMediaStatistics & statistics  ///< Received statistics
     );
+
+    typedef std::map<PString, OpalMediaStatistics> StatisticsMap;
+    const StatisticsMap & GetFinalStatistics() const { return m_finalStatistics; }
 #endif // OPAL_STATISTICS
     //@}
 
@@ -685,6 +706,11 @@ class OpalCall : public PSafeObject
     std::list<PSyncPoint *> m_endCallSyncPoint;
 
     PSafeArray<OpalConnection> m_connectionsActive;
+
+#if OPAL_STATISTICS
+    StatisticsMap m_finalStatistics;
+    void AddFinalStatistics(OpalMediaStream & stream);
+#endif
 
 #if OPAL_HAS_MIXER
     OpalRecordManager * m_recordManager;

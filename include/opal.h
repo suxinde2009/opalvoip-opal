@@ -76,7 +76,7 @@ typedef struct OpalHandleStruct * OpalHandle;
 typedef struct OpalMessage OpalMessage;
 
 /// Current API version
-#define OPAL_C_API_VERSION 40
+#define OPAL_C_API_VERSION 41
 
 
 ///////////////////////////////////////
@@ -1625,6 +1625,7 @@ typedef struct OpalStatusCallCleared {
                                    code corresponding to values in the
                                    OpalCallEndReason enum, followed by a colon and
                                    an English description. */
+  const char * m_statistics; ///< Final statistics for media streams.
 } OpalStatusCallCleared;
 
 

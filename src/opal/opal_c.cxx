@@ -2933,6 +2933,40 @@ void OpalManager_C::OnClearedCall(OpalCall & call)
   PTRACE(4, "OnClearedCall:"
             " token=\""  << message->m_param.m_callCleared.m_callToken << "\""
             " reason=\"" << message->m_param.m_callCleared.m_reason << '"');
+
+#if OPAL_STATISTICS
+  PJSON json(PJSON::e_Object);
+  PJSON::Object & stats = json.GetObject();
+  stats.SetString("CallToken", call.GetToken());
+  stats.SetTime("CallStarted", call.GetStartTime());
+  stats.SetTime("CallEstablished", call.GetEstablishedTime());
+  PJSON::Array & conns = stats.SetArray("Connections");
+  for (PINDEX i = 0; i < call.GetConnectionCount(); ++i) {
+    PSafePtr<OpalConnection> conn = call.GetConnection(i);
+    if (conn) {
+      PJSON::Object & connstat = conns.AppendObject();
+      connstat.SetString("Party", (char)('A'+i));
+      connstat.SetString("Identifier", conn->GetIdentifier());
+      connstat.SetString("RemoteName", conn->GetRemotePartyName());
+      connstat.SetString("RemoteNumber", conn->GetRemotePartyNumber());
+      connstat.SetString("RemoteURL", conn->GetRemotePartyURL());
+      connstat.SetString("LocalName", conn->GetLocalPartyName());
+      connstat.SetString("LocalURL", conn->GetLocalPartyURL());
+      connstat.SetString("Destination", conn->GetDestinationAddress());
+      for (OpalConnection::Phases p = OpalConnection::BeginPhases; p < OpalConnection::EndPhases; ++p)
+        connstat.SetTime(OpalConnection::PhasesToString(p), conn->GetPhaseTime(p));
+    }
+  }
+  PJSON::Array & strms = stats.SetArray("MediaStreams");
+  const OpalCall::StatisticsMap & finalStats = call.GetFinalStatistics();
+  for (OpalCall::StatisticsMap::const_iterator it = finalStats.begin(); it != finalStats.end(); ++it) {
+    PJSON::Object & strmstat = strms.AppendObject();
+    strmstat.SetString("Stream", it->first);
+    it->second.ToJSON(strmstat);
+  }
+  SET_MESSAGE_STRING(message, m_param.m_callCleared.m_statistics, json.AsString());
+#endif
+
   PostMessage(message);
 
   OpalManager::OnClearedCall(call);

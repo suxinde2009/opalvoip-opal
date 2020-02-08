@@ -793,7 +793,51 @@ void OpalCall::CloseMediaStreams()
 }
 
 
+void OpalCall::OnStartMediaPatch(OpalConnection & connection, OpalMediaPatch & patch)
+{
+  PTRACE(3, "OnStartMediaPatch " << patch << " on " << connection);
+
+  OpalMediaStream & source = patch.GetSource();
+  if (&source.GetConnection() != &connection)
+    return;
+
 #if OPAL_STATISTICS
+  AddFinalStatistics(source);
+#endif
+
+  PSafePtr<OpalConnection> other = connection.GetOtherPartyConnection();
+  if (other != NULL)
+    other->OnStartMediaPatch(patch);
+}
+
+
+void OpalCall::OnStopMediaPatch(OpalConnection & connection, OpalMediaPatch & patch)
+{
+  PTRACE(3, "OnStopMediaPatch " << patch << " on " << connection);
+
+  OpalMediaStream & source = patch.GetSource();
+  if (&source.GetConnection() != &connection)
+    return;
+
+#if OPAL_STATISTICS
+  AddFinalStatistics(source);
+#endif
+
+  PSafePtr<OpalConnection> other = connection.GetOtherPartyConnection();
+  if (other != NULL)
+    other->OnStopMediaPatch(patch);
+}
+
+
+#if OPAL_STATISTICS
+void OpalCall::AddFinalStatistics(OpalMediaStream & mediaStream)
+{
+  PStringStream name;
+  name << (mediaStream.IsSource() ? "From " : "To ") << (&mediaStream.GetConnection() == GetConnection(0) ? 'A' : 'B');
+  mediaStream.GetStatistics(m_finalStatistics[name]);
+}
+
+
 bool OpalCall::GetStatistics(const OpalMediaType & mediaType, bool fromAparty, OpalMediaStatistics & statistics)
 {
   PSafePtr<OpalConnection> conn = GetConnection(fromAparty ? 0 : 1);

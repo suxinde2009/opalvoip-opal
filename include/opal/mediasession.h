@@ -36,6 +36,7 @@
 #include <opal/transports.h>
 #include <opal/mediatype.h>
 #include <ptlib/notifier_ext.h>
+#include <ptclib/pjson.h>
 
 
 class OpalConnection;
@@ -220,6 +221,7 @@ class OpalMediaStatistics : public PObject
     OpalMediaStatistics & operator=(const OpalMediaStatistics & other);
 
     virtual void PrintOn(ostream & strm) const;
+    void ToJSON(PJSON::Object & json) const;
 
     // To following fields are not copied by
     struct UpdateInfo
