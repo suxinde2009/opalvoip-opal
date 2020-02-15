@@ -4376,6 +4376,7 @@ BEGIN_EVENT_TABLE(OptionsDialog, wxDialog)
 #endif
   EVT_LISTBOX(XRCID("LocalInterfaces"), OptionsDialog::SelectedLocalInterface)
   EVT_CHOICE(XRCID("InterfaceProtocol"), OptionsDialog::ChangedInterfaceInfo)
+  EVT_COMBOBOX(XRCID("InterfaceAddress"), OptionsDialog::ChangedInterfaceInfo)
   EVT_TEXT(XRCID("InterfaceAddress"), OptionsDialog::ChangedInterfaceInfo)
   EVT_TEXT(XRCID("InterfacePort"), OptionsDialog::ChangedInterfaceInfo)
   EVT_BUTTON(XRCID("AddInterface"), OptionsDialog::AddInterface)
