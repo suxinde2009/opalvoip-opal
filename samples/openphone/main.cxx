@@ -3598,7 +3598,7 @@ bool MyManager::CreateVideoInputDevice(const OpalConnection & connection,
                                        PVideoInputDevice * & device,
                                        PBoolean & autoDelete)
 {
-  if (m_primaryVideoGrabber == NULL || m_primaryVideoGrabber->GetDeviceName() != args.deviceName)
+  if (m_primaryVideoGrabber == NULL || args.deviceName.Find(m_primaryVideoGrabber->GetDeviceName()) == P_MAX_INDEX)
     return OpalManager::CreateVideoInputDevice(connection, args, device, autoDelete);
 
   device = m_primaryVideoGrabber;
