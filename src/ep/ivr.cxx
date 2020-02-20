@@ -193,12 +193,6 @@ OpalIVRConnection::~OpalIVRConnection()
 }
 
 
-PString OpalIVRConnection::GetLocalPartyURL() const
-{
-  return GetPrefixName() + ':' + m_vxmlScript.Left(m_vxmlScript.FindOneOf("\r\n"));
-}
-
-
 void OpalIVRConnection::OnStartMediaPatch(OpalMediaPatch & patch)
 {
   OpalLocalConnection::OnStartMediaPatch(patch);
@@ -244,6 +238,7 @@ void OpalIVRConnection::SetVXML(const PString & vxml)
   m_vxmlScript = vxml.Mid(prefixLength);
   if (m_vxmlScript.IsEmpty() || m_vxmlScript == "*")
     m_vxmlScript = endpoint.GetDefaultVXML();
+  m_localPartyURL = GetPrefixName() + ':' + PURL::TranslateString(m_vxmlScript.Left(m_vxmlScript.FindOneOf("\r\n")), PURL::LoginTranslation);
 
   m_stringOptions.Merge(ExtractOptionsFromVXML(m_vxmlScript), PStringOptions::e_MergeOverwrite);
 }

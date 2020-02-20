@@ -172,10 +172,6 @@ class SIPConnection : public OpalSDPConnection, public SIPTransactionOwner
       */
     virtual PString GetPrefixName() const;
 
-    /**Get the protocol-specific unique identifier for this connection.
-     */
-    virtual PString GetIdentifier() const;
-
     /// Call back for connection to act on changed string options
     virtual void OnApplyStringOptions();
 
@@ -218,10 +214,6 @@ class SIPConnection : public OpalSDPConnection, public SIPTransactionOwner
     /**Get any extra call information.
       */
     virtual PMultiPartList GetExtraCallInfo() const { return m_multiPartMIME; }
-
-    /**Get the local name/alias.
-      */
-    virtual PString GetLocalPartyURL() const;
 
     /**Get alerting type information of an incoming call.
        The type of "distinctive ringing" for the call. The string is protocol

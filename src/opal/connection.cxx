@@ -111,21 +111,74 @@ static POrdinalToString CallEndReasonStrings(PARRAYSIZE(CallEndReasonStringsInit
 
 /////////////////////////////////////////////////////////////////////////////
 
+OpalConnectionInfo::OpalConnectionInfo()
+  : m_originating(false)
+{
+}
+
+
+OpalConnectionInfo::OpalConnectionInfo(OpalEndPoint & ep, size_t phases)
+  : m_originating(false)
+  , m_productInfo(ep.GetProductInfo())
+  , m_localPartyName(ep.GetDefaultLocalPartyName())
+  , m_localPartyURL(PSTRSTRM(ep.GetPrefixName() << ':' << ep.GetDefaultLocalPartyName()))
+  , m_displayName(ep.GetDefaultDisplayName())
+  , m_phaseTime(phases, PTime(0))
+{
+}
+
+
+void OpalConnectionInfo::ToLogging(ostream & strm) const
+{
+  std::streamsize indent = strm.precision()+17;
+  strm << setw(indent) <<         "Identifier" << ": \"" << m_identifier << "\"\n"
+       << setw(indent) <<        "Remote Name" << ": \"" << m_remotePartyName << "\"\n"
+       << setw(indent) <<      "Remote Number" << ": \"" << m_remotePartyNumber << "\"\n"
+       << setw(indent) <<         "Remote URL" << ": \"" << m_remotePartyURL << "\"\n"
+       << setw(indent) <<         "Local Name" << ": \"" << m_localPartyName << "\"\n"
+       << setw(indent) <<          "Local URL" << ": \"" << m_localPartyURL << "\"\n"
+       << setw(indent) <<    "CalledPartyName" << ": \"" << m_calledPartyName << "\"\n"
+       << setw(indent) <<  "CalledPartyNumber" << ": \"" << m_calledPartyNumber << "\"\n"
+       << setw(indent) <<         "Start Time" << ": " << m_phaseTime[OpalConnection::UninitialisedPhase].AsString(PTime::LoggingFormat) << '\n';
+  for (OpalConnection::Phases ph = OpalConnection::BeginPhases; ph < OpalConnection::EndPhases; ph = ++ph) {
+    strm << setw(indent) << ph << ": ";
+    if (m_phaseTime[ph].IsValid())
+      strm << (m_phaseTime[ph] - m_phaseTime[OpalConnection::UninitialisedPhase]) << '\n';
+    else
+      strm << "N/A\n";
+  }
+}
+
+
+void OpalConnectionInfo::ToJSON(PJSON::Object & obj) const
+{
+  obj.SetString("Identifier", m_identifier);
+  obj.SetString("RemoteName", m_remotePartyName);
+  obj.SetString("RemoteNumber", m_remotePartyNumber);
+  obj.SetString("RemoteURL", m_remotePartyURL);
+  obj.SetString("LocalName", m_localPartyName);
+  obj.SetString("LocalURL", m_localPartyURL);
+  obj.SetBoolean("Originating", m_originating);
+  obj.SetString("CalledPartyName", m_calledPartyName);
+  obj.SetString("CalledPartyNumber", m_calledPartyNumber);
+  for (OpalConnection::Phases p = OpalConnection::BeginPhases; p < OpalConnection::EndPhases; ++p)
+    obj.SetTime(OpalConnection::PhasesToString(p), m_phaseTime[p]);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+
 OpalConnection::OpalConnection(OpalCall & call,
                                OpalEndPoint  & ep,
                                const PString & token,
                                unsigned int options,
                                OpalConnection::StringOptions * stringOptions)
   : PSafeObject(&call)  // Share the lock flag from the call
+  , OpalConnectionInfo(ep, NumPhases)
   , m_ownerCall(call)
   , m_endpoint(ep)
   , m_phase(UninitialisedPhase)
   , m_callToken(token)
-  , m_originating(false)
-  , m_productInfo(ep.GetProductInfo())
-  , m_localPartyName(ep.GetDefaultLocalPartyName())
-  , m_displayName(ep.GetDefaultDisplayName())
-  , m_remotePartyName(token)
   , m_callEndReason(NumCallEndReasons)
   , m_silenceDetector(NULL)
 #if OPAL_AEC
@@ -155,9 +208,7 @@ OpalConnection::OpalConnection(OpalCall & call,
 
   PTRACE(3, "Created connection " << *this << " ptr=" << this);
 
-  PAssert(m_ownerCall.SafeReference(), PLogicError);
-
-  m_ownerCall.m_connectionsActive.Append(this);
+  m_ownerCall.InternalAddConnection(this);
 
   m_stringOptions = ep.GetDefaultStringOptions();
   m_stringOptions.MakeUnique();
@@ -244,8 +295,7 @@ OpalConnection::~OpalConnection()
   delete t120handler;
 #endif
 
-  m_ownerCall.m_connectionsActive.Remove(this);
-  m_ownerCall.SafeDereference();
+  m_ownerCall.InternalRemoveConnection(this);
 
   PTRACE(3, "Destroyed connection " << *this << " ptr=" << this);
 }
@@ -501,24 +551,9 @@ void OpalConnection::OnReleased()
 
   SetPhase(ReleasedPhase);
 
-#if PTRACING
-  static const int Level = 3;
-  if (PTrace::CanTrace(Level)) {
-    ostream & trace = PTRACE_BEGIN(Level);
-    trace << "Connection " << *this << " released\n"
-             "        Initial Time: " << m_phaseTime[UninitialisedPhase] << '\n';
-    for (Phases ph = SetUpPhase; ph < NumPhases; ph = (Phases)(ph+1)) {
-      trace << setw(20) << ph << ": ";
-      if (m_phaseTime[ph].IsValid())
-        trace << (m_phaseTime[ph]-m_phaseTime[UninitialisedPhase]);
-      else
-        trace << "N/A";
-      trace << '\n';
-    }
-    trace << "     Call end reason: " << m_callEndReason << '\n'
-          << PTrace::End;
-  }
-#endif
+  PTRACE(3, "Connection " << *this << " released\n"
+         << setw(19) << "Call end reason" << ": " << m_callEndReason << '\n'
+         << setprecision(2) << PTrace::LogObject(GetConnectionInfo()));
 }
 
 
@@ -1555,12 +1590,7 @@ PString OpalConnection::GetPrefixName() const
 void OpalConnection::SetLocalPartyName(const PString & name)
 {
   m_localPartyName = name;
-}
-
-
-PString OpalConnection::GetLocalPartyURL() const
-{
-  return GetPrefixName() + ':' + PURL::TranslateString(GetLocalPartyName(), PURL::LoginTranslation);
+  m_localPartyURL = GetPrefixName() + ':' + PURL::TranslateString(GetLocalPartyName(), PURL::LoginTranslation);
 }
 
 
@@ -1609,7 +1639,7 @@ PString OpalConnection::GetCalledPartyURL()
 void OpalConnection::CopyPartyNames(const OpalConnection & other)
 {
   if (IsNetworkConnection()) {
-    m_localPartyName = m_endpoint.StripPrefixName(other.GetEndPoint().StripPrefixName(other.GetRemoteIdentity()));
+    SetLocalPartyName(m_endpoint.StripPrefixName(other.GetEndPoint().StripPrefixName(other.GetRemoteIdentity())));
     m_displayName = other.GetRemotePartyName();
   }
   else {
@@ -1685,7 +1715,7 @@ void OpalConnection::SetAudioJitterDelay(unsigned minDelay, unsigned maxDelay)
 
 PString OpalConnection::GetIdentifier() const
 {
-  return GetToken();
+  return m_identifier.IsEmpty() ? GetToken() : m_identifier;
 }
 
 

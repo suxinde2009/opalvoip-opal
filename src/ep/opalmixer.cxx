@@ -1009,9 +1009,9 @@ OpalMixerConnection::OpalMixerConnection(PSafePtr<OpalMixerNode> node,
 
   const PStringSet & names = node->GetNames();
   if (names.IsEmpty())
-    m_localPartyName = node->GetGUID().AsString();
+    SetLocalPartyName(node->GetGUID().AsString());
   else
-    m_localPartyName = *names.begin();
+    SetLocalPartyName(*names.begin());
 
   PTRACE(4, "Constructed");
 }

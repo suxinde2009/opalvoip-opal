@@ -255,6 +255,7 @@ void H323Connection::OnApplyStringOptions()
     PString str = m_stringOptions(OPAL_OPT_CALL_IDENTIFIER);
     if (!str.IsEmpty())
       m_callIdentifier = PGloballyUniqueID(str);
+    m_identifier = m_callIdentifier.AsString();
     UnlockReadWrite();
   }
 }
@@ -926,6 +927,7 @@ PBoolean H323Connection::OnReceivedSignalSetup(const H323SignalPDU & originalSet
   // Save the identifiers sent by caller
   if (setup.HasOptionalField(H225_Setup_UUIE::e_callIdentifier))
     m_callIdentifier = setup.m_callIdentifier.m_guid;
+  m_identifier = m_callIdentifier.AsString();
   m_conferenceIdentifier = setup.m_conferenceID;
 
   m_setupPDU->GetQ931().GetRedirectingNumber(m_redirectingParty);
@@ -1174,12 +1176,6 @@ PBoolean H323Connection::OnReceivedSignalSetup(const H323SignalPDU & originalSet
     AnsweringCall(OnAnswerCall(m_remotePartyName, *m_setupPDU, *m_connectPDU, *m_progressPDU));
 
   return m_connectionState != ShuttingDownConnection;
-}
-
-
-PString H323Connection::GetIdentifier() const
-{
-  return m_callIdentifier.AsString();
 }
 
 

@@ -243,10 +243,6 @@ class OpalIVRConnection : public OpalLocalConnection
       */
     virtual bool IsNetworkConnection() const { return false; }
 
-    /**Get the local name/alias.
-      */
-    virtual PString GetLocalPartyURL() const;
-
     /**Call back when media stream patch thread starts.
 
        Default behaviour calls OpalManager function of same name.

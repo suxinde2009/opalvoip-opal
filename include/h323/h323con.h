@@ -1912,10 +1912,6 @@ class H323Connection : public OpalRTPConnection
     inline const OpalGloballyUniqueID & GetCallIdentifier() const 
     { return m_callIdentifier; }
 
-    /**Get the protocol-specific unique identifier for this connection.
-     */
-    virtual PString GetIdentifier() const;
-
     /**Get the conference identifier for this connection.
      */
     const OpalGloballyUniqueID & GetConferenceIdentifier() const { return m_conferenceIdentifier; }

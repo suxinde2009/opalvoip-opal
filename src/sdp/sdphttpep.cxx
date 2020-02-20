@@ -241,6 +241,7 @@ PBoolean OpalSDPHTTPConnection::SetUpConnection()
   PString id = replyMIME(OPAL_SDP_HTTP_ID_HEADER);
   if (!id.IsEmpty())
     m_guid = id;
+  m_identifier = m_guid.AsString();
 
   return HandleAnswerSDP(answer);
 }
@@ -300,6 +301,7 @@ bool OpalSDPHTTPConnection::OnReceivedHTTP(PHTTPRequest & request)
   PString id = parameters(OPAL_SDP_HTTP_ID_QUERY_PARAM);
   if (!id.IsEmpty())
     m_guid = id;
+  m_identifier = m_guid.AsString();
 
   m_remotePartyName = request.origin.AsString();
   m_remoteAddress = OpalTransportAddress(m_remotePartyName, OpalTransportAddress::TcpPrefix());
@@ -372,12 +374,6 @@ PBoolean OpalSDPHTTPConnection::SetConnected()
 
   m_connected.Signal();
   return ok && OpalSDPConnection::SetConnected();
-}
-
-
-PString OpalSDPHTTPConnection::GetIdentifier() const
-{
-  return m_guid.AsString();
 }
 
 

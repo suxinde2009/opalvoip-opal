@@ -46,19 +46,77 @@
 
 #define PTraceModule() "Call"
 
+ 
+/////////////////////////////////////////////////////////////////////////////
+
+OpalCallStatistics::OpalCallStatistics()
+  : m_networkOriginated(false)
+  , m_establishedTime(0)
+  , m_callEndReason(OpalConnection::NumCallEndReasons)
+{
+}
+
+
+void OpalCallStatistics::ToLogging(ostream & strm) const
+{
+  std::streamsize indent = strm.precision()+18;
+  strm << setw(indent) <<             "Party A" << ": \"" << m_partyA << "\"\n"
+       << setw(indent) <<             "Party B" << ": \"" << m_partyB << "\"\n"
+       << setw(indent) <<             "Name A" << ": \"" << m_nameA << "\"\n"
+       << setw(indent) <<             "Name B" << ": \"" << m_nameB << "\"\n"
+       << setw(indent) <<         "Identity A" << ": \"" << m_identityA << "\"\n"
+       << setw(indent) <<         "Identity B" << ": \"" << m_identityB << "\"\n"
+       << setw(indent) << "Network Originated" << ": \"" << m_networkOriginated << "\"\n"
+       << setw(indent) <<       "Call Started" << ": "  << m_startTime.AsString(PTime::LoggingFormat) << '\n'
+       << setw(indent) <<   "Call Established" << ": "  << m_establishedTime.AsString(PTime::LoggingFormat) << '\n'
+       << setw(indent) <<      "Call Duration" << ": "  << setprecision(1) << m_duration << '\n';
+
+  // Don't log Connections as they are logged in OnRelease
+
+#if OPAL_STATISTICS
+  for (MediaStatisticsMap::const_iterator it = m_mediaStatistics.begin(); it != m_mediaStatistics.end(); ++it)
+    strm << setw(indent) << "Stream" << ": " << it->first << '\n' << setprecision(indent-14) << it->second;
+#endif
+}
+
+
+void OpalCallStatistics::ToJSON(PJSON::Object & obj) const
+{
+  obj.SetString("PartyA", m_partyA);
+  obj.SetString("PartyB", m_partyB);
+  obj.SetString("NameA", m_nameA);
+  obj.SetString("NameB", m_nameB);
+  obj.SetString("IdentityA", m_identityA);
+  obj.SetString("IdentityB", m_identityB);
+  obj.SetBoolean("NetworkOriginated", m_networkOriginated);
+  obj.SetTime("CallStarted", m_startTime);
+  obj.SetTime("CallEstablished", m_establishedTime);
+  obj.SetInterval("CallDuration", m_duration);
+
+  PJSON::Array & conns = obj.SetArray("Connections");
+  for (ConnectionInfoMap::const_iterator it = m_connectionInfo.begin(); it != m_connectionInfo.end(); ++it)
+    it->second.ToJSON(conns.AppendObject());
+
+#if OPAL_STATISTICS
+  PJSON::Array & strms = obj.SetArray("MediaStreams");
+  for (MediaStatisticsMap::const_iterator it = m_mediaStatistics.begin(); it != m_mediaStatistics.end(); ++it) {
+    PJSON::Object & strmstat = strms.AppendObject();
+    strmstat.SetString("Stream", it->first);
+    it->second.ToJSON(strmstat);
+  }
+#endif
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 
 OpalCall::OpalCall(OpalManager & mgr)
   : m_manager(mgr)
   , m_token(mgr.GetNextToken('C'))
-  , m_networkOriginated(false)
-  , m_establishedTime(0)
   , m_isEstablished(false)
   , m_isClearing(false)
   , m_handlingHold(false)
   , m_isCleared(false)
-  , m_callEndReason(OpalConnection::NumCallEndReasons)
 #if OPAL_HAS_MIXER
   , m_recordManager(NULL)
 #endif
@@ -183,6 +241,8 @@ void OpalCall::InternalOnClear()
 
   if (m_isCleared.exchange(true))
     return;
+
+  m_duration = m_startTime.GetElapsed();
 
   OnCleared();
 
@@ -802,7 +862,7 @@ void OpalCall::OnStartMediaPatch(OpalConnection & connection, OpalMediaPatch & p
     return;
 
 #if OPAL_STATISTICS
-  AddFinalStatistics(source);
+  AddFinalMediaStreamStatistics(source);
 #endif
 
   PSafePtr<OpalConnection> other = connection.GetOtherPartyConnection();
@@ -820,7 +880,7 @@ void OpalCall::OnStopMediaPatch(OpalConnection & connection, OpalMediaPatch & pa
     return;
 
 #if OPAL_STATISTICS
-  AddFinalStatistics(source);
+  AddFinalMediaStreamStatistics(source);
 #endif
 
   PSafePtr<OpalConnection> other = connection.GetOtherPartyConnection();
@@ -830,11 +890,12 @@ void OpalCall::OnStopMediaPatch(OpalConnection & connection, OpalMediaPatch & pa
 
 
 #if OPAL_STATISTICS
-void OpalCall::AddFinalStatistics(OpalMediaStream & mediaStream)
+void OpalCallStatistics::AddFinalMediaStreamStatistics(OpalMediaStream & mediaStream)
 {
   PStringStream name;
-  name << (mediaStream.IsSource() ? "From " : "To ") << (&mediaStream.GetConnection() == GetConnection(0) ? 'A' : 'B');
-  mediaStream.GetStatistics(m_finalStatistics[name]);
+  name << (mediaStream.IsSource() ? "From " : "To ")
+       << (mediaStream.GetConnection().GetToken() == m_connectionInfo.begin()->first ? 'A' : 'B');
+  mediaStream.GetStatistics(m_mediaStatistics[name]);
 }
 
 
@@ -1111,6 +1172,22 @@ void OpalCall::ScriptClear(PScriptLanguage &, PScriptLanguage::Signature & sig)
 }
 
 #endif // OPAL_SCRIPT
+
+
+void OpalCall::InternalAddConnection(OpalConnection * connection)
+{
+  PAssert(SafeReference(), PLogicError);
+  m_connectionsActive.Append(connection);
+  m_connectionInfo[connection->GetToken()] = connection->GetConnectionInfo();
+}
+
+
+void OpalCall::InternalRemoveConnection(OpalConnection * connection)
+{
+  m_connectionInfo[connection->GetToken()] = connection->GetConnectionInfo();
+  m_connectionsActive.Remove(connection);
+  SafeDereference();
+}
 
 
 /////////////////////////////////////////////////////////////////////////////

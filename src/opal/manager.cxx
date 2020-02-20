@@ -828,7 +828,9 @@ void OpalManager::InternalClearAllCalls(OpalConnection::CallEndReason reason, bo
 
 void OpalManager::OnClearedCall(OpalCall & PTRACE_PARAM(call))
 {
-  PTRACE(3, "OnClearedCall " << call << " from \"" << call.GetPartyA() << "\" to \"" << call.GetPartyB() << '"');
+  PTRACE(3, "OnClearedCall " << call << '\n'
+         << setw(20) << "Call end reason" << ": " << call.GetCallEndReason() << '\n'
+         << setprecision(2) << PTrace::LogObject(call.GetFinalStatistics()));
 }
 
 

@@ -277,11 +277,6 @@ class OpalSDPHTTPConnection : public OpalSDPConnection
       */
     virtual void OnReleased();
 
-    /**Get the protocol-specific unique identifier for this connection.
-    Default behaviour just returns the connection token.
-    */
-    virtual PString GetIdentifier() const;
-
     /// Get the media local interface to initialise the RTP session.
     virtual PString GetMediaInterface();
 

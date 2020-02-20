@@ -474,7 +474,7 @@ OpalLineConnection::OpalLineConnection(OpalCall & call,
   , m_promptTone(OpalLineInterfaceDevice::DialTone)
   , m_handlerThread(NULL)
 {
-  m_localPartyName = ln.GetToken();
+  SetLocalPartyName(ln.GetToken());
   m_remotePartyNumber = number.Right(number.FindSpan("0123456789*#,"));
   m_remotePartyName = number;
   m_remotePartyURL = GetPrefixName() + ':';

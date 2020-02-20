@@ -45,6 +45,36 @@ class OpalManager;
 class OpalRTPSession;
 
 
+struct OpalCallStatistics
+{
+  PString m_partyA;
+  PString m_partyB;
+  PString m_nameA;
+  PString m_nameB;
+  PString m_identityA;
+  PString m_identityB;
+  bool    m_networkOriginated;
+  PTime   m_startTime;
+  PTime   m_establishedTime;
+  PTimeInterval m_duration;
+
+  OpalConnection::CallEndReason m_callEndReason;
+
+  typedef std::map<PString, OpalConnectionInfo> ConnectionInfoMap;
+  ConnectionInfoMap m_connectionInfo;
+
+#if OPAL_STATISTICS
+  typedef std::map<PString, OpalMediaStatistics> MediaStatisticsMap;
+  MediaStatisticsMap m_mediaStatistics;
+  void AddFinalMediaStreamStatistics(OpalMediaStream & stream);
+#endif
+
+  OpalCallStatistics();
+  void ToLogging(ostream & strm) const;
+  void ToJSON(PJSON::Object & obj) const;
+};
+
+
 /**This class manages a call.
    A call consists of one or more OpalConnection instances. While these
    connections may be created elsewhere this class is responsible for their
@@ -59,7 +89,7 @@ class OpalRTPSession;
    In a conference situation, one OpalCall would manage lots of
    H323Connection/SIPConnection classes.
  */
-class OpalCall : public PSafeObject
+class OpalCall : public PSafeObject, protected OpalCallStatistics
 {
     PCLASSINFO(OpalCall, PSafeObject);
   public:
@@ -74,6 +104,9 @@ class OpalCall : public PSafeObject
     /**Destroy call.
      */
     ~OpalCall();
+
+    /// Get final statistics for call
+    const OpalCallStatistics & GetFinalStatistics() const { return *this; }
   //@}
 
   /**@name Overrides from PObject */
@@ -468,9 +501,6 @@ class OpalCall : public PSafeObject
       bool fromAparty,                  ///< Getting from A-party or B-party
       OpalMediaStatistics & statistics  ///< Received statistics
     );
-
-    typedef std::map<PString, OpalMediaStatistics> StatisticsMap;
-    const StatisticsMap & GetFinalStatistics() const { return m_finalStatistics; }
 #endif // OPAL_STATISTICS
     //@}
 
@@ -667,6 +697,8 @@ class OpalCall : public PSafeObject
 #endif // OPAL_HAS_MIXER
 
     void InternalOnClear();
+    void InternalAddConnection(OpalConnection * connection);
+    void InternalRemoveConnection(OpalConnection * connection);
 
     void SetPartyNames();
 
@@ -688,29 +720,14 @@ class OpalCall : public PSafeObject
 
     PString m_token;
 
-    PString m_partyA;
-    PString m_partyB;
-    PString m_nameA;
-    PString m_nameB;
-    PString m_identityA;
-    PString m_identityB;
-    bool    m_networkOriginated;
-    PTime   m_startTime;
-    PTime   m_establishedTime;
     bool    m_isEstablished;
     bool    m_isClearing;
     bool    m_handlingHold;
     atomic<bool> m_isCleared;
 
-    OpalConnection::CallEndReason m_callEndReason;
     std::list<PSyncPoint *> m_endCallSyncPoint;
 
     PSafeArray<OpalConnection> m_connectionsActive;
-
-#if OPAL_STATISTICS
-    StatisticsMap m_finalStatistics;
-    void AddFinalStatistics(OpalMediaStream & stream);
-#endif
 
 #if OPAL_HAS_MIXER
     OpalRecordManager * m_recordManager;
@@ -727,11 +744,6 @@ class OpalCall : public PSafeObject
       e_SwitchingFromT38
     } m_T38SwitchState;
 #endif
-
-  //use to add the connection to the call's connection list
-  friend OpalConnection::OpalConnection(OpalCall &, OpalEndPoint &, const PString &, unsigned int, OpalConnection::StringOptions *);
-  //use to remove the connection from the call's connection list
-  friend OpalConnection::~OpalConnection();
 
   P_REMOVE_VIRTUAL_VOID(OnRTPStatistics(const OpalConnection &, const OpalRTPSession &));
 };

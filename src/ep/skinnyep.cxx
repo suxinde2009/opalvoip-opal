@@ -1114,13 +1114,14 @@ bool OpalSkinnyConnection::OnReceiveCallInfo(const OpalSkinnyEndPoint::CallInfoC
     m_remotePartyName = msg.GetCalledPartyName();
     m_remotePartyNumber = msg.GetCalledPartyNumber();
     m_displayName = msg.GetCallingPartyName();
-    m_localPartyName = msg.GetCallingPartyNumber();
+    SetLocalPartyName(msg.GetCallingPartyNumber());
   }
   else {
     m_remotePartyName = msg.GetCallingPartyName();
     m_remotePartyNumber = msg.GetCallingPartyNumber();
     m_calledPartyName = m_displayName = msg.GetCalledPartyName();
-    m_calledPartyNumber = m_localPartyName = msg.GetCalledPartyNumber();
+    m_calledPartyNumber = msg.GetCalledPartyNumber();
+    SetLocalPartyName(m_calledPartyNumber);
     m_redirectingParty = GetPrefixName() + ':' + msg.GetRedirectingPartyNumber();
   }
 
