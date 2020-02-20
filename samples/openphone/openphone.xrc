@@ -42,6 +42,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -51,6 +53,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -87,6 +91,8 @@
 					</font>
 					<label>Hang Up</label>
 					<default>0</default>
+					<markup>0</markup>
+					<bitmap />
 				</object>
 			</object>
 			<object class="spacer">
@@ -270,6 +276,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>1</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -285,6 +293,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -338,6 +348,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -347,6 +359,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>
@@ -354,7 +368,7 @@
 		</object>
 	</object>
 	<object class="wxPanel" name="InCallPanel" subclass="InCallPanel">
-		<style>wxSUNKEN_BORDER|wxTAB_TRAVERSAL</style>
+		<style>wxTAB_TRAVERSAL|wxBORDER_SUNKEN</style>
 		<size>610,358</size>
 		<object class="wxBoxSizer">
 			<orient>wxHORIZONTAL</orient>
@@ -487,7 +501,7 @@
 										<object class="wxNotebook" name="Statistics">
 											<object class="notebookpage">
 												<label>Rx Audio</label>
-												<selected>0</selected>
+												<selected>1</selected>
 												<object class="wxPanel" name="RxAudioStatistics">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">
@@ -1284,7 +1298,7 @@
 											</object>
 											<object class="notebookpage">
 												<label>Tx Video</label>
-												<selected>1</selected>
+												<selected>0</selected>
 												<object class="wxPanel" name="TxVideoStatistics">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">
@@ -1820,6 +1834,8 @@
 																<size>40,40</size>
 																<label>1</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1830,6 +1846,8 @@
 																<size>40,40</size>
 																<label>2\nabc</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1840,6 +1858,8 @@
 																<size>40,40</size>
 																<label>3\ndef</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1850,6 +1870,8 @@
 																<size>40,40</size>
 																<label>4\nghi</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1860,6 +1882,8 @@
 																<size>40,40</size>
 																<label>5\njkl</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1870,6 +1894,8 @@
 																<size>40,40</size>
 																<label>6\nmno</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1880,6 +1906,8 @@
 																<size>40,40</size>
 																<label>7\npqrs</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1890,6 +1918,8 @@
 																<size>40,40</size>
 																<label>8\ntuv</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1900,6 +1930,8 @@
 																<size>40,40</size>
 																<label>9\nwxyz</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1910,6 +1942,8 @@
 																<size>40,40</size>
 																<label>*</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1920,6 +1954,8 @@
 																<size>40,40</size>
 																<label>0</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1930,6 +1966,8 @@
 																<size>40,40</size>
 																<label>#</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 													</object>
@@ -1941,6 +1979,8 @@
 													<object class="wxButton" name="InputFlash">
 														<label>Hook Flash</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 											</object>
@@ -1969,6 +2009,8 @@
 																<enabled>0</enabled>
 																<label>Wide</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1980,6 +2022,8 @@
 																<enabled>0</enabled>
 																<label>Tight</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 													</object>
@@ -2010,6 +2054,8 @@
 																<enabled>0</enabled>
 																<label>U</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -2027,6 +2073,8 @@
 																<enabled>0</enabled>
 																<label>L</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -2044,6 +2092,8 @@
 																<enabled>0</enabled>
 																<label>R</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -2061,6 +2111,8 @@
 																<enabled>0</enabled>
 																<label>D</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -2086,6 +2138,8 @@
 																<enabled>0</enabled>
 																<label>In</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -2097,6 +2151,8 @@
 																<enabled>0</enabled>
 																<label>Out</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 													</object>
@@ -2134,6 +2190,8 @@
 									</font>
 									<label>Hang Up</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="spacer">
@@ -2156,6 +2214,8 @@
 									</font>
 									<label>Hold</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="spacer">
@@ -2179,6 +2239,8 @@
 									</font>
 									<label>Conference</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="spacer">
@@ -2202,6 +2264,8 @@
 									</font>
 									<label>No Handset</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="spacer">
@@ -2230,7 +2294,7 @@
 				<object class="wxNotebook" name="OptionsNotebook">
 					<object class="notebookpage">
 						<label>General</label>
-						<selected>0</selected>
+						<selected>1</selected>
 						<object class="wxPanel" name="GeneralOptions">
 							<style>wxTAB_TRAVERSAL</style>
 							<object class="wxFlexGridSizer">
@@ -2312,6 +2376,8 @@
 											<object class="wxButton" name="PlaySoundFile">
 												<label>Play</label>
 												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
 											</object>
 										</object>
 										<object class="sizeritem">
@@ -2330,6 +2396,8 @@
 											<object class="wxButton" name="BrowseSoundFile">
 												<label>Browse</label>
 												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
 											</object>
 										</object>
 									</object>
@@ -2659,6 +2727,8 @@
 																<style>wxBU_RIGHT</style>
 																<label>Certificate Authority:</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -2678,6 +2748,8 @@
 																<style>wxBU_RIGHT</style>
 																<label>Local Certificate:</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -2697,6 +2769,8 @@
 																<style>wxBU_RIGHT</style>
 																<label>Private Key:</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -2716,19 +2790,19 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxLEFT|wxRIGHT|wxTOP|wxEXPAND</flag>
+									<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
 									<border>12</border>
 									<object class="wxStaticBoxSizer">
 										<orient>wxHORIZONTAL</orient>
 										<label>NAT/Firewall</label>
 										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxEXPAND</flag>
+											<option>1</option>
+											<flag>wxALIGN_CENTER_VERTICAL</flag>
 											<border>0</border>
 											<object class="wxBoxSizer">
 												<orient>wxHORIZONTAL</orient>
 												<object class="sizeritem">
-													<option>0</option>
+													<option>1</option>
 													<flag>wxALL|wxEXPAND</flag>
 													<border>8</border>
 													<object class="wxListBox" name="NatMethods">
@@ -2736,7 +2810,7 @@
 													</object>
 												</object>
 												<object class="sizeritem">
-													<option>0</option>
+													<option>4</option>
 													<flag>wxALIGN_CENTER_VERTICAL</flag>
 													<border>0</border>
 													<object class="wxFlexGridSizer">
@@ -2744,7 +2818,7 @@
 														<cols>2</cols>
 														<vgap>0</vgap>
 														<hgap>0</hgap>
-														<growablecols></growablecols>
+														<growablecols>1</growablecols>
 														<growablerows></growablerows>
 														<object class="spacer">
 															<option>0</option>
@@ -2763,7 +2837,7 @@
 														</object>
 														<object class="sizeritem">
 															<option>0</option>
-															<flag>wxLEFT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL</flag>
+															<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
 															<border>8</border>
 															<object class="wxStaticText" name="label_115">
 																<label>Server:</label>
@@ -2771,8 +2845,8 @@
 															</object>
 														</object>
 														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxRIGHT|wxTOP|wxALIGN_CENTER_VERTICAL</flag>
+															<option>1</option>
+															<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT|wxTOP</flag>
 															<border>8</border>
 															<object class="wxTextCtrl" name="NatServer">
 																<value></value>
@@ -2804,7 +2878,7 @@
 											</object>
 										</object>
 										<object class="sizeritem">
-											<option>3</option>
+											<option>0</option>
 											<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 											<border>24</border>
 											<object class="wxFlexGridSizer">
@@ -2972,6 +3046,8 @@
 															<object class="wxButton" name="AddInterface">
 																<label>&lt;- Add</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -2981,6 +3057,8 @@
 															<object class="wxButton" name="RemoveInterface">
 																<label>Remove -&gt;</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 													</object>
@@ -3123,6 +3201,8 @@
 													<object class="wxButton" name="TestPlayer">
 														<label>Test</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -3151,6 +3231,8 @@
 													<object class="wxButton" name="TestRecorder">
 														<label>Test</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -3594,7 +3676,7 @@
 					</object>
 					<object class="notebookpage">
 						<label>Video</label>
-						<selected>1</selected>
+						<selected>0</selected>
 						<object class="wxPanel" name="VideoOptions">
 							<style>wxTAB_TRAVERSAL</style>
 							<object class="wxBoxSizer">
@@ -3701,6 +3783,8 @@
 															<object class="wxButton" name="TestVideoCapture">
 																<label>Test Video</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 													</object>
@@ -4046,6 +4130,8 @@
 											<object class="wxButton" name="FaxBrowseReceiveDirectory">
 												<label>Browse</label>
 												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
 											</object>
 										</object>
 									</object>
@@ -4224,7 +4310,7 @@
 											<flag>wxALL|wxEXPAND</flag>
 											<border>8</border>
 											<object class="wxListCtrl" name="Presentities">
-												<style>wxLC_REPORT|wxLC_EDIT_LABELS|wxLC_SINGLE_SEL|wxSUNKEN_BORDER</style>
+												<style>wxLC_REPORT|wxLC_EDIT_LABELS|wxLC_SINGLE_SEL|wxBORDER_SUNKEN</style>
 											</object>
 										</object>
 										<object class="sizeritem">
@@ -4246,6 +4332,8 @@
 													<object class="wxButton" name="AddPresentity">
 														<label>Add</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -4262,6 +4350,8 @@
 														<enabled>0</enabled>
 														<label>Remove</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -4316,7 +4406,7 @@
 													<flag>wxLEFT|wxRIGHT|wxEXPAND</flag>
 													<border>20</border>
 													<object class="wxListCtrl" name="AllCodecs">
-														<style>wxLC_REPORT|wxLC_NO_HEADER|wxLC_SORT_ASCENDING|wxSUNKEN_BORDER</style>
+														<style>wxLC_REPORT|wxLC_NO_HEADER|wxLC_SORT_ASCENDING|wxBORDER_SUNKEN</style>
 													</object>
 												</object>
 											</object>
@@ -4334,6 +4424,8 @@
 													<object class="wxButton" name="AddCodec">
 														<label>Add -&gt;</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -4343,6 +4435,8 @@
 													<object class="wxButton" name="RemoveCodec">
 														<label>&lt;- Remove</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -4352,6 +4446,8 @@
 													<object class="wxButton" name="MoveUpCodec">
 														<label>Move Up</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -4361,6 +4457,8 @@
 													<object class="wxButton" name="MoveDownCodec">
 														<label>Move Down</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 											</object>
@@ -4419,7 +4517,7 @@
 													<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT</flag>
 													<border>20</border>
 													<object class="wxListCtrl" name="CodecOptionsList">
-														<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_SORT_ASCENDING|wxSUNKEN_BORDER</style>
+														<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_SORT_ASCENDING|wxBORDER_SUNKEN</style>
 													</object>
 												</object>
 											</object>
@@ -4472,6 +4570,8 @@
 															<object class="wxButton" name="SetDefaultCodecOption">
 																<label>Set Default</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -4487,7 +4587,7 @@
 													<flag>wxEXPAND</flag>
 													<border>0</border>
 													<object class="wxStaticText" name="CodecOptionValueError">
-														<style>wxALIGN_CENTRE</style>
+														<style>wxALIGN_CENTER_HORIZONTAL</style>
 														<label>Invalid value entered!!</label>
 														<wrap>200</wrap>
 													</object>
@@ -4546,6 +4646,8 @@
 																	<object class="wxButton" name="AddAlias">
 																		<label>&lt;- Add</label>
 																		<default>0</default>
+																		<markup>0</markup>
+																		<bitmap />
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -4555,6 +4657,8 @@
 																	<object class="wxButton" name="RemoveAlias">
 																		<label>Remove -&gt;</label>
 																		<default>0</default>
+																		<markup>0</markup>
+																		<bitmap />
 																	</object>
 																</object>
 															</object>
@@ -4579,6 +4683,8 @@
 											<object class="wxButton" name="MoreOptionsH323">
 												<label>More Options ...</label>
 												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
 											</object>
 										</object>
 									</object>
@@ -5051,6 +5157,8 @@
 											<object class="wxButton" name="MoreOptionsSIP">
 												<label>More Options ...</label>
 												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
 											</object>
 										</object>
 									</object>
@@ -5067,7 +5175,7 @@
 											<flag>wxALL|wxEXPAND</flag>
 											<border>8</border>
 											<object class="wxListCtrl" name="Registrars">
-												<style>wxLC_REPORT|wxSUNKEN_BORDER</style>
+												<style>wxLC_REPORT|wxBORDER_SUNKEN</style>
 											</object>
 										</object>
 										<object class="sizeritem">
@@ -5089,6 +5197,8 @@
 													<object class="wxButton" name="AddRegistrar">
 														<label>Add</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -5105,6 +5215,8 @@
 														<enabled>0</enabled>
 														<label>Change</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -5121,6 +5233,8 @@
 														<enabled>0</enabled>
 														<label>Remove</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -5137,6 +5251,8 @@
 														<enabled>0</enabled>
 														<label>Move Up</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -5153,6 +5269,8 @@
 														<enabled>0</enabled>
 														<label>Move Down</label>
 														<default>0</default>
+														<markup>0</markup>
+														<bitmap />
 													</object>
 												</object>
 												<object class="spacer">
@@ -5471,6 +5589,8 @@
 															<object class="wxButton" name="AddRoute">
 																<label>Add -&gt;</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -5486,6 +5606,8 @@
 															<object class="wxButton" name="RemoveRoute">
 																<label>&lt;- Remove</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -5501,6 +5623,8 @@
 															<object class="wxButton" name="MoveUpRoute">
 																<label>Move Up</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -5516,6 +5640,8 @@
 															<object class="wxButton" name="MoveDownRoute">
 																<label>Move Down</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -5531,6 +5657,8 @@
 															<object class="wxButton" name="RestoreDefaultRoutes">
 																<label>Defaults</label>
 																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
 															</object>
 														</object>
 														<object class="spacer">
@@ -5546,7 +5674,7 @@
 													<flag>wxALL|wxEXPAND</flag>
 													<border>8</border>
 													<object class="wxListCtrl" name="Routes">
-														<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxSUNKEN_BORDER</style>
+														<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxBORDER_SUNKEN</style>
 													</object>
 												</object>
 											</object>
@@ -5731,6 +5859,8 @@
 											<object class="wxButton" name="BrowseTraceFile">
 												<label>Browse</label>
 												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
 											</object>
 										</object>
 									</object>
@@ -5759,6 +5889,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -5768,6 +5900,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -5777,6 +5911,8 @@
 						<object class="wxButton" name="wxID_APPLY">
 							<label>Apply</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>
@@ -5863,6 +5999,8 @@
 															<enabled>0</enabled>
 															<label>Up</label>
 															<default>0</default>
+															<markup>0</markup>
+															<bitmap />
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -5873,6 +6011,8 @@
 															<enabled>0</enabled>
 															<label>Down</label>
 															<default>0</default>
+															<markup>0</markup>
+															<bitmap />
 														</object>
 													</object>
 												</object>
@@ -5912,6 +6052,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -5927,6 +6069,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -6009,6 +6153,8 @@
 						<object class="wxButton" name="Send">
 							<label>Send</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>
@@ -6252,6 +6398,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -6267,6 +6415,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -6624,6 +6774,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>1</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -6633,6 +6785,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>
@@ -6714,6 +6868,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -6729,6 +6885,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -6816,6 +6974,8 @@
 							</font>
 							<label>Answer</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -6839,6 +6999,8 @@
 							</font>
 							<label>Reject</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -7047,6 +7209,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -7062,6 +7226,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -7158,6 +7324,8 @@
 						<object class="wxButton" name="wxID_OK">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -7173,6 +7341,8 @@
 						<object class="wxButton" name="wxID_APPLY">
 							<label>Apply</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
@@ -7188,6 +7358,8 @@
 						<object class="wxButton" name="wxID_CANCEL">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="spacer">
