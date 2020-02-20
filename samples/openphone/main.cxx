@@ -2758,6 +2758,8 @@ void MyManager::OnEvtEstablished(wxCommandEvent & theEvent)
 
 void MyManager::OnClearedCall(OpalCall & call)
 {
+  OpalManager::OnClearedCall(call);
+
   StopRingSound();
 
   PString name = call.GetPartyB().IsEmpty() ? call.GetPartyA() : call.GetPartyB();
