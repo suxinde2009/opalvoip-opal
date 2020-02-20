@@ -1178,19 +1178,10 @@ PBoolean OpalMixerMediaStream::Open()
 
   SetPaused(IsSink() && m_listenOnly);
 
-  return OpalMediaStream::Open();
-}
-
-
-PBoolean OpalMixerMediaStream::Start()
-{
-  if (!OpalMediaStream::Start())
+  if (!IsPaused() && !m_node->AttachStream(this))
     return false;
 
-  if (IsSink() && m_listenOnly)
-    return true;
-
-  return m_node->AttachStream(this);
+  return OpalMediaStream::Open();
 }
 
 
