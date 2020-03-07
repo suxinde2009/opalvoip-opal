@@ -550,7 +550,7 @@ PBoolean OpalInternalIPTransport::GetIpAndPort(const OpalTransportAddress & addr
     ip = PIPSocket::Address::GetAny(4);
   else if (host == "::" || host == "[::]")
     ip = PIPSocket::Address::GetAny(6);
-  else if (host.IsEmpty())
+  else if (host.IsEmpty() || host == "*")
     ip = PIPSocket::GetDefaultIpAny();
   else {
     if (!PIPSocket::GetHostAddress(host, ip)) {
