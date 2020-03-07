@@ -215,7 +215,7 @@ OpalRFC2833Info::OpalRFC2833Info(char t, unsigned d, unsigned ts)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-OpalRFC2833Proto::OpalRFC2833Proto(const PNotifier & rx, const OpalMediaFormat & fmt)
+OpalRFC2833Proto::OpalRFC2833Proto(const Notifier & rx, const OpalMediaFormat & fmt)
   : m_baseMediaFormat(fmt)
   , m_txPayloadType(RTP_DataFrame::IllegalPayloadType)
   , m_rxPayloadType(RTP_DataFrame::IllegalPayloadType)
@@ -523,7 +523,7 @@ void OpalRFC2833Proto::OnStartReceive(char tone, unsigned timestamp)
   m_receiveTimer = 200;
 
   OpalRFC2833Info info(tone, 0, timestamp);
-  m_receiveNotifier(info, 0);
+  m_receiveNotifier(info, Started);
 }
 
 
@@ -533,7 +533,7 @@ void OpalRFC2833Proto::OnEndReceive()
   m_receiveTimer.Stop(false);
 
   OpalRFC2833Info info(m_receivedTone, m_receivedDuration/m_baseMediaFormat.GetTimeUnits(), m_receivedTimestamp);
-  m_receiveNotifier(info, 1);
+  m_receiveNotifier(info, Ended);
 }
 
 

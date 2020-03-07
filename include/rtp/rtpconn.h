@@ -37,6 +37,7 @@
 #include <opal/mediatype.h>
 #include <opal/mediasession.h>
 #include <rtp/rtp_session.h>
+#include <codec/rfc2833.h>
 #include <ptlib/bitwise_enum.h>
 
 
@@ -331,7 +332,7 @@ class OpalRTPConnection : public OpalConnection
 
   protected:
     virtual bool GarbageCollection();
-    PDECLARE_NOTIFIER(OpalRFC2833Info, OpalRTPConnection, OnUserInputInlineRFC2833);
+    PDECLARE_NOTIFIER2(OpalRFC2833Info, OpalRTPConnection, OnUserInputInlineRFC2833, OpalRFC2833Proto::NotifyState);
 
 #if OPAL_RTP_FEC
     OpalMediaFormatList NegotiateFECMediaFormats(OpalMediaSession & session);

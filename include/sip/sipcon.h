@@ -806,7 +806,7 @@ class SIPConnection : public OpalSDPConnection, public SIPTransactionOwner
       ReceivedRFC2833,
       ReceivedINFO
     } m_receivedUserInputMethod;
-    void OnUserInputInlineRFC2833(OpalRFC2833Info & info, INT type);
+    void OnUserInputInlineRFC2833(OpalRFC2833Info & info, OpalRFC2833Proto::NotifyState state);
 
 
   private:

@@ -36,7 +36,6 @@
 #include <rtp/rtpconn.h>
 #include <rtp/rtpep.h>
 #include <opal/manager.h>
-#include <codec/rfc2833.h>
 #include <t38/t38proto.h>
 #include <opal/patch.h>
 
@@ -695,13 +694,15 @@ void OpalRTPConnection::OnPatchMediaStream(PBoolean isSource, OpalMediaPatch & p
 #endif
 }
 
-void OpalRTPConnection::OnUserInputInlineRFC2833(OpalRFC2833Info & info, P_INT_PTR)
+void OpalRTPConnection::OnUserInputInlineRFC2833(OpalRFC2833Info & info, OpalRFC2833Proto::NotifyState state)
 {
-  GetEndPoint().GetManager().QueueDecoupledEvent(
-          new PSafeWorkArg2<OpalConnection, char, unsigned>(
-                 this, info.GetTone(),
-                 info.GetDuration(),
-                 &OpalConnection::OnUserInputTone));
+  if (state == OpalRFC2833Proto::Started) {
+    GetEndPoint().GetManager().QueueDecoupledEvent(
+            new PSafeWorkArg2<OpalConnection, char, unsigned>(
+                  this, info.GetTone(),
+                  info.GetDuration(),
+                  &OpalConnection::OnUserInputTone));
+  }
 }
 
 
