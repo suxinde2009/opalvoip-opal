@@ -3356,7 +3356,7 @@ void SIPConnection::OnReceivedPRACK(SIP_PDU & request)
 }
 
 
-void SIPConnection::OnUserInputInlineRFC2833(OpalRFC2833Info & info, INT type)
+void SIPConnection::OnUserInputInlineRFC2833(OpalRFC2833Info & info, OpalRFC2833Proto::NotifyState state)
 {
   switch (m_receivedUserInputMethod) {
     case ReceivedINFO :
@@ -3368,7 +3368,7 @@ void SIPConnection::OnUserInputInlineRFC2833(OpalRFC2833Info & info, INT type)
       // Do default case
 
     default:
-      OpalRTPConnection::OnUserInputInlineRFC2833(info, type);
+      OpalRTPConnection::OnUserInputInlineRFC2833(info, state);
   }
 }
 
