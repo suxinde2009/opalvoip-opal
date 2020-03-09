@@ -457,7 +457,7 @@ static PBoolean SplitAddress(const PString & addr, PString & host, PString & dev
   // parse optional device name
   if (addr[pos] == '%') {
     PINDEX colon = addr.Find(':', pos);
-    device = addr(pos+1, colon-1).Trim();
+    device = addr(pos, colon-1).Trim();
     if (colon == P_MAX_INDEX)
       return true;
     pos = colon;
